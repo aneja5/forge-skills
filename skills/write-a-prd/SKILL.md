@@ -5,6 +5,8 @@ description: Create a PRD through user interview, codebase exploration, and modu
 
 This skill will be invoked when the user wants to create a PRD. You may skip steps if you don't consider them necessary.
 
+0. Check if `.forge/idea-brief.md` exists. If it does, read it — this is a pre-filled brief from idea-griller. Skip any discovery questions that are already answered in the brief. Only ask the user about gaps or open assumptions listed in the brief.
+
 1. Ask the user for a long, detailed description of the problem they want to solve and any potential ideas for solutions.
 
 2. Explore the repo to verify their assertions and understand the current state of the codebase.
