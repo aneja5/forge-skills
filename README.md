@@ -1,5 +1,12 @@
 # forge-skills
 
+[![GitHub stars](https://img.shields.io/github/stars/aneja5/forge-skills?style=flat-square)](https://github.com/aneja5/forge-skills/stargazers)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Skills](https://img.shields.io/badge/skills-12-brightgreen?style=flat-square)](#commands-skills-and-artifacts)
+[![Agents](https://img.shields.io/badge/agents-5-orange?style=flat-square)](#agent-personas--reference-checklists)
+[![Commands](https://img.shields.io/badge/commands-7-purple?style=flat-square)](#commands-skills-and-artifacts)
+![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-black?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=)
+
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
 Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 12 skills, and 5 specialist agent personas.
@@ -35,7 +42,7 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 /grill      /spec      /architect    /plan       /build     /review      /ship
 ```
 
-Each stage produces an artifact. The next stage consumes it. You can join mid-pipeline if you already have the artifact. See [docs/examples.md](docs/examples.md) for before/after examples of each stage.
+> **Install:** `/plugin marketplace add aneja5/forge-skills` then `/plugin install forge-skills@forge-skills`
 
 ---
 
@@ -56,9 +63,12 @@ Each stage produces an artifact. The next stage consumes it. You can join mid-pi
 
 Add `.forge/` to `.gitignore` for local-only, or commit it to share context across the team.
 
+> **See [examples](docs/examples.md)** for before/after diffs of each pipeline stage.
+
 ---
 
-## Quick Start (Claude Code)
+<details>
+<summary><b>Quick Start — Claude Code</b></summary>
 
 **Marketplace install (recommended):**
 
@@ -98,9 +108,10 @@ Copy `hooks/hooks.json` content into your project's `.claude/settings.json`.
 /ship     ← pre-launch gate
 ```
 
----
+</details>
 
-## Quick Start (Other Tools)
+<details>
+<summary><b>Quick Start — Cursor / Gemini CLI / Other</b></summary>
 
 **Cursor** — add to `.cursorrules`:
 
@@ -116,9 +127,14 @@ gemini skills install ./forge-skills/skills/
 
 See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsurf, and other tools.
 
+</details>
+
 ---
 
-## Agent Personas
+<details>
+<summary><b>Agent Personas & Reference Checklists</b></summary>
+
+### Agent Personas
 
 | Persona | File | When to invoke |
 |---------|------|----------------|
@@ -128,9 +144,7 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | Code Reviewer | `agents/code-reviewer.md` | PR review, contract compliance |
 | Security Auditor | `agents/security-auditor.md` | Threat modeling, OWASP review |
 
----
-
-## Reference Checklists
+### Reference Checklists
 
 | File | Used by |
 |------|---------|
@@ -139,9 +153,10 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | `references/testing-patterns.md` | tdd, incremental-implementation, code-review-and-quality |
 | `references/security-checklist.md` | shipping-and-launch, security-auditor |
 
----
+</details>
 
-## Project Structure
+<details>
+<summary><b>Project Structure</b></summary>
 
 ```
 forge-skills/
@@ -187,6 +202,8 @@ forge-skills/
 ├── CLAUDE.md
 └── AGENTS.md
 ```
+
+</details>
 
 ---
 
