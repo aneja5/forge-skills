@@ -5,98 +5,111 @@ description: Triage a bug or issue by exploring the codebase to find root cause,
 
 # Triage Issue
 
-Investigate a reported problem, find its root cause, and create a GitHub issue with a TDD fix plan. This is a mostly hands-off workflow - minimize questions to the user.
+## Overview
 
-## Process
+Investigate a reported problem, find its root cause, and create a GitHub issue with a TDD fix plan. Exploration-first — no guessing. The issue is written in terms of behaviors and contracts, not file paths or line numbers, so it stays useful after refactors.
+
+## When to Use
+
+- User reports a bug or unexpected behavior
+- User wants to file a GitHub issue before implementing a fix
+- User says "triage", "investigate", or "what's causing this"
+- Bug needs a structured fix plan before work begins
+
+## When NOT to Use
+
+- Root cause is already known — go straight to `debugging-and-recovery`
+- No GitHub repo exists — you can't create the issue
+- The problem is a missing feature, not broken behavior — use `spec-driven-development`
+
+## Common Rationalizations
+
+| Thought | Reality |
+|---------|---------|
+| "I know what's wrong, I'll skip investigation" | You know the symptom. Cause is found by tracing, not guessing |
+| "The fix is obvious — no need for a plan" | Obvious fixes skip TDD cycles and reintroduce the bug |
+| "I'll reference the file and line in the issue" | File paths rot — write behaviors and contracts, not pointers |
+| "I'll ask the user for more details before investigating" | Codebase exploration answers more than follow-up questions |
+
+## Red Flags
+
+- Issue body names specific file paths or line numbers (stale after any refactor)
+- Root cause described as "it just wasn't working" — that's a symptom, not a cause
+- TDD fix plan has more than 6 RED/GREEN cycles (not a vertical slice — decompose)
+- Fix plan describes internal state changes, not observable behavior changes
+
+## Core Process
 
 ### 1. Capture the problem
 
-Get a brief description of the issue from the user. If they haven't provided one, ask ONE question: "What's the problem you're seeing?"
-
-Do NOT ask follow-up questions yet. Start investigating immediately.
+Get a brief description from the user. If none provided, ask ONE question: "What's the problem you're seeing?" Do NOT ask follow-up questions — start investigating immediately.
 
 ### 2. Explore and diagnose
 
-Use the Agent tool with subagent_type=Explore to deeply investigate the codebase. Your goal is to find:
+Use the Agent tool with subagent_type=Explore to find:
 
 - **Where** the bug manifests (entry points, UI, API responses)
 - **What** code path is involved (trace the flow)
-- **Why** it fails (the root cause, not just the symptom)
+- **Why** it fails (root cause, not symptom)
 - **What** related code exists (similar patterns, tests, adjacent modules)
 
-Look at:
-- Related source files and their dependencies
-- Existing tests (what's tested, what's missing)
-- Recent changes to affected files (`git log` on relevant files)
-- Error handling in the code path
-- Similar patterns elsewhere in the codebase that work correctly
+Look at: related source files, existing tests, recent changes (`git log` on relevant files), error handling in the code path, similar patterns that work correctly.
 
 ### 3. Identify the fix approach
 
-Based on your investigation, determine:
-
-- The minimal change needed to fix the root cause
+Based on investigation, determine:
+- The minimal change to fix the root cause
 - Which modules/interfaces are affected
 - What behaviors need to be verified via tests
 - Whether this is a regression, missing feature, or design flaw
 
 ### 4. Design TDD fix plan
 
-Create a concrete, ordered list of RED-GREEN cycles. Each cycle is one vertical slice:
+Ordered list of RED-GREEN cycles. Each is one vertical slice:
 
-- **RED**: Describe a specific test that captures the broken/missing behavior
-- **GREEN**: Describe the minimal code change to make that test pass
+- **RED**: A specific test that captures the broken/missing behavior
+- **GREEN**: The minimal code change to make that test pass
 
-Rules:
-- Tests verify behavior through public interfaces, not implementation details
-- One test at a time, vertical slices (NOT all tests first, then all code)
-- Each test should survive internal refactors
-- Include a final refactor step if needed
-- **Durability**: Only suggest fixes that would survive radical codebase changes. Describe behaviors and contracts, not internal structure. Tests assert on observable outcomes (API responses, UI state, user-visible effects), not internal state. A good suggestion reads like a spec; a bad one reads like a diff.
+Rules: tests verify behavior through public interfaces, not implementation details. One test at a time. Each test must survive internal refactors.
 
 ### 5. Create the GitHub issue
 
-Create a GitHub issue using `gh issue create` with the template below. Do NOT ask the user to review before creating - just create it and share the URL.
+Use `gh issue create`. Do NOT ask the user to review before creating — create it and share the URL.
 
 <issue-template>
 
 ## Problem
 
-A clear description of the bug or issue, including:
-- What happens (actual behavior)
-- What should happen (expected behavior)
-- How to reproduce (if applicable)
+[What happens (actual) vs what should happen (expected). How to reproduce.]
 
 ## Root Cause Analysis
 
-Describe what you found during investigation:
-- The code path involved
-- Why the current code fails
-- Any contributing factors
-
-Do NOT include specific file paths, line numbers, or implementation details that couple to current code layout. Describe modules, behaviors, and contracts instead. The issue should remain useful even after major refactors.
+[Code path, why it fails, contributing factors — no file paths or line numbers]
 
 ## TDD Fix Plan
-
-A numbered list of RED-GREEN cycles:
 
 1. **RED**: Write a test that [describes expected behavior]
    **GREEN**: [Minimal change to make it pass]
 
-2. **RED**: Write a test that [describes next behavior]
-   **GREEN**: [Minimal change to make it pass]
-
-...
+2. ...
 
 **REFACTOR**: [Any cleanup needed after all tests pass]
 
 ## Acceptance Criteria
 
 - [ ] Criterion 1
-- [ ] Criterion 2
 - [ ] All new tests pass
 - [ ] Existing tests still pass
 
 </issue-template>
 
-After creating the issue, print the issue URL and a one-line summary of the root cause.
+After creating: print the issue URL and a one-line root cause summary.
+
+## Verification
+
+- [ ] Codebase explored before drawing conclusions
+- [ ] Root cause identified (cause, not symptom)
+- [ ] TDD fix plan uses observable behaviors, not implementation details
+- [ ] Issue body contains no file paths or line numbers
+- [ ] Each RED/GREEN cycle is a vertical slice
+- [ ] GitHub issue created and URL returned to user

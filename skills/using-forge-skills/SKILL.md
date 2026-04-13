@@ -147,17 +147,3 @@ Every skill includes a verification checklist. A task is not complete until veri
 3. Multiple skills can apply — use the lifecycle sequence to choose order.
 4. When in doubt, start with a spec.
 
-## Quick Reference
-
-| Phase   | Skill                        | Command      | Artifact Out              |
-|---------|------------------------------|--------------|---------------------------|
-| Define  | idea-griller                 | /grill       | .forge/idea-brief.md      |
-| Specify | spec-driven-development      | /spec        | .forge/prd.md             |
-| Design  | architecture-and-contracts   | /architect   | .forge/architecture.md + contracts/ |
-| Plan    | planning-and-task-breakdown  | /plan        | .forge/tasks.yaml         |
-| Build   | incremental-implementation   | /build       | code + commits            |
-| Build   | tdd                          | /build       | passing tests             |
-| Verify  | debugging-and-recovery       | —            | fix + regression test     |
-| Review  | code-review-and-quality      | /review      | review findings           |
-| Ship    | git-workflow                 | —            | clean history             |
-| Ship    | shipping-and-launch          | /ship        | go/no-go decision         |

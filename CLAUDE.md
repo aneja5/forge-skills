@@ -26,7 +26,6 @@ forge-skills/
 │   ├── code-review-and-quality/     # Five-axis review with contract compliance
 │   ├── git-workflow/                # Atomic commits, branch strategy, PR prep
 │   ├── shipping-and-launch/         # Six-domain pre-launch gate
-│   ├── triage-issue/                # Bug investigation → GitHub Issue + TDD fix plan
 │   └── triage-issue/                # Bug investigation → GitHub Issue + TDD fix plan
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
