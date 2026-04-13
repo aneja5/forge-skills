@@ -3,6 +3,9 @@
   "description": "Agentic Engineering toolkit — 12 skills, 5 agent personas, 7 slash commands. From /grill to /ship.",
   "version": "1.0.3",
   "author": {
-    "name": "Sahil Aneja"
-  }
+    "name": "Sahilpreet Singh Aneja"
+  },
+  "homepage": "https://github.com/aneja5/forge-skills",
+  "repository": "https://github.com/aneja5/forge-skills",
+  "license": "MIT"
 }

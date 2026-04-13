@@ -1,7 +1,11 @@
 {
   "name": "forge-skills",
   "owner": {
-    "name": "Sahil Aneja"
+    "name": "Sahilpreet Singh Aneja",
+    "email": "sahilpreetaneja@gmail.com"
+  },
+  "metadata": {
+    "description": "Agentic Engineering toolkit — structured workflows from idea to shipped code"
   },
   "plugins": [
     {
@@ -11,7 +15,12 @@
         "repo": "aneja5/forge-skills"
       },
       "description": "Agentic Engineering toolkit — 12 skills, 5 agent personas, 7 slash commands. From /grill to /ship.",
-      "version": "1.0.3"
+      "homepage": "https://github.com/aneja5/forge-skills",
+      "repository": "https://github.com/aneja5/forge-skills",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": ["agentic-engineering", "tdd", "code-review", "architecture", "planning"],
+      "tags": ["skills", "agents", "pipeline", "contracts"]
     }
   ]
 }
