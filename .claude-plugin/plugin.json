@@ -1,5 +1,37 @@
 {
   "name": "forge-skills",
   "description": "Agentic Engineering toolkit — 12 skills, 5 agent personas, 7 slash commands. From /grill to /ship.",
-  "version": "1.0.1"
+  "version": "1.0.2",
+  "components": {
+    "skills": [
+      "skills/idea-griller",
+      "skills/spec-driven-development",
+      "skills/architecture-and-contracts",
+      "skills/planning-and-task-breakdown",
+      "skills/incremental-implementation",
+      "skills/tdd",
+      "skills/debugging-and-recovery",
+      "skills/code-review-and-quality",
+      "skills/git-workflow",
+      "skills/shipping-and-launch",
+      "skills/triage-issue",
+      "skills/using-forge-skills"
+    ],
+    "commands": [
+      "commands/grill",
+      "commands/spec",
+      "commands/architect",
+      "commands/plan",
+      "commands/build",
+      "commands/review",
+      "commands/ship"
+    ],
+    "agents": [
+      "agents/architect",
+      "agents/code-reviewer",
+      "agents/project-manager",
+      "agents/security-auditor",
+      "agents/test-engineer"
+    ]
+  }
 }
