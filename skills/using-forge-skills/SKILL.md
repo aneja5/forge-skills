@@ -25,7 +25,7 @@ Task arrives
     ├── Code ready for review? ────────────────────→ code-review-and-quality
     ├── Committing / branching? ───────────────────→ git-workflow
     ├── Deploying or launching? ───────────────────→ shipping-and-launch
-    └── Stress-testing a design? ──────────────────→ (invoke grill-me behavior inline)
+    └── Stress-testing a design? ──────────────────→ (relentless questioning — ask one branch per turn)
 ```
 
 ## The Forge Pipeline

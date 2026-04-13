@@ -206,8 +206,7 @@ forge-skills/
 │   ├── code-review-and-quality/
 │   ├── git-workflow/
 │   ├── shipping-and-launch/
-│   ├── triage-issue/
-│   └── grill-me/
+│   └── triage-issue/
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md
 │   ├── project-manager.md
