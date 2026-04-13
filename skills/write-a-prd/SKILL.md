@@ -3,74 +3,104 @@ name: write-a-prd
 description: Create a PRD through user interview, codebase exploration, and module design, then submit as a GitHub issue. Use when user wants to write a PRD, create a product requirements document, or plan a new feature.
 ---
 
-This skill will be invoked when the user wants to create a PRD. You may skip steps if you don't consider them necessary.
+# Write a PRD
 
-0. Check if `.forge/idea-brief.md` exists. If it does, read it — this is a pre-filled brief from idea-griller. Skip any discovery questions that are already answered in the brief. Only ask the user about gaps or open assumptions listed in the brief.
+## Overview
 
-1. Ask the user for a long, detailed description of the problem they want to solve and any potential ideas for solutions.
+Turn a feature idea into a GitHub issue PRD through structured interview, codebase exploration, and module design. Reads `.forge/idea-brief.md` if it exists (output of `idea-griller`) to skip already-answered questions.
 
-2. Explore the repo to verify their assertions and understand the current state of the codebase.
+## When to Use
 
-3. Interview the user relentlessly about every aspect of this plan until you reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+- User wants to write a PRD or product requirements document
+- User wants to plan a new feature from scratch
+- User has a rough idea and wants to formalize it before implementation
 
-4. Sketch out the major modules you will need to build or modify to complete the implementation. Actively look for opportunities to extract deep modules that can be tested in isolation.
+## When NOT to Use
 
-A deep module (as opposed to a shallow module) is one which encapsulates a lot of functionality in a simple, testable interface which rarely changes.
+- Idea hasn't been pressure-tested yet — run `idea-griller` first
+- Implementation has already started — PRD would be documenting history, not guiding work
+- Change is trivial (single function, config tweak) — just use `tdd` or `triage-issue`
 
-Check with the user that these modules match their expectations. Check with the user which modules they want tests written for.
+## Common Rationalizations
 
-5. Once you have a complete understanding of the problem and solution, use the template below to write the PRD. The PRD should be submitted as a GitHub issue.
+| Thought | Reality |
+|---------|---------|
+| "The feature is simple, we don't need a PRD" | Simple features grow. Write the scope down. |
+| "I already know what to build" | The interview surfaces what you don't know you don't know |
+| "We can figure out testing later" | Testing decisions made late are testing decisions skipped |
+| "The codebase exploration is optional" | Skipping it produces PRDs with wrong module assumptions |
+| "User stories take too long to write" | A thin story list produces thin acceptance criteria |
 
-<prd-template>
+## Red Flags
 
+- Problem statement is written from the engineer's perspective, not the user's
+- User stories use passive voice ("the system shall") instead of actor/want/benefit format
+- Out of Scope section is empty — everything is in scope until stated otherwise
+- No testing decisions recorded — tests become an afterthought
+- Module list names files instead of behaviors
+
+## Core Process
+
+### Step 0: Read the brief
+
+Check if `.forge/idea-brief.md` exists. If it does, read it. Skip any discovery questions already answered. Only ask about gaps and open assumptions listed in the brief.
+
+### Step 1: Understand the problem
+
+If no brief exists, ask the user for a detailed description of the problem and any potential solutions they've considered.
+
+### Step 2: Explore the codebase
+
+Use the Agent tool to explore the repo. Verify the user's assertions. Understand current architecture, existing patterns, and where new modules would attach.
+
+### Step 3: Interview to shared understanding
+
+Interview the user about every aspect of the plan. Walk down each branch of the design tree, resolving dependencies between decisions one at a time. Don't proceed until ambiguities are resolved.
+
+### Step 4: Design the modules
+
+Sketch the major modules to build or modify. Look for opportunities to extract deep modules — small interface, deep implementation, testable in isolation. Confirm module list with the user. Ask which modules need tests.
+
+### Step 5: Write and submit the PRD
+
+Use the template below. Submit as a GitHub issue with `gh issue create`.
+
+## PRD Template
+
+```markdown
 ## Problem Statement
-
-The problem that the user is facing, from the user's perspective.
+[The problem from the user's perspective — not the engineer's]
 
 ## Solution
-
-The solution to the problem, from the user's perspective.
+[The solution from the user's perspective]
 
 ## User Stories
-
-A LONG, numbered list of user stories. Each user story should be in the format of:
-
-1. As an <actor>, I want a <feature>, so that <benefit>
-
-<user-story-example>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
-</user-story-example>
-
-This list of user stories should be extremely extensive and cover all aspects of the feature.
+[Numbered list. Format: "As a <actor>, I want <feature>, so that <benefit>". Be extensive.]
 
 ## Implementation Decisions
-
-A list of implementation decisions that were made. This can include:
-
-- The modules that will be built/modified
-- The interfaces of those modules that will be modified
-- Technical clarifications from the developer
-- Architectural decisions
-- Schema changes
-- API contracts
-- Specific interactions
-
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
+[Modules to build/modify, interfaces, architectural decisions, schema changes, API contracts.
+Do NOT include file paths or code snippets.]
 
 ## Testing Decisions
-
-A list of testing decisions that were made. Include:
-
-- A description of what makes a good test (only test external behavior, not implementation details)
-- Which modules will be tested
-- Prior art for the tests (i.e. similar types of tests in the codebase)
+[What makes a good test here, which modules get tested, prior art in the codebase]
 
 ## Out of Scope
-
-A description of the things that are out of scope for this PRD.
+[Explicit list. If this section is empty, the PRD is incomplete.]
 
 ## Further Notes
+[Anything that didn't fit above]
+```
 
-Any further notes about the feature.
+## Verification
 
-</prd-template>
+Before submitting the GitHub issue, confirm:
+
+- [ ] Brief read (if it existed) and gaps identified
+- [ ] Codebase explored — assertions verified against real code
+- [ ] All open assumptions from the brief addressed or re-noted
+- [ ] Problem statement written from user's perspective
+- [ ] User stories cover all acceptance criteria
+- [ ] Out of Scope section is non-empty
+- [ ] Module list confirmed with user
+- [ ] Testing decisions recorded
+- [ ] PRD submitted as GitHub issue — URL shared with user
