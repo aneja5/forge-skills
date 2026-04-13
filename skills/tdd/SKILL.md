@@ -1,32 +1,47 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-driven development with red-green-refactor loop. Use when implementing features or fixing bugs test-first, when user mentions "red-green-refactor", or when incremental-implementation needs TDD discipline for a specific task.
 ---
 
 # Test-Driven Development
 
-## Philosophy
+## Overview
 
-**Core principle**: Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.
+Tests verify behavior through public interfaces, not implementation details. One failing test → minimum code to pass → repeat. Never write all tests first. See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
 
-**Good tests** are integration-style: they exercise real code paths through public APIs. They describe _what_ the system does, not _how_ it does it. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.
+## When to Use
 
-**Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
+- Implementing a task from `.forge/tasks.yaml` that needs test-first discipline
+- Any feature or bug fix where behavior must be proven before merging
+- User explicitly asks for TDD or red-green-refactor
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+## When NOT to Use
+
+- Writing tests retroactively for already-working code — that's a different activity
+- Exploratory spike to understand a problem space — spike first, then TDD the result
+- Config changes with no behavioral assertions possible
+
+## Common Rationalizations
+
+| Thought | Reality |
+|---------|---------|
+| "I'll write tests after the implementation works" | Then you test implementation shape, not behavior |
+| "Writing all tests first is TDD" | That's horizontal slicing — produces brittle tests |
+| "This behavior is obvious, no test needed" | Obvious behaviors are the ones that silently break |
+| "I need to mock my own modules to test this" | Your interface boundaries need rethinking |
+| "The test is too hard to write" | The interface is too hard to use — fix the interface |
+
+## Red Flags
+
+- Test names describe HOW not WHAT ("calls paymentService.process")
+- Test mocks internal collaborators owned by the same codebase
+- Test breaks on refactor when behavior didn't change
+- All tests written before any implementation ("horizontal slicing")
+- Test verifies through side effects or database state instead of interface
 
 ## Anti-Pattern: Horizontal Slices
 
-**DO NOT write all tests first, then all implementation.** This is "horizontal slicing" - treating RED as "write all tests" and GREEN as "write all code."
-
-This produces **crap tests**:
-
-- Tests written in bulk test _imagined_ behavior, not _actual_ behavior
-- You end up testing the _shape_ of things (data structures, function signatures) rather than user-facing behavior
-- Tests become insensitive to real changes - they pass when behavior breaks, fail when behavior is fine
-- You outrun your headlights, committing to test structure before understanding the implementation
-
-**Correct approach**: Vertical slices via tracer bullets. One test → one implementation → repeat. Each test responds to what you learned from the previous cycle. Because you just wrote the code, you know exactly what behavior matters and how to verify it.
+**DO NOT write all tests first, then all implementation.**
 
 ```
 WRONG (horizontal):
@@ -34,74 +49,65 @@ WRONG (horizontal):
   GREEN: impl1, impl2, impl3, impl4, impl5
 
 RIGHT (vertical):
-  RED→GREEN: test1→impl1
-  RED→GREEN: test2→impl2
-  RED→GREEN: test3→impl3
-  ...
+  RED → GREEN: test1 → impl1
+  RED → GREEN: test2 → impl2
+  RED → GREEN: test3 → impl3
 ```
+
+Each test responds to what you learned from the previous implementation cycle.
 
 ## Workflow
 
-### 1. Planning
+### 1. Plan before coding
 
-Before writing any code:
+- [ ] Confirm public interface changes with user (or with task's contract from `.forge/contracts/`)
+- [ ] List behaviors to test — not implementation steps
+- [ ] Design interface for [testability](interface-design.md)
+- [ ] Identify [deep module](deep-modules.md) opportunities
+- [ ] Get user approval before writing the first test
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Confirm with user which behaviors to test (prioritize)
-- [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
-- [ ] Design interfaces for [testability](interface-design.md)
-- [ ] List the behaviors to test (not implementation steps)
-- [ ] Get user approval on the plan
+### 2. Tracer bullet
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
-
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
-
-### 2. Tracer Bullet
-
-Write ONE test that confirms ONE thing about the system:
+Write ONE test that proves the end-to-end path works:
 
 ```
-RED:   Write test for first behavior → test fails
-GREEN: Write minimal code to pass → test passes
+RED:   Write test for first behavior → must fail
+GREEN: Write minimum code to pass → passes
 ```
 
-This is your tracer bullet - proves the path works end-to-end.
-
-### 3. Incremental Loop
+### 3. Incremental loop
 
 For each remaining behavior:
 
 ```
 RED:   Write next test → fails
-GREEN: Minimal code to pass → passes
+GREEN: Minimum code to pass → passes
+REPEAT
 ```
 
-Rules:
-
-- One test at a time
-- Only enough code to pass current test
-- Don't anticipate future tests
-- Keep tests focused on observable behavior
+Rules: one test at a time, only enough code for the current test, no speculative features.
 
 ### 4. Refactor
 
-After all tests pass, look for [refactor candidates](refactoring.md):
+After all tests pass — see [refactoring.md](refactoring.md):
 
 - [ ] Extract duplication
 - [ ] Deepen modules (move complexity behind simple interfaces)
-- [ ] Apply SOLID principles where natural
-- [ ] Consider what new code reveals about existing code
 - [ ] Run tests after each refactor step
+- [ ] **Never refactor while RED**
 
-**Never refactor while RED.** Get to GREEN first.
+## Per-Cycle Checklist
 
-## Checklist Per Cycle
+- [ ] Test describes behavior (WHAT), not implementation (HOW)
+- [ ] Test uses public interface only — no private method access
+- [ ] Test would survive internal refactor without breaking
+- [ ] Implementation is minimal — no speculative features
+- [ ] Test name reads like a specification sentence
 
-```
-[ ] Test describes behavior, not implementation
-[ ] Test uses public interface only
-[ ] Test would survive internal refactor
-[ ] Code is minimal for this test
-[ ] No speculative features added
-```
+## Verification
+
+- [ ] All behaviors listed in Step 1 have a passing test
+- [ ] No tests mock internal collaborators
+- [ ] Full test suite passes (not just new tests)
+- [ ] Refactor pass complete — no duplication, no shallow modules
+- [ ] If task from tasks.yaml: all acceptance criteria verified
