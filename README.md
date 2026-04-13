@@ -1,8 +1,10 @@
 # forge-skills
 
-> A planning-first engineering skill library for AI coding agents. From raw idea to shipped code — with contracts, TDD, and a pre-launch gate at every stage.
+> An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Skills are structured workflows, not reference docs. Each skill encodes the process a senior engineer follows. The agent follows the process — not its instincts.
+Andrej Karpathy described **Agentic Engineering** (Feb 2026) as the shift from vibe coding to a structured model: humans write the specs, architecture, and guardrails — AI agents execute in parallel — humans review. That's the exact workflow forge-skills encodes. The `.forge/` pipeline IS agentic engineering: specs (`.forge/prd.md`), architecture + interface contracts (`.forge/architecture.md`, `.forge/contracts/`), parallel implementation with task contracts (`.forge/tasks.yaml`), and review gates built into every skill.
+
+Skills are structured workflows, not reference docs. Each skill encodes the process a senior engineer follows — with anti-rationalization tables to prevent shortcuts and verification checklists that define done.
 
 ---
 
@@ -242,3 +244,15 @@ forge-skills/
 3. Add a slash command in `.claude/commands/` if it fits the pipeline
 4. Update the skills table in this README
 5. Update `using-forge-skills/SKILL.md` if the skill has a new trigger pattern
+
+---
+
+## Credits & Inspiration
+
+**Andrej Karpathy** — Behavioral principles (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution) and the Agentic Engineering concept (Feb 2026) that frames the human-as-architect, AI-as-implementer model the forge pipeline embodies.
+
+**Addy Osmani** ([agent-skills](https://github.com/addyosmani/agent-skills)) — Skill anatomy standard: frontmatter, When to Use / When NOT to Use, Common Rationalizations, Red Flags, Verification checklists. The anti-rationalization pattern is directly from his work.
+
+**Matt Pocock** — Handoff contracts and tracer bullet discipline. The idea that each pipeline stage produces a durable artifact that the next stage consumes — no verbal briefing needed.
+
+**FORGE** — Multi-agent team concept with specialist personas (Architect, PM, Test Engineer, Reviewer, Security Auditor) and the interface contract format used in `.forge/contracts/`.
