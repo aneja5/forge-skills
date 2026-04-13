@@ -2,9 +2,9 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Andrej Karpathy described **Agentic Engineering** (Feb 2026) as the shift from vibe coding to a structured model: humans write the specs, architecture, and guardrails — AI agents execute in parallel — humans review. That's the exact workflow forge-skills encodes. The `.forge/` pipeline IS agentic engineering: specs (`.forge/prd.md`), architecture + interface contracts (`.forge/architecture.md`, `.forge/contracts/`), parallel implementation with task contracts (`.forge/tasks.yaml`), and review gates built into every skill.
+Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 12 skills, and 5 specialist agent personas.
 
-Skills are structured workflows, not reference docs. Each skill encodes the process a senior engineer follows — with anti-rationalization tables to prevent shortcuts and verification checklists that define done.
+Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
 ---
 
@@ -27,67 +27,32 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 ## The Forge Pipeline
 
 ```
-┌──────────┐   ┌──────────┐   ┌───────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌─────────┐
-│  /grill  │──▶│  /spec   │──▶│ /architect│──▶│  /plan   │──▶│  /build  │──▶│ /review  │──▶│  /ship  │
-└────┬─────┘   └────┬─────┘   └─────┬─────┘   └────┬─────┘   └────┬─────┘   └────┬─────┘   └────┬────┘
-     │              │               │               │               │              │               │
-     ▼              ▼               ▼               ▼               ▼              ▼               ▼
-.forge/         .forge/        .forge/          .forge/        code +          review         go/no-go
-idea-           prd.md         architecture.    tasks.yaml     commits         findings       decision
-brief.md                       md                              + tests
-                               .forge/
-                               contracts/
-                               .forge/adr/
+ GRILL       SPEC       DESIGN       PLAN        BUILD      REVIEW      SHIP
+┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐
+│ Idea   │─▶│ PRD    │─▶│ Arch + │─▶│ Tasks  │─▶│ Code + │─▶│ 5-axis │─▶│ Launch │
+│ Brief  │  │        │  │Contract│  │  .yaml │  │  TDD   │  │ Review │  │  Gate  │
+└────────┘  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘
+/grill      /spec      /architect    /plan       /build     /review      /ship
 ```
 
 Each stage produces an artifact. The next stage consumes it. You can join mid-pipeline if you already have the artifact.
 
 ---
 
-## Slash Commands
+## Commands, Skills, and Artifacts
 
-| Command       | Skill(s)                        | Input                   | Output                          |
-|---------------|---------------------------------|-------------------------|---------------------------------|
-| `/grill`      | idea-griller                    | Raw idea (spoken)       | `.forge/idea-brief.md`          |
-| `/spec`       | spec-driven-development         | idea-brief or idea      | `.forge/prd.md`                 |
-| `/architect`  | architecture-and-contracts      | `.forge/prd.md`         | `.forge/architecture.md` + contracts/ + adr/ |
-| `/plan`       | planning-and-task-breakdown     | prd + architecture      | `.forge/tasks.yaml`             |
-| `/build`      | incremental-implementation + tdd| `.forge/tasks.yaml`     | code + commits                  |
-| `/review`     | code-review-and-quality         | code change             | findings + merge decision       |
-| `/ship`       | shipping-and-launch             | ready code              | go/no-go + rollback plan        |
-
----
-
-## All Skills
-
-| Phase   | Skill                          | What it does                                                          |
-|---------|--------------------------------|-----------------------------------------------------------------------|
-| Define  | `idea-griller`                 | 7-branch Socratic interview — pressure-tests a raw idea               |
-| Specify | `spec-driven-development`      | Interview + codebase exploration → `.forge/prd.md`                    |
-| Design  | `architecture-and-contracts`   | System design + interface contracts + ADRs                            |
-| Plan    | `planning-and-task-breakdown`  | Sized, dependency-ordered vertical slices → `.forge/tasks.yaml`       |
-| Build   | `incremental-implementation`   | Execute tasks one at a time, contract-aware, commit per task          |
-| Build   | `tdd`                          | Red-green-refactor — behavior-first, vertical slices only             |
-| Verify  | `debugging-and-recovery`       | Reproduce → localize → fix → regression test                         |
-| Review  | `code-review-and-quality`      | Five-axis review + contract compliance validation                     |
-| Ship    | `git-workflow`                 | Atomic commits, branch strategy, PR prep                              |
-| Ship    | `shipping-and-launch`          | Six-domain pre-launch gate with go/no-go decision                    |
-| Triage  | `triage-issue`                 | Bug investigation → GitHub Issue + TDD fix plan                       |
-| Meta    | `using-forge-skills`           | Skill discovery flowchart + pipeline overview (injected at start)     |
-
----
-
-## The .forge/ Artifact Chain
-
-```
-.forge/idea-brief.md    ← idea-griller
-.forge/prd.md           ← spec-driven-development  (reads idea-brief)
-.forge/architecture.md  ← architecture-and-contracts (reads prd)
-.forge/contracts/*.md   ← architecture-and-contracts
-.forge/adr/*.md         ← architecture-and-contracts
-.forge/tasks.yaml       ← planning-and-task-breakdown (reads prd + arch + contracts)
-code + commits          ← incremental-implementation (reads tasks + contracts)
-```
+| Command | Phase | Skill | Reads | Produces |
+|---------|-------|-------|-------|----------|
+| `/grill` | Define | `idea-griller` | — | `.forge/idea-brief.md` |
+| `/spec` | Specify | `spec-driven-development` | `idea-brief.md` | `.forge/prd.md` |
+| `/architect` | Design | `architecture-and-contracts` | `prd.md` | `architecture.md` + `contracts/` + `adr/` |
+| `/plan` | Plan | `planning-and-task-breakdown` | `prd.md` + `architecture.md` + `contracts/` | `.forge/tasks.yaml` |
+| `/build` | Build | `incremental-implementation` + `tdd` | `tasks.yaml` + `contracts/` | code + commits |
+| `/review` | Review | `code-review-and-quality` | code + `contracts/` | findings + decision |
+| `/ship` | Ship | `shipping-and-launch` | ready code | go/no-go + rollback plan |
+| — | Verify | `debugging-and-recovery` | bug report | fix + regression test |
+| — | Ship | `git-workflow` | completed tasks | atomic commits + PR |
+| — | Triage | `triage-issue` | bug report | GitHub issue + TDD plan |
 
 Add `.forge/` to `.gitignore` for local-only, or commit it to share context across the team.
 
@@ -95,19 +60,19 @@ Add `.forge/` to `.gitignore` for local-only, or commit it to share context acro
 
 ## Quick Start (Claude Code)
 
-**Clone and link:**
+**Install one skill:**
+
+```bash
+curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s idea-griller
+```
+
+**Clone and link everything:**
 
 ```bash
 git clone https://github.com/aneja5/forge-skills.git
 cp -r forge-skills/skills ~/.claude/skills
 cp -r forge-skills/agents ~/.claude/agents
 cp -r forge-skills/.claude/commands ~/.claude/commands
-```
-
-**Install one skill:**
-
-```bash
-curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s idea-griller
 ```
 
 **Enable the session-start hook** (recommended — injects the pipeline at every session start):
@@ -165,33 +130,6 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for full setup including Gemini
 
 ---
 
-## How is this different?
-
-**vs. Addy's agent-skills:** forge-skills adds an explicit architecture phase with interface contracts — the differentiator for parallel implementation. It also has the full `.forge/` artifact chain and five specialist agent personas.
-
-**vs. other skill libraries:** Most skill libraries are reference docs. Forge skills are workflows with verification gates, anti-rationalization tables, and explicit handoff artifacts. Skills can't be partially applied — the verification checklist defines done.
-
-**vs. building your own orchestrator:** Zero Python. Zero YAML config. Zero infrastructure. Just Markdown files that any agent can read. The "orchestration" is the agent following the process.
-
----
-
-## How Skills Work
-
-Each `SKILL.md` has a fixed anatomy:
-
-- **Frontmatter** — `name` + `description` with trigger phrases (used for skill discovery)
-- **When to Use / When NOT to Use** — prevents misapplication
-- **Common Rationalizations** — arguments an agent uses to skip steps, pre-rebutted
-- **Red Flags** — observable signals something is going wrong
-- **Core Process** — ordered steps with verification gates
-- **Verification** — checkbox list; all must pass before the skill is "done"
-
-Supporting files (templates, checklists, examples) live in the skill's directory and are linked from SKILL.md. This keeps SKILL.md under 150 lines and scannable.
-
-See [docs/skill-anatomy.md](docs/skill-anatomy.md) for the full anatomy guide.
-
----
-
 ## Project Structure
 
 ```
@@ -229,7 +167,8 @@ forge-skills/
 │   ├── getting-started.md
 │   ├── skill-anatomy.md
 │   ├── cursor-setup.md
-│   └── the-forge-pipeline.md
+│   ├── the-forge-pipeline.md
+│   └── examples.md
 ├── install.sh
 ├── CLAUDE.md
 └── AGENTS.md
