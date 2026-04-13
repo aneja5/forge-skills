@@ -1,12 +1,5 @@
 # forge-skills
 
-[![GitHub stars](https://img.shields.io/github/stars/aneja5/forge-skills?style=flat-square)](https://github.com/aneja5/forge-skills/stargazers)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Skills](https://img.shields.io/badge/skills-12-brightgreen?style=flat-square)](#commands-skills-and-artifacts)
-[![Agents](https://img.shields.io/badge/agents-5-orange?style=flat-square)](#agent-personas--reference-checklists)
-[![Commands](https://img.shields.io/badge/commands-7-purple?style=flat-square)](#commands-skills-and-artifacts)
-![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-black?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=)
-
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
 Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 12 skills, and 5 specialist agent personas.
