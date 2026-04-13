@@ -1,120 +1,192 @@
 # forge-skills
 
-A planning-first skill library for Claude Code. Skills are structured workflows — not reference docs. Each skill encodes a specific process an agent follows step-by-step to go from raw idea to shipped code.
+> A planning-first engineering skill library for AI coding agents. From raw idea to shipped code — with contracts, TDD, and a pre-launch gate at every stage.
+
+Skills are structured workflows, not reference docs. Each skill encodes the process a senior engineer follows. The agent follows the process — not its instincts.
+
+---
+
+## Your AI Engineering Team
+
+Five specialist agents, available via the Task tool:
+
+| Agent | Role |
+|-------|------|
+| **Architect** | System design, interface contracts, ADRs |
+| **Project Manager** | Task breakdown, dependency ordering, scope management |
+| **Test Engineer** | TDD coaching, test quality review, coverage gaps |
+| **Code Reviewer** | PR review, contract validation, five-axis quality check |
+| **Security Auditor** | Threat modeling, OWASP prevention, hardening |
+
+Each agent has a defined role, push-back behavior, and quality bar. See `agents/` for the full personas.
 
 ---
 
 ## The Forge Pipeline
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   /grill    │────▶│   /spec     │────▶│   /plan     │────▶│   /build    │────▶│   /ship     │
-│             │     │             │     │             │     │             │     │             │
-│ idea-griller│     │ write-a-prd │     │ prd-to-plan │     │     tdd     │     │  checklist  │
-│             │     │             │     │ prd-to-issues│    │             │     │             │
-└──────┬──────┘     └──────┬──────┘     └──────┬──────┘     └──────┬──────┘     └─────────────┘
-       │                   │                   │                   │
-       ▼                   ▼                   ▼                   ▼
-.forge/idea-         GitHub Issue          ./plans/           passing tests
-brief.md               (PRD)               *.md               + code
+┌──────────┐   ┌──────────┐   ┌───────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌─────────┐
+│  /grill  │──▶│  /spec   │──▶│ /architect│──▶│  /plan   │──▶│  /build  │──▶│ /review  │──▶│  /ship  │
+└────┬─────┘   └────┬─────┘   └─────┬─────┘   └────┬─────┘   └────┬─────┘   └────┬─────┘   └────┬────┘
+     │              │               │               │               │              │               │
+     ▼              ▼               ▼               ▼               ▼              ▼               ▼
+.forge/         .forge/        .forge/          .forge/        code +          review         go/no-go
+idea-           prd.md         architecture.    tasks.yaml     commits         findings       decision
+brief.md                       md                              + tests
+                               .forge/
+                               contracts/
+                               .forge/adr/
 ```
 
-Each stage produces an artifact consumed by the next. You can join mid-pipeline if you already have the upstream artifact.
+Each stage produces an artifact. The next stage consumes it. You can join mid-pipeline if you already have the artifact.
 
 ---
 
-## Commands
+## Slash Commands
 
-| Command   | Skill(s)                        | What it does                                               |
-|-----------|---------------------------------|------------------------------------------------------------|
-| `/grill`  | idea-griller                    | Socratic interview → `.forge/idea-brief.md`                |
-| `/spec`   | write-a-prd                     | Interview + codebase exploration → GitHub Issue PRD        |
-| `/plan`   | prd-to-plan, prd-to-issues      | PRD → `./plans/*.md` + GitHub Issues                       |
-| `/build`  | tdd                             | Red-green-refactor, one behavior at a time                 |
-| `/review` | grill-me                        | Relentless questioning → shared understanding              |
-| `/ship`   | pre-launch checklist            | Tests, security, docs, PR review before deploy             |
+| Command       | Skill(s)                        | Input                   | Output                          |
+|---------------|---------------------------------|-------------------------|---------------------------------|
+| `/grill`      | idea-griller                    | Raw idea (spoken)       | `.forge/idea-brief.md`          |
+| `/spec`       | spec-driven-development         | idea-brief or idea      | `.forge/prd.md`                 |
+| `/architect`  | architecture-and-contracts      | `.forge/prd.md`         | `.forge/architecture.md` + contracts/ + adr/ |
+| `/plan`       | planning-and-task-breakdown     | prd + architecture      | `.forge/tasks.yaml`             |
+| `/build`      | incremental-implementation + tdd| `.forge/tasks.yaml`     | code + commits                  |
+| `/review`     | code-review-and-quality         | code change             | findings + merge decision       |
+| `/ship`       | shipping-and-launch             | ready code              | go/no-go + rollback plan        |
 
 ---
 
 ## All Skills
 
-| Phase    | Skill               | Description                                                          |
-|----------|---------------------|----------------------------------------------------------------------|
-| Define   | `idea-griller`      | Socratic interview across 7 branches — pressure-tests a raw idea     |
-| Specify  | `write-a-prd`       | PRD via interview + codebase exploration, submitted as GitHub issue  |
-| Plan     | `prd-to-plan`       | Breaks PRD into phased vertical slices → `./plans/*.md`              |
-| Plan     | `prd-to-issues`     | Converts PRD into independently-grabbable GitHub issues              |
-| Build    | `tdd`               | Test-driven development: red-green-refactor, vertical slices         |
-| Debug    | `triage-issue`      | Investigates bugs, finds root cause, creates GitHub issue + fix plan |
-| Review   | `grill-me`          | Interviews relentlessly about a plan until shared understanding      |
-| Meta     | `using-forge-skills`| Skill discovery and pipeline overview — injected at session start    |
+| Phase   | Skill                          | What it does                                                          |
+|---------|--------------------------------|-----------------------------------------------------------------------|
+| Define  | `idea-griller`                 | 7-branch Socratic interview — pressure-tests a raw idea               |
+| Specify | `spec-driven-development`      | Interview + codebase exploration → `.forge/prd.md`                    |
+| Design  | `architecture-and-contracts`   | System design + interface contracts + ADRs                            |
+| Plan    | `planning-and-task-breakdown`  | Sized, dependency-ordered vertical slices → `.forge/tasks.yaml`       |
+| Build   | `incremental-implementation`   | Execute tasks one at a time, contract-aware, commit per task          |
+| Build   | `tdd`                          | Red-green-refactor — behavior-first, vertical slices only             |
+| Verify  | `debugging-and-recovery`       | Reproduce → localize → fix → regression test                         |
+| Review  | `code-review-and-quality`      | Five-axis review + contract compliance validation                     |
+| Ship    | `git-workflow`                 | Atomic commits, branch strategy, PR prep                              |
+| Ship    | `shipping-and-launch`          | Six-domain pre-launch gate with go/no-go decision                    |
+| Triage  | `triage-issue`                 | Bug investigation → GitHub Issue + TDD fix plan                       |
+| Meta    | `using-forge-skills`           | Skill discovery flowchart + pipeline overview (injected at start)     |
 
 ---
 
-## Installation
+## The .forge/ Artifact Chain
 
-### Claude Code
+```
+.forge/idea-brief.md    ← idea-griller
+.forge/prd.md           ← spec-driven-development  (reads idea-brief)
+.forge/architecture.md  ← architecture-and-contracts (reads prd)
+.forge/contracts/*.md   ← architecture-and-contracts
+.forge/adr/*.md         ← architecture-and-contracts
+.forge/tasks.yaml       ← planning-and-task-breakdown (reads prd + arch + contracts)
+code + commits          ← incremental-implementation (reads tasks + contracts)
+```
 
-**Install a single skill into your project:**
+Add `.forge/` to `.gitignore` for local-only, or commit it to share context across the team.
+
+---
+
+## Quick Start (Claude Code)
+
+**Clone and link:**
+
+```bash
+git clone https://github.com/aneja5/forge-skills.git
+cp -r forge-skills/skills ~/.claude/skills
+cp -r forge-skills/agents ~/.claude/agents
+cp -r forge-skills/.claude/commands ~/.claude/commands
+```
+
+**Install one skill:**
 
 ```bash
 curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s idea-griller
 ```
 
-**Install all skills:**
+**Enable the session-start hook** (recommended — injects the pipeline at every session start):
 
-```bash
-for skill in idea-griller write-a-prd prd-to-plan prd-to-issues tdd grill-me triage-issue using-forge-skills; do
-  curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s $skill
-done
+Copy `hooks/hooks.json` content into your project's `.claude/settings.json`.
+
+**Start using:**
+
+```
+/grill    ← describe your idea
+/spec     ← formalize requirements
+/architect ← design the system
+/plan     ← break into tasks
+/build    ← implement (TDD)
+/review   ← validate against contracts
+/ship     ← pre-launch gate
 ```
 
-**Or clone and symlink:**
+---
+
+## Quick Start (Cursor)
+
+Add to `.cursorrules`:
 
 ```bash
-git clone https://github.com/aneja5/forge-skills.git
-ln -s $(pwd)/forge-skills/skills ~/.claude/skills
+cat skills/using-forge-skills/SKILL.md > .cursorrules
 ```
 
-### SessionStart hook (recommended)
+Or paste any SKILL.md into Cursor Notepad and reference it in your prompt.
 
-Automatically injects the skill pipeline at every session start:
+See [docs/cursor-setup.md](docs/cursor-setup.md) for full setup including Gemini CLI and other tools.
 
-1. Copy `hooks/hooks.json` content into your project's `.claude/settings.json`
-2. Make sure `hooks/session-start.sh` is executable: `chmod +x hooks/session-start.sh`
+---
 
-### Cursor / Windsurf / other agents
+## Agent Personas
 
-Skills are plain Markdown — compatible with any agent that can read files from a `skills/` directory or project knowledge:
+| Persona | File | When to invoke |
+|---------|------|----------------|
+| Architect | `agents/architect.md` | System design, contracts, tech decisions |
+| Project Manager | `agents/project-manager.md` | Task breakdown, dependency mapping |
+| Test Engineer | `agents/test-engineer.md` | TDD coaching, test quality review |
+| Code Reviewer | `agents/code-reviewer.md` | PR review, contract compliance |
+| Security Auditor | `agents/security-auditor.md` | Threat modeling, OWASP review |
 
-1. Copy `skills/<name>/SKILL.md` into your agent's context or project knowledge
-2. Reference the skill by name in your prompt, or add a rule: "When starting a new feature, always invoke idea-griller first"
+---
+
+## Reference Checklists
+
+| File | Used by |
+|------|---------|
+| `references/contract-templates.md` | architecture-and-contracts |
+| `references/idea-evaluation.md` | idea-griller |
+| `references/testing-patterns.md` | tdd, incremental-implementation, code-review-and-quality |
+| `references/security-checklist.md` | shipping-and-launch, security-auditor |
+
+---
+
+## How is this different?
+
+**vs. Addy's agent-skills:** forge-skills adds an explicit architecture phase with interface contracts — the differentiator for parallel implementation. It also has the full `.forge/` artifact chain and five specialist agent personas.
+
+**vs. other skill libraries:** Most skill libraries are reference docs. Forge skills are workflows with verification gates, anti-rationalization tables, and explicit handoff artifacts. Skills can't be partially applied — the verification checklist defines done.
+
+**vs. building your own orchestrator:** Zero Python. Zero YAML config. Zero infrastructure. Just Markdown files that any agent can read. The "orchestration" is the agent following the process.
 
 ---
 
 ## How Skills Work
 
-Skills are Markdown files that encode the *process* a senior engineer follows — not just knowledge, but a workflow with checkpoints.
+Each `SKILL.md` has a fixed anatomy:
 
-Each `SKILL.md` contains:
-
-- **Frontmatter** — `name` and `description` (used for skill discovery)
+- **Frontmatter** — `name` + `description` with trigger phrases (used for skill discovery)
 - **When to Use / When NOT to Use** — prevents misapplication
-- **Common Rationalizations** — arguments an agent uses to skip steps, with rebuttals
-- **Red Flags** — signals that something is going wrong
-- **Core Process** — ordered steps with checkpoints
-- **Verification** — checklist that must pass before the skill is "done"
+- **Common Rationalizations** — arguments an agent uses to skip steps, pre-rebutted
+- **Red Flags** — observable signals something is going wrong
+- **Core Process** — ordered steps with verification gates
+- **Verification** — checkbox list; all must pass before the skill is "done"
 
-Supporting files (like `evaluation-criteria.md`) hold reference material so `SKILL.md` stays under 100 lines.
+Supporting files (templates, checklists, examples) live in the skill's directory and are linked from SKILL.md. This keeps SKILL.md under 150 lines and scannable.
 
-### Why planning-first?
-
-The most expensive bugs are specification bugs. Coding too early locks in wrong assumptions. The forge pipeline forces clarity before commitment:
-
-- `/grill` surfaces assumptions before they become requirements
-- `/spec` records decisions before they become code
-- `/plan` slices work before it becomes a big-bang PR
-- `/build` implements one behavior at a time, verified by tests
+See [docs/skill-anatomy.md](docs/skill-anatomy.md) for the full anatomy guide.
 
 ---
 
@@ -122,31 +194,52 @@ The most expensive bugs are specification bugs. Coding too early locks in wrong 
 
 ```
 forge-skills/
-├── skills/
-│   ├── using-forge-skills/     # Meta-skill: discovery flowchart + pipeline
-│   ├── idea-griller/           # Socratic interview skill
-│   │   └── evaluation-criteria.md
-│   ├── write-a-prd/            # PRD creation skill
-│   ├── prd-to-plan/            # Planning skill
-│   ├── prd-to-issues/          # Issue decomposition skill
-│   ├── tdd/                    # TDD skill + supporting files
-│   ├── grill-me/               # Design review skill
-│   └── triage-issue/           # Bug triage skill
+├── skills/                          # All skill definitions
+│   ├── using-forge-skills/          # Meta-skill
+│   ├── idea-griller/                # + evaluation-criteria.md
+│   ├── spec-driven-development/
+│   ├── architecture-and-contracts/
+│   ├── planning-and-task-breakdown/
+│   ├── incremental-implementation/
+│   ├── tdd/                         # + deep-modules.md, mocking.md, tests.md, ...
+│   ├── debugging-and-recovery/
+│   ├── code-review-and-quality/
+│   ├── git-workflow/
+│   ├── shipping-and-launch/
+│   ├── triage-issue/
+│   └── grill-me/
+├── agents/                          # Specialist agent personas
+│   ├── architect.md
+│   ├── project-manager.md
+│   ├── test-engineer.md
+│   ├── code-reviewer.md
+│   └── security-auditor.md
+├── references/                      # Shared checklists and templates
+│   ├── contract-templates.md
+│   ├── idea-evaluation.md
+│   ├── testing-patterns.md
+│   └── security-checklist.md
 ├── .claude/
-│   └── commands/               # Slash commands (/grill, /spec, /plan, /build, /review, /ship)
+│   └── commands/                    # /grill /spec /architect /plan /build /review /ship
 ├── hooks/
-│   ├── hooks.json              # Hook configuration
-│   └── session-start.sh        # Injects meta-skill at session start
-├── install.sh                  # Single-skill installer
-├── CLAUDE.md                   # Project conventions for Claude
-└── README.md
+│   ├── hooks.json
+│   └── session-start.sh
+├── docs/
+│   ├── getting-started.md
+│   ├── skill-anatomy.md
+│   ├── cursor-setup.md
+│   └── the-forge-pipeline.md
+├── install.sh
+├── CLAUDE.md
+└── AGENTS.md
 ```
 
 ---
 
-## Adding a New Skill
+## Contributing
 
-1. Create `skills/<name>/SKILL.md` with the standard anatomy (see `CLAUDE.md`)
-2. Add supporting files to `skills/<name>/` as needed
-3. Add a slash command in `.claude/commands/<name>.md` if it fits the pipeline
-4. Update the skills table above
+1. Create `skills/<name>/SKILL.md` — follow the anatomy in [docs/skill-anatomy.md](docs/skill-anatomy.md)
+2. Keep SKILL.md under 150 lines — extract templates/checklists to supporting files
+3. Add a slash command in `.claude/commands/` if it fits the pipeline
+4. Update the skills table in this README
+5. Update `using-forge-skills/SKILL.md` if the skill has a new trigger pattern
