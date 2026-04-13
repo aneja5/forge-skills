@@ -1,76 +1,78 @@
 ---
 name: idea-griller
-description: Socratic interview that pressure-tests a raw idea before writing a PRD. Drills across 7 branches — problem, founder fit, solution, business model, distribution, risks, MVP — where every question builds on the previous answer. Outputs .forge/idea-brief.md for write-a-prd to consume. Use when user describes a new idea, project, or feature and wants to think it through before planning.
+description: Socratic interview that pressure-tests a raw idea before writing a spec. Drills across 7 branches — problem, founder fit, solution, business model, distribution, risks, MVP — where every question builds on the previous answer. Outputs .forge/idea-brief.md. Use when user describes a new idea, project, or feature and wants to think it through before planning.
 ---
 
 # Idea Griller
 
 ## Overview
 
-Pressure-test a raw idea through Socratic questioning before committing to a PRD. One question per turn, each generated from the user's last answer. Output is `.forge/idea-brief.md` — a structured brief that makes `write-a-prd` fast and precise.
+Pressure-test a raw idea through Socratic questioning. One question per turn, each built from the user's last answer. Output is `.forge/idea-brief.md` — a structured brief that lets `spec-driven-development` skip discovery and go straight to requirements.
 
 ## When to Use
 
 - User describes a new idea, project, or feature they haven't fully thought through
-- User wants to stress-test assumptions before writing a PRD
-- Idea is vague or contradictory and needs sharpening
+- User wants to stress-test assumptions before writing a spec
+- Idea is vague, contradictory, or needs a sharper scope
 
 ## When NOT to Use
 
-- PRD already exists — go straight to `write-a-prd`
-- User is asking for a bug fix or code change — use `triage-issue` or `tdd`
-- Idea is already well-specified with clear scope and user segment
+- `.forge/prd.md` already exists — the idea is past this stage
+- User is reporting a bug — use `debugging-and-recovery`
+- Idea is already well-specified with named users, clear scope, and a distribution plan
 
 ## Common Rationalizations
 
 | Thought | Reality |
 |---------|---------|
-| "The idea is obvious, let's skip to the PRD" | Obvious ideas have the most unchecked assumptions |
-| "The user knows what they want" | They know symptoms; root cause is often different |
+| "The idea is obvious, let's skip to the spec" | Obvious ideas carry the most unchecked assumptions |
+| "The user knows what they want" | They know symptoms — root cause is often different |
 | "One more question is too many" | Vague answers compound — drill until specific |
-| "I can infer the business model" | Never infer — ask. You will be wrong. |
+| "I can infer the business model" | Never infer. Ask. You will be wrong. |
 | "The MVP is clear" | MVPs defined without drilling risks are over-scoped |
+| "We can resolve distribution later" | If you can't name channel + motion now, the idea isn't ready |
 
 ## Red Flags
 
-- User says "everyone" or "all users" — no specific segment identified
-- Answer to distribution is "word of mouth" — not a plan
-- MVP scope keeps growing across turns — unresolved risk assumption
-- User can't name a single person who has this problem right now
-- Business model answer is "we'll figure it out later"
+- User says "everyone" or "all users" — no segment identified
+- Answer to distribution is "word of mouth" or "social media" — not a plan
+- MVP scope grows across turns — riskiest assumption not isolated
+- User can't name a single person who has this problem today
+- Business model is "we'll figure it out later"
+- Founder fit answer is "I'm passionate about this space"
 
 ## Behavior Rules
 
 - **One question per turn. Always.**
 - Generate each question from the user's last answer — never from a fixed script
 - If vague or contradictory: drill deeper on the same branch
-- If clear and specific: acknowledge briefly, advance to next branch
-- Max 3 questions per branch before moving on
-- Push back on weak answers. Don't accept "people want this" without evidence.
-- Note unresolved answers as open assumptions in the brief
+- If clear and specific: acknowledge briefly (one line), advance to next branch
+- Max 3 questions per branch — don't loop forever
+- Push back on weak answers. "People want this" requires evidence.
+- Note unresolved items as open assumptions in the brief
 
 ## Branches
 
-Work through these in order. Each is a checkpoint to *reach*, not a question to *ask*. See [evaluation-criteria.md](evaluation-criteria.md) for resolution criteria.
+Work through in order. Each is a checkpoint to *reach*, not a question to *ask*. See [evaluation-criteria.md](evaluation-criteria.md) for resolution criteria per branch.
 
 1. **Problem** — what's broken, for who, how often, how painfully
 2. **Founder fit** — why this person, why now, what's the unfair advantage
-3. **Solution** — what specifically, what's explicitly out of scope
+3. **Solution** — what specifically; what's explicitly out of scope
 4. **Business model** — how money flows, who pays, how much
-5. **Distribution** — how the first 100 users find it, what's the acquisition motion
+5. **Distribution** — how the first 100 users find it; specific acquisition motion
 6. **Risks** — the single most likely way this fails
 7. **MVP** — the smallest thing that tests the riskiest assumption
 
 ## Workflow
 
 1. Ask the user to describe their idea in a few sentences. Take it in — no clarifying questions yet.
-2. Start branch 1. Generate your first question from what they said, not from a template.
-3. After each answer: clear → acknowledge + advance; vague → follow-up that names the vagueness explicitly.
-4. When all 7 branches are resolved (or noted as open assumptions), write the brief.
+2. Start branch 1. Generate your first question from what they said.
+3. After each answer: clear → acknowledge + advance; vague → follow-up that names the vagueness explicitly ("You said 'small businesses' — do you mean a 2-person bootstrapped shop or a 50-person company with a finance team?").
+4. When all 7 branches are resolved (or explicitly noted as open assumptions), write the brief.
 
 ## Output
 
-Write `.forge/idea-brief.md`:
+Create `.forge/` if it doesn't exist. Write `.forge/idea-brief.md`:
 
 ```markdown
 # Idea Brief: [idea name]
@@ -88,7 +90,7 @@ Write `.forge/idea-brief.md`:
 [Who pays. How much. Why they would.]
 
 ## Distribution
-[How first 100 users are acquired. Specific channel, not "word of mouth".]
+[How first 100 users are acquired. Specific channel — not "word of mouth".]
 
 ## Biggest risk
 [The single most likely failure mode.]
@@ -97,18 +99,17 @@ Write `.forge/idea-brief.md`:
 [The smallest thing that tests the biggest risk.]
 
 ## Open assumptions
-[Anything unresolved. These are red flags for write-a-prd.]
+[Anything unresolved. These become explicit gaps in the spec.]
 ```
 
-After writing: "Brief written to `.forge/idea-brief.md`. Run `write-a-prd` to continue."
+After writing: "Brief written to `.forge/idea-brief.md`. Run `/spec` to continue."
 
 ## Verification
 
-Before closing the session, confirm:
-
-- [ ] All 7 branches reached (or explicitly skipped with reason noted)
+- [ ] All 7 branches reached (or explicitly skipped with reason noted in Open assumptions)
 - [ ] No answer left as "everyone", "scale", or "later"
 - [ ] At least one named person or company as the target user
 - [ ] MVP is a single testable thing, not a feature list
+- [ ] Distribution names a specific channel and motion
 - [ ] Open assumptions section populated (empty = suspicious)
 - [ ] `.forge/idea-brief.md` written and readable
