@@ -1,13 +1,22 @@
 ---
-description: Stress-test a design or plan through relentless questioning
+description: Five-axis code review validating correctness, contracts, readability, security, performance
 ---
 
-Invoke the forge-skills:grill-me skill.
+Invoke the forge-skills:code-review-and-quality skill.
 
-Interview the user relentlessly about every aspect of the plan or design until reaching shared understanding.
+For each module touched in the change, check `.forge/contracts/<module>.md`:
+- Input types match contract schema
+- Output types match contract schema
+- Every error type in the contract is handled
+- Every invariant in the contract is enforced
 
-Walk down each branch of the decision tree, resolving dependencies between decisions one at a time.
+Then review across all five axes:
+1. Contract compliance (see above)
+2. Correctness — acceptance criteria met, edge cases handled
+3. Readability — names, comments, function length
+4. Security — input validation, authn/authz, data exposure
+5. Performance — N+1 queries, blocking operations
 
-For each question, provide your recommended answer if you have one.
-
-If a question can be answered by exploring the codebase, explore the codebase instead of asking.
+Categorize each finding: [CRITICAL] / [IMPORTANT] / [SUGGESTION]
+Cite file:line for every finding.
+State a clear recommendation: APPROVE / REQUEST CHANGES / BLOCK.

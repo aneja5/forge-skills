@@ -1,18 +1,19 @@
 ---
-description: Implement a feature or fix using test-driven development
+description: Implement the next ready task from .forge/tasks.yaml using TDD discipline
 ---
 
-Invoke the forge-skills:tdd skill.
+Invoke the forge-skills:incremental-implementation skill, with forge-skills:tdd for each cycle.
 
-Before writing any code:
-- Confirm the public interface and which behaviors to test
-- Get user approval on the plan
+Read `.forge/tasks.yaml`. Find the next unblocked task (dependencies complete, status not done).
+Load the task's contracts from `.forge/contracts/`. Load only files in files_likely_affected.
 
-Then implement using strict vertical slices:
-  RED: write one failing test for one behavior
-  GREEN: write the minimum code to pass it
-  Repeat for each behavior
+Implement using strict vertical slices:
+  RED: write one failing test for one acceptance criterion
+  GREEN: write minimum code to make it pass
+  Repeat for each acceptance criterion
+  REFACTOR: clean up while all tests stay green
 
-Never write all tests first. One test → one implementation → repeat.
+Commit after each completed task: "[TASK-ID] <task title>"
+Update `.forge/tasks.yaml` status to done.
 
-Run the full test suite after each GREEN. Refactor only after all tests pass.
+Report: which task was completed, which tasks are now unblocked.

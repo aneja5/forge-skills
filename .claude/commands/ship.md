@@ -1,16 +1,19 @@
 ---
-description: Run the pre-launch checklist before deploying or merging
+description: Pre-launch gate — six-domain checklist before any production deployment
 ---
 
-Run through the complete pre-launch checklist:
+Invoke the forge-skills:shipping-and-launch skill.
 
-1. **Tests** — full test suite passes, no skipped tests
-2. **Build** — build is clean, no lint errors
-3. **Code quality** — no TODOs, no debug logs, no dead code left in
-4. **Security** — no secrets in code, no new vulnerabilities introduced
-5. **Docs** — README updated if public interface changed, CHANGELOG entry added
-6. **PR** — PR description explains the why, not just the what; links to PRD issue
+Run through all six domains in order:
+1. Code quality — tests pass, build clean, no debug artifacts, no TODOs
+2. Security — input validation, no secrets in code/logs, auth in place, headers configured
+3. Performance — no N+1s, indexes in place, no blocking paths, bundle sized
+4. Observability — structured logging, metrics, alerts configured for new surface area
+5. Infrastructure — env vars set in prod, migrations tested, rollback plan written
+6. Documentation — README current, CHANGELOG entry added, ADRs written
 
-Report any failing checks and help resolve them before proceeding.
+Report each domain: OK / findings.
+Categorize findings: [CRITICAL] (blocks ship) / [IMPORTANT] (must accept explicitly).
 
-Define the rollback plan before marking as ready to ship.
+Write the rollback plan before stating the go/no-go decision.
+State explicitly: "GO — shipping [tasks]. Rollback: [specifics]." or "NO-GO — [blockers]."

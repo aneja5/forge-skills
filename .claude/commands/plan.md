@@ -1,14 +1,16 @@
 ---
-description: Break a PRD into phased vertical slices and generate GitHub issues
+description: Break architecture into a .forge/tasks.yaml of sized, dependency-ordered vertical slices
 ---
 
-Invoke the forge-skills:prd-to-plan skill, then forge-skills:prd-to-issues.
+Invoke the forge-skills:planning-and-task-breakdown skill.
 
-Ask the user for the PRD GitHub issue number if not already in context.
+Read `.forge/prd.md`, `.forge/architecture.md`, and all files in `.forge/contracts/`.
+If architecture doesn't exist, tell the user to run /architect first.
 
-Break the PRD into tracer-bullet vertical slices — each a thin but complete path through all layers. Present the breakdown, get approval, then:
+Break the PRD into vertical slices — each a thin but complete path through all layers.
+Size each task (XS/S/M/L/XL). Map dependencies. Present the breakdown to the user for approval.
 
-1. Write the plan to `./plans/<feature-name>.md`
-2. Create GitHub issues in dependency order (blockers first)
+After approval, write `.forge/tasks.yaml` with task IDs, sizes, acceptance criteria,
+verification steps, contracts referenced, and files likely affected.
 
-Share all issue URLs when done.
+After writing: "Task plan written to .forge/tasks.yaml. Run /build to start implementation."
