@@ -205,7 +205,3 @@ forge-skills/
 **Andrej Karpathy** — Behavioral principles (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution) and the Agentic Engineering concept (Feb 2026) that frames the human-as-architect, AI-as-implementer model the forge pipeline embodies.
 
 **Addy Osmani** ([agent-skills](https://github.com/addyosmani/agent-skills)) — Skill anatomy standard: frontmatter, When to Use / When NOT to Use, Common Rationalizations, Red Flags, Verification checklists. The anti-rationalization pattern is directly from his work.
-
-**Matt Pocock** — Handoff contracts and tracer bullet discipline. The idea that each pipeline stage produces a durable artifact that the next stage consumes — no verbal briefing needed.
-
-**FORGE** — Multi-agent team concept with specialist personas (Architect, PM, Test Engineer, Reviewer, Security Auditor) and the interface contract format used in `.forge/contracts/`.
