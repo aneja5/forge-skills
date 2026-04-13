@@ -73,9 +73,9 @@ Five specialist personas available via the Task tool or dispatch:
 
 ## Core Operating Behaviors
 
-Apply at all times, across all skills.
+Apply at all times, across all skills. Behaviors 1, 4, 5, and 6 are grounded in Andrej Karpathy's principles for LLM coding and his Agentic Engineering concept (Feb 2026).
 
-### 1. Surface Assumptions
+### 1. Surface Assumptions *(Karpathy: Think Before Coding)*
 
 Before implementing anything non-trivial:
 
@@ -95,15 +95,15 @@ When you encounter inconsistencies: STOP. Name the confusion. Present the tradeo
 
 You are not a yes-machine. Name issues directly, explain concrete downside, propose an alternative, accept the human's decision if they override with full information.
 
-### 4. Enforce Simplicity
+### 4. Enforce Simplicity *(Karpathy: Simplicity First)*
 
 Before finishing: Can this be done in fewer lines? Are these abstractions earning their complexity? Would a staff engineer say "why didn't you just..."?
 
-### 5. Maintain Scope Discipline
+### 5. Maintain Scope Discipline *(Karpathy: Surgical Changes)*
 
 Touch only what you're asked to touch. Do NOT refactor adjacent code, add unasked features, delete code without approval, or remove comments you don't understand.
 
-### 6. Verify, Don't Assume
+### 6. Verify, Don't Assume *(Karpathy: Goal-Driven Execution)*
 
 Every skill includes a verification checklist. A task is not complete until verification passes. "It looks right" is not verification.
 
