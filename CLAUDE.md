@@ -38,15 +38,14 @@ forge-skills/
 │   ├── idea-evaluation.md           # Per-branch resolution criteria for idea-griller
 │   ├── testing-patterns.md          # Good/bad tests, mocking rules, TDD patterns
 │   └── security-checklist.md        # OWASP checklist, severity levels
-├── .claude/
-│   └── commands/                    # Slash commands for the full lifecycle
-│       ├── grill.md                 # /grill → idea-griller
-│       ├── spec.md                  # /spec → spec-driven-development
-│       ├── architect.md             # /architect → architecture-and-contracts
-│       ├── plan.md                  # /plan → planning-and-task-breakdown
-│       ├── build.md                 # /build → incremental-implementation + tdd
-│       ├── review.md                # /review → code-review-and-quality
-│       └── ship.md                  # /ship → shipping-and-launch
+├── commands/                        # Slash commands for the full lifecycle
+│   ├── grill.md                     # /grill → idea-griller
+│   ├── spec.md                      # /spec → spec-driven-development
+│   ├── architect.md                 # /architect → architecture-and-contracts
+│   ├── plan.md                      # /plan → planning-and-task-breakdown
+│   ├── build.md                     # /build → incremental-implementation + tdd
+│   ├── review.md                    # /review → code-review-and-quality
+│   └── ship.md                      # /ship → shipping-and-launch
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
@@ -111,7 +110,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 
 ### Slash commands
 
-- Short files in `.claude/commands/`
+- Short files in `commands/`
 - Frontmatter: `description` (one line, shown in command picker)
 - Body: which skill to invoke + 5-15 lines of concrete instruction
 - Commands align 1:1 with pipeline phases
@@ -137,7 +136,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 
 1. Create `skills/<name>/SKILL.md` with all required sections (see skill anatomy in docs/)
 2. Add supporting files to `skills/<name>/` if needed
-3. If it fits the pipeline, add a slash command in `.claude/commands/<name>.md`
+3. If it fits the pipeline, add a slash command in `commands/<name>.md`
 4. Update the skills tables in README.md and this file
 5. Keep SKILL.md under 150 lines
 6. Update `using-forge-skills/SKILL.md` skill discovery flowchart if the skill has a new trigger pattern

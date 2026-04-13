@@ -35,7 +35,7 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 /grill      /spec      /architect    /plan       /build     /review      /ship
 ```
 
-Each stage produces an artifact. The next stage consumes it. You can join mid-pipeline if you already have the artifact.
+Each stage produces an artifact. The next stage consumes it. You can join mid-pipeline if you already have the artifact. See [docs/examples.md](docs/examples.md) for before/after examples of each stage.
 
 ---
 
@@ -60,22 +60,29 @@ Add `.forge/` to `.gitignore` for local-only, or commit it to share context acro
 
 ## Quick Start (Claude Code)
 
+**Marketplace install (recommended):**
+
+```
+/plugin marketplace add aneja5/forge-skills
+/plugin install forge-skills@forge-skills
+```
+
 **Install one skill:**
 
 ```bash
 curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s idea-griller
 ```
 
-**Clone and link everything:**
+**Manual clone:**
 
 ```bash
 git clone https://github.com/aneja5/forge-skills.git
 cp -r forge-skills/skills ~/.claude/skills
 cp -r forge-skills/agents ~/.claude/agents
-cp -r forge-skills/.claude/commands ~/.claude/commands
+cp -r forge-skills/commands ~/.claude/commands
 ```
 
-**Enable the session-start hook** (recommended — injects the pipeline at every session start):
+**Enable the session-start hook** (optional — injects the pipeline at every session start):
 
 Copy `hooks/hooks.json` content into your project's `.claude/settings.json`.
 
@@ -93,17 +100,21 @@ Copy `hooks/hooks.json` content into your project's `.claude/settings.json`.
 
 ---
 
-## Quick Start (Cursor)
+## Quick Start (Other Tools)
 
-Add to `.cursorrules`:
+**Cursor** — add to `.cursorrules`:
 
 ```bash
 cat skills/using-forge-skills/SKILL.md > .cursorrules
 ```
 
-Or paste any SKILL.md into Cursor Notepad and reference it in your prompt.
+**Gemini CLI:**
 
-See [docs/cursor-setup.md](docs/cursor-setup.md) for full setup including Gemini CLI and other tools.
+```bash
+gemini skills install ./forge-skills/skills/
+```
+
+See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsurf, and other tools.
 
 ---
 
@@ -158,11 +169,13 @@ forge-skills/
 │   ├── idea-evaluation.md
 │   ├── testing-patterns.md
 │   └── security-checklist.md
-├── .claude/
-│   └── commands/                    # /grill /spec /architect /plan /build /review /ship
+├── commands/                        # /grill /spec /architect /plan /build /review /ship
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh
+├── .claude-plugin/
+│   ├── plugin.json                  # Plugin manifest
+│   └── marketplace.json             # Marketplace listing
 ├── docs/
 │   ├── getting-started.md
 │   ├── skill-anatomy.md
@@ -170,6 +183,7 @@ forge-skills/
 │   ├── the-forge-pipeline.md
 │   └── examples.md
 ├── install.sh
+├── LICENSE
 ├── CLAUDE.md
 └── AGENTS.md
 ```
@@ -180,7 +194,7 @@ forge-skills/
 
 1. Create `skills/<name>/SKILL.md` — follow the anatomy in [docs/skill-anatomy.md](docs/skill-anatomy.md)
 2. Keep SKILL.md under 150 lines — extract templates/checklists to supporting files
-3. Add a slash command in `.claude/commands/` if it fits the pipeline
+3. Add a slash command in `commands/` if it fits the pipeline
 4. Update the skills table in this README
 5. Update `using-forge-skills/SKILL.md` if the skill has a new trigger pattern
 

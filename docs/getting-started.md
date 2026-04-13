@@ -14,7 +14,7 @@ The library covers the full feature lifecycle: from raw idea to shipped code.
 git clone https://github.com/aneja5/forge-skills.git
 cp -r forge-skills/skills ~/.claude/skills
 cp -r forge-skills/agents ~/.claude/agents
-cp -r forge-skills/.claude/commands ~/.claude/commands
+cp -r forge-skills/commands ~/.claude/commands
 ```
 
 **Option 2: Install one skill**
