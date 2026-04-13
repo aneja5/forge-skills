@@ -1,4 +1,4 @@
-# sahil-skills
+# forge-skills
 
 Personal Claude Code skill library.
 
@@ -6,10 +6,10 @@ Personal Claude Code skill library.
 
 ```bash
 # Install a single skill
-curl -sL https://raw.githubusercontent.com/aneja5/sahil-skills/main/install.sh | bash -s <skill-name>
+curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s <skill-name>
 
 # Example
-curl -sL https://raw.githubusercontent.com/aneja5/sahil-skills/main/install.sh | bash -s idea-griller
+curl -sL https://raw.githubusercontent.com/aneja5/forge-skills/main/install.sh | bash -s idea-griller
 ```
 
 ## Planning Pipeline
@@ -47,7 +47,7 @@ Add to your project's `CLAUDE.md`:
 ```markdown
 ## Skills
 
-This project uses skills from [sahil-skills](https://github.com/aneja5/sahil-skills).
+This project uses skills from [forge-skills](https://github.com/aneja5/forge-skills).
 
 Available commands:
 - `/idea-griller` — pressure-test a new idea
