@@ -7,107 +7,157 @@ description: Discovers and invokes forge skills. Use when starting a session or 
 
 ## Overview
 
-Forge Skills is a planning-first skill library for Claude Code. Skills encode structured workflows for the full feature lifecycle — from raw idea to shipped code. This meta-skill maps your current task to the right skill.
+Forge Skills is a planning-first engineering skill library. Skills encode structured workflows — not reference docs. This meta-skill maps your task to the right skill and explains the full .forge/ handoff chain.
 
 ## Skill Discovery
 
 ```
 Task arrives
     │
-    ├── Raw idea, haven't thought it through? ───→ idea-griller
-    ├── Ready to write a PRD? ───────────────────→ write-a-prd
-    │   └── Have .forge/idea-brief.md? ──────────→ write-a-prd (reads brief)
-    ├── Have a PRD, need a plan? ────────────────→ prd-to-plan
-    ├── Have a plan, need issues? ───────────────→ prd-to-issues
-    ├── Implementing a feature? ─────────────────→ tdd
-    ├── Stress-testing a design? ────────────────→ grill-me
-    └── Bug to investigate and fix? ─────────────→ triage-issue
+    ├── Raw idea, not yet pressure-tested? ────────→ idea-griller
+    ├── Ready to write a spec/PRD? ────────────────→ spec-driven-development
+    │     └── .forge/idea-brief.md exists? ─────────→ (read it, skip answered questions)
+    ├── Have .forge/prd.md, need architecture? ────→ architecture-and-contracts
+    ├── Have architecture, need tasks? ────────────→ planning-and-task-breakdown
+    ├── Have .forge/tasks.yaml, implementing? ─────→ incremental-implementation
+    │     └── Need test-first discipline? ──────────→ tdd
+    ├── Something broke or behaves wrong? ─────────→ debugging-and-recovery
+    ├── Code ready for review? ────────────────────→ code-review-and-quality
+    ├── Committing / branching? ───────────────────→ git-workflow
+    ├── Deploying or launching? ───────────────────→ shipping-and-launch
+    └── Stress-testing a design? ──────────────────→ (invoke grill-me behavior inline)
 ```
 
 ## The Forge Pipeline
 
-Skills chain together. Output of one feeds the next:
-
 ```
-/grill   →   /spec    →   /plan    →   /build   →   /ship
-   ↓             ↓            ↓            ↓            ↓
-idea-griller  write-a-prd  prd-to-plan   tdd       pre-launch
-   ↓             ↓            ↓            ↓
-.forge/      GitHub       ./plans/     passing
-idea-brief   Issue PRD    *.md         tests
-.md
+/grill  →  /spec   →  /architect  →  /plan   →  /build  →  /review  →  /ship
+  │           │            │            │           │           │          │
+idea-      spec-      architecture-  planning-  incremental  code-     shipping-
+griller    driven     and-contracts  and-task-  implement-   review-   and-launch
+           develop-                  breakdown  ation        and-
+           ment                                             quality
+  │           │            │            │           │
+  ▼           ▼            ▼            ▼           ▼
+.forge/    .forge/    .forge/arch-  .forge/    passing
+idea-      prd.md     itecture.md   tasks.yaml tests +
+brief.md              .forge/                  commits
+                      contracts/*
+                      .forge/adr/*
 ```
 
-Each stage is optional if you're joining mid-pipeline. You don't need to start at `/grill` — but you must have the previous stage's output.
+Each stage consumes the previous stage's artifact. You can join mid-pipeline if you have the artifact.
+
+## The .forge/ Handoff Chain
+
+| Artifact | Produced by | Consumed by |
+|----------|-------------|-------------|
+| `.forge/idea-brief.md` | idea-griller | spec-driven-development |
+| `.forge/prd.md` | spec-driven-development | architecture-and-contracts, planning-and-task-breakdown |
+| `.forge/architecture.md` | architecture-and-contracts | planning-and-task-breakdown, incremental-implementation |
+| `.forge/contracts/*.md` | architecture-and-contracts | incremental-implementation, code-review-and-quality |
+| `.forge/adr/*.md` | architecture-and-contracts | (reference for all future decisions) |
+| `.forge/tasks.yaml` | planning-and-task-breakdown | incremental-implementation |
+
+## Agent Team
+
+Five specialist personas available via the Task tool or dispatch:
+
+| Agent | File | When to invoke |
+|-------|------|----------------|
+| **Architect** | `agents/architect.md` | Designing system structure, evaluating tech decisions |
+| **Project Manager** | `agents/project-manager.md` | Task breakdown, dependency ordering, scope management |
+| **Test Engineer** | `agents/test-engineer.md` | Test strategy, TDD coaching, coverage gaps |
+| **Code Reviewer** | `agents/code-reviewer.md` | PR review, contract validation, quality gates |
+| **Security Auditor** | `agents/security-auditor.md` | Threat modeling, input validation, hardening |
 
 ## Core Operating Behaviors
 
-These apply at all times, regardless of which skill is active.
+Apply at all times, across all skills.
 
 ### 1. Surface Assumptions
 
-Before implementing anything non-trivial, state your assumptions explicitly:
+Before implementing anything non-trivial:
 
 ```
 ASSUMPTIONS I'M MAKING:
-1. [about scope]
+1. [about requirements]
 2. [about architecture]
-3. [about what's out of scope]
+3. [about scope]
 → Correct me now or I'll proceed with these.
 ```
 
-### 2. Push Back When Warranted
+### 2. Manage Confusion Actively
 
-You are not a yes-machine. When an approach has problems:
-- Name the issue directly
-- Explain the concrete downside
-- Propose an alternative
-- Accept the user's decision if they override with full information
+When you encounter inconsistencies: STOP. Name the confusion. Present the tradeoff. Wait for resolution. Never silently pick one interpretation.
 
-### 3. Enforce Simplicity
+### 3. Push Back When Warranted
 
-Before finishing any implementation, ask:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer say "why didn't you just..."?
+You are not a yes-machine. Name issues directly, explain concrete downside, propose an alternative, accept the human's decision if they override with full information.
 
-### 4. Maintain Scope Discipline
+### 4. Enforce Simplicity
 
-Touch only what you're asked to touch. Do NOT:
-- Refactor adjacent code as a side effect
-- Add features not in the spec because they "seem useful"
-- Delete code that seems unused without explicit approval
-- Remove comments you don't understand
+Before finishing: Can this be done in fewer lines? Are these abstractions earning their complexity? Would a staff engineer say "why didn't you just..."?
 
-### 5. Verify, Don't Assume
+### 5. Maintain Scope Discipline
 
-Every skill includes a verification step. A task is not complete until verification passes. "It looks right" is not verification.
+Touch only what you're asked to touch. Do NOT refactor adjacent code, add unasked features, delete code without approval, or remove comments you don't understand.
+
+### 6. Verify, Don't Assume
+
+Every skill includes a verification checklist. A task is not complete until verification passes. "It looks right" is not verification.
 
 ## Lifecycle Sequence
 
-1. **Define** → `idea-griller` — pressure-test the idea
-2. **Specify** → `write-a-prd` — PRD as GitHub issue
-3. **Plan** → `prd-to-plan` — phased vertical slices
-4. **Decompose** → `prd-to-issues` — independently-grabbable issues
-5. **Build** → `tdd` — red-green-refactor, one behavior at a time
-6. **Debug** → `triage-issue` — root cause → TDD fix plan
-7. **Stress-test** → `grill-me` — challenge any design before committing
+1. **Define** → `idea-griller` — pressure-test the idea, output `.forge/idea-brief.md`
+2. **Specify** → `spec-driven-development` — PRD, output `.forge/prd.md`
+3. **Design** → `architecture-and-contracts` — system design + interface contracts
+4. **Plan** → `planning-and-task-breakdown` — output `.forge/tasks.yaml`
+5. **Build** → `incremental-implementation` + `tdd` — one task at a time
+6. **Verify** → `debugging-and-recovery` — reproduce → isolate → fix → guard
+7. **Review** → `code-review-and-quality` — validate against contracts
+8. **Ship** → `git-workflow` + `shipping-and-launch` — clean history, pre-launch gate
+
+## Anti-Rationalization
+
+| Thought | Why it's wrong |
+|---------|----------------|
+| "This is too simple for a skill" | Simple tasks are where unchecked assumptions cause the most waste |
+| "I'll gather context first, then check skills" | Skills tell you HOW to gather context — check first |
+| "I remember this skill" | Skills evolve. Always read the current version. |
+| "The brief/PRD is close enough" | Missing artifacts break the handoff chain downstream |
+| "I can skip architecture for a small feature" | Contracts protect parallel workers — skip them and work diverges |
+| "Tests can come after the implementation" | Then they test implementation, not behavior |
+| "I'll clean up the adjacent code while I'm here" | Scope creep disguised as helpfulness |
+
+## Red Flags
+
+- Starting implementation without a `.forge/prd.md`
+- Writing tests after all implementation code is done
+- Module list names files instead of behaviors
+- Contracts written at function-level instead of module-boundary level
+- Tasks in `.forge/tasks.yaml` that touch more than 2-3 modules
+- PR that touches files not listed in the task's file list
+- "Out of Scope" section in the PRD is empty
 
 ## Skill Rules
 
-1. Check for an applicable skill before starting work — even a 1% chance means invoke it.
+1. Check for an applicable skill before starting work — even a 1% chance.
 2. Skills are workflows, not suggestions. Follow steps in order.
-3. Multiple skills can apply — use the lifecycle sequence to pick order.
+3. Multiple skills can apply — use the lifecycle sequence to choose order.
 4. When in doubt, start with a spec.
 
 ## Quick Reference
 
-| Phase    | Skill           | Slash Command | Output                    |
-|----------|-----------------|---------------|---------------------------|
-| Define   | idea-griller    | /grill        | .forge/idea-brief.md      |
-| Specify  | write-a-prd     | /spec         | GitHub Issue (PRD)        |
-| Plan     | prd-to-plan     | /plan         | ./plans/*.md              |
-| Decompose| prd-to-issues   | /plan         | GitHub Issues             |
-| Build    | tdd             | /build        | Passing tests + code      |
-| Debug    | triage-issue    | —             | GitHub Issue (bug + fix)  |
-| Review   | grill-me        | /review       | Shared understanding      |
+| Phase   | Skill                        | Command      | Artifact Out              |
+|---------|------------------------------|--------------|---------------------------|
+| Define  | idea-griller                 | /grill       | .forge/idea-brief.md      |
+| Specify | spec-driven-development      | /spec        | .forge/prd.md             |
+| Design  | architecture-and-contracts   | /architect   | .forge/architecture.md + contracts/ |
+| Plan    | planning-and-task-breakdown  | /plan        | .forge/tasks.yaml         |
+| Build   | incremental-implementation   | /build       | code + commits            |
+| Build   | tdd                          | /build       | passing tests             |
+| Verify  | debugging-and-recovery       | —            | fix + regression test     |
+| Review  | code-review-and-quality      | /review      | review findings           |
+| Ship    | git-workflow                 | —            | clean history             |
+| Ship    | shipping-and-launch          | /ship        | go/no-go decision         |
