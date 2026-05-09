@@ -21,6 +21,10 @@ Turn a feature idea into a structured PRD at `.forge/prd.md` through interview, 
 - Idea hasn't been pressure-tested — run `idea-griller` first
 - Change is trivial (config tweak, single function) — just implement with `tdd`
 
+## Context-Loaded Mode
+
+If a comprehensive context document exists (e.g., `context/CONTEXT.md` or similar file with >500 lines of structured research, interviews, or domain analysis), skip the interview steps (Steps 1-3). The context document replaces the user interview — read it in full, extract requirements, and proceed directly to Step 4 (module design). Note in the PRD's Open Assumptions which sections were derived from context document vs. user confirmation.
+
 ## Common Rationalizations
 
 | Thought | Reality |
