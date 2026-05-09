@@ -4,7 +4,9 @@
 # Available skills: idea-griller, spec-driven-development, architecture-and-contracts,
 #                   planning-and-task-breakdown, incremental-implementation, tdd,
 #                   debugging-and-recovery, code-review-and-quality, git-workflow,
-#                   shipping-and-launch, triage-issue, using-forge-skills
+#                   shipping-and-launch, triage-issue, competitive-analysis,
+#                   gtm-strategy, security-and-compliance, scalability-analysis,
+#                   cross-validation, redaction-and-cleanup, using-forge-skills
 
 set -e
 
@@ -26,6 +28,12 @@ if [ -z "$SKILL" ]; then
   echo "  git-workflow               — atomic commits, branch strategy"
   echo "  shipping-and-launch        — six-domain pre-launch gate"
   echo "  triage-issue               — bug investigation + fix plan"
+  echo "  competitive-analysis       — market research + positioning"
+  echo "  gtm-strategy               — go-to-market plan + ICP"
+  echo "  security-and-compliance    — auth, PII, threat model, certification"
+  echo "  scalability-analysis       — capacity math + cost projections"
+  echo "  cross-validation           — external reviewer prompt + synthesis"
+  echo "  redaction-and-cleanup      — redact .forge/ for external sharing"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
 fi

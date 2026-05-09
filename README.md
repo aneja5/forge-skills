@@ -2,7 +2,7 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 12 skills, and 5 specialist agent personas.
+Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 18 skills, and 7 specialist agent personas.
 
 Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
@@ -10,7 +10,7 @@ Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this 
 
 ## Your AI Engineering Team
 
-Five specialist agents, available via the Task tool:
+Seven specialist agents, available via the Task tool:
 
 | Agent | Role |
 |-------|------|
@@ -19,6 +19,8 @@ Five specialist agents, available via the Task tool:
 | **Test Engineer** | TDD coaching, test quality review, coverage gaps |
 | **Code Reviewer** | PR review, contract validation, five-axis quality check |
 | **Security Auditor** | Threat modeling, OWASP prevention, hardening |
+| **Competitive Analyst** | Market research, feature matrices, positioning |
+| **Compliance Officer** | Regulatory assessment, data governance, certification |
 
 Each agent has a defined role, push-back behavior, and quality bar. See `agents/` for the full personas.
 
@@ -36,6 +38,8 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 ```
 
 > **Install:** `/plugin marketplace add aneja5/forge-skills` then `/plugin install forge-skills@forge-skills`
+>
+> **New here?** Read [docs/HOW-TO-USE.md](docs/HOW-TO-USE.md) — a 10-minute walkthrough with copy-paste prompts for every skill.
 
 ---
 
@@ -50,6 +54,12 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 | `/build` | Build | `incremental-implementation` + `tdd` | `tasks.yaml` + `contracts/` | code + commits |
 | `/review` | Review | `code-review-and-quality` | code + `contracts/` | findings + decision |
 | `/ship` | Ship | `shipping-and-launch` | ready code | go/no-go + rollback plan |
+| `/compete` | Analyze | `competitive-analysis` | `prd.md` | `.forge/competitive.md` |
+| `/gtm` | Analyze | `gtm-strategy` | `prd.md` + `competitive.md` | `.forge/gtm.md` |
+| `/secure` | Analyze | `security-and-compliance` | `architecture.md` | `.forge/security.md` |
+| `/scale` | Analyze | `scalability-analysis` | `architecture.md` | `.forge/scalability.md` |
+| `/validate` | Validate | `cross-validation` | `.forge/` artifacts | `.forge/cross-validation-*.md` |
+| `/redact` | Share | `redaction-and-cleanup` | `.forge/` artifacts | `.forge/redacted/` |
 | — | Verify | `debugging-and-recovery` | bug report | fix + regression test |
 | — | Ship | `git-workflow` | completed tasks | atomic commits + PR |
 | — | Triage | `triage-issue` | bug report | GitHub issue + TDD plan |
@@ -136,6 +146,8 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | Test Engineer | `agents/test-engineer.md` | TDD coaching, test quality review |
 | Code Reviewer | `agents/code-reviewer.md` | PR review, contract compliance |
 | Security Auditor | `agents/security-auditor.md` | Threat modeling, OWASP review |
+| Competitive Analyst | `agents/competitive-analyst.md` | Market research, positioning |
+| Compliance Officer | `agents/compliance-officer.md` | Regulatory assessment, certification |
 
 ### Reference Checklists
 
@@ -165,19 +177,27 @@ forge-skills/
 │   ├── code-review-and-quality/
 │   ├── git-workflow/
 │   ├── shipping-and-launch/
-│   └── triage-issue/
+│   ├── triage-issue/
+│   ├── competitive-analysis/
+│   ├── gtm-strategy/
+│   ├── security-and-compliance/
+│   ├── scalability-analysis/
+│   ├── cross-validation/
+│   └── redaction-and-cleanup/
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md
 │   ├── project-manager.md
 │   ├── test-engineer.md
 │   ├── code-reviewer.md
-│   └── security-auditor.md
+│   ├── security-auditor.md
+│   ├── competitive-analyst.md
+│   └── compliance-officer.md
 ├── references/                      # Shared checklists and templates
 │   ├── contract-templates.md
 │   ├── idea-evaluation.md
 │   ├── testing-patterns.md
 │   └── security-checklist.md
-├── commands/                        # /grill /spec /architect /plan /build /review /ship
+├── commands/                        # /grill /spec /architect /plan /build /review /ship + 6 more
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh

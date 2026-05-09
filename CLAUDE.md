@@ -26,13 +26,21 @@ forge-skills/
 │   ├── code-review-and-quality/     # Five-axis review with contract compliance
 │   ├── git-workflow/                # Atomic commits, branch strategy, PR prep
 │   ├── shipping-and-launch/         # Six-domain pre-launch gate
-│   └── triage-issue/                # Bug investigation → GitHub Issue + TDD fix plan
+│   ├── triage-issue/                # Bug investigation → GitHub Issue + TDD fix plan
+│   ├── competitive-analysis/        # Market research → .forge/competitive.md
+│   ├── gtm-strategy/               # Go-to-market plan → .forge/gtm.md
+│   ├── security-and-compliance/     # Security assessment → .forge/security.md
+│   ├── scalability-analysis/        # Capacity planning → .forge/scalability.md
+│   ├── cross-validation/            # External review → .forge/cross-validation-*.md
+│   └── redaction-and-cleanup/       # Redact for sharing → .forge/redacted/
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
 │   ├── project-manager.md           # Task breakdown, dependency ordering
 │   ├── test-engineer.md             # Test strategy, TDD coaching
 │   ├── code-reviewer.md             # PR review, contract validation
-│   └── security-auditor.md          # Threat modeling, hardening
+│   ├── security-auditor.md          # Threat modeling, hardening
+│   ├── competitive-analyst.md       # Market research, positioning
+│   └── compliance-officer.md        # Regulatory assessment, certification
 ├── references/                      # Shared checklists linked from skills
 │   ├── contract-templates.md        # Interface contract + ADR formats
 │   ├── idea-evaluation.md           # Per-branch resolution criteria for idea-griller
@@ -45,7 +53,13 @@ forge-skills/
 │   ├── plan.md                      # /plan → planning-and-task-breakdown
 │   ├── build.md                     # /build → incremental-implementation + tdd
 │   ├── review.md                    # /review → code-review-and-quality
-│   └── ship.md                      # /ship → shipping-and-launch
+│   ├── ship.md                      # /ship → shipping-and-launch
+│   ├── compete.md                   # /compete → competitive-analysis
+│   ├── gtm.md                      # /gtm → gtm-strategy
+│   ├── secure.md                    # /secure → security-and-compliance
+│   ├── scale.md                     # /scale → scalability-analysis
+│   ├── validate.md                  # /validate → cross-validation
+│   └── redact.md                    # /redact → redaction-and-cleanup
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
@@ -67,6 +81,15 @@ Skills produce and consume artifacts in `.forge/`:
 .forge/contracts/*.md  ← architecture-and-contracts
 .forge/adr/*.md        ← architecture-and-contracts
 .forge/tasks.yaml      ← planning-and-task-breakdown (reads prd.md + architecture.md + contracts/)
+.forge/tasks-summary.md ← planning-and-task-breakdown
+.forge/competitive.md  ← competitive-analysis (reads prd.md)
+.forge/gtm.md          ← gtm-strategy (reads prd.md + competitive.md)
+.forge/security.md     ← security-and-compliance (reads architecture.md + contracts/)
+.forge/scalability.md  ← scalability-analysis (reads architecture.md)
+.forge/cross-validation-prompt.md    ← cross-validation (reads all .forge/ artifacts)
+.forge/cross-validation-synthesis.md ← cross-validation (reads reviewer responses)
+.forge/redaction-manifest.md         ← redaction-and-cleanup
+.forge/redacted/       ← redaction-and-cleanup (copies, never modifies originals)
 ```
 
 Never skip ahead without the previous artifact. You can join mid-pipeline if you have the artifact.
@@ -85,6 +108,13 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Review  | code-review-and-quality      | /review    | code change          | findings + merge decision         |
 | Ship    | git-workflow                 | —          | completed tasks      | atomic commits + PR               |
 | Ship    | shipping-and-launch          | /ship      | ready PR             | go/no-go decision                 |
+| Triage  | triage-issue                 | —          | bug report           | GitHub issue + TDD plan           |
+| Analyze | competitive-analysis         | /compete   | prd.md               | .forge/competitive.md             |
+| Analyze | gtm-strategy                 | /gtm       | prd.md + competitive.md | .forge/gtm.md                  |
+| Analyze | security-and-compliance      | /secure    | architecture.md + contracts/ | .forge/security.md         |
+| Analyze | scalability-analysis         | /scale     | architecture.md      | .forge/scalability.md             |
+| Validate| cross-validation             | /validate  | .forge/ artifacts    | cross-validation-*.md             |
+| Share   | redaction-and-cleanup        | /redact    | .forge/ artifacts    | .forge/redacted/                  |
 
 ## Conventions
 

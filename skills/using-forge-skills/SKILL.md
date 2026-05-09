@@ -25,6 +25,12 @@ Task arrives
     ├── Code ready for review? ────────────────────→ code-review-and-quality
     ├── Committing / branching? ───────────────────→ git-workflow
     ├── Deploying or launching? ───────────────────→ shipping-and-launch
+    ├── Research competitors / positioning? ───────→ competitive-analysis
+    ├── Go-to-market / how to sell this? ──────────→ gtm-strategy
+    ├── Security / compliance / PII / SOC 2? ──────→ security-and-compliance
+    ├── Will this scale / capacity planning? ──────→ scalability-analysis
+    ├── Validate decisions / get external input? ──→ cross-validation
+    ├── Redact / prepare for external sharing? ────→ redaction-and-cleanup
     └── Stress-testing a design? ──────────────────→ (relentless questioning — ask one branch per turn)
 ```
 
