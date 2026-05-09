@@ -76,9 +76,27 @@ Each contract must define:
 
 For each non-obvious decision made in steps 3-4, write an ADR at `.forge/adr/NNN-<slug>.md`. Use the format in [contract-templates.md](../../references/contract-templates.md).
 
-### Step 6: Write architecture.md
+### Step 6: Cost modeling
 
-Write `.forge/architecture.md` with system overview, component diagram, tech stack table, and a table of all contracts with their module names and file paths.
+Include a cost model section in the architecture:
+- Per-unit cost breakdown (what does one transaction/request/user cost?)
+- Margin analysis per pricing tier (if applicable)
+- Cost scaling curve (how costs grow with 10x, 100x users)
+- Third-party API costs at projected volume
+
+### Step 7: Write architecture.md
+
+Write `.forge/architecture.md` with system overview, component diagram, tech stack table, cost model section, and a table of all contracts with their module names and file paths.
+
+### Step 8: Expansion documents (optional)
+
+When the user requests deeper analysis, generate supplementary docs:
+- `docs/architecture/scalability-analysis.md`
+- `docs/architecture/microservices-design.md`
+- `docs/planning/testing-strategy.md`
+- `docs/planning/feature-priority-matrix.md`
+
+These are deeper dives on specific sections. Generate only when explicitly requested.
 
 ## Verification
 
@@ -88,5 +106,6 @@ Write `.forge/architecture.md` with system overview, component diagram, tech sta
 - [ ] No contract says "TBD" in any required field
 - [ ] Architecture document uses component names, not file paths
 - [ ] At least one ADR written (even "use existing patterns" is a decision)
+- [ ] Cost model section included with per-unit costs and scaling curve
 - [ ] `.forge/architecture.md` written with component diagram
 - [ ] Contract table in architecture.md lists all contract files
