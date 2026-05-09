@@ -105,8 +105,18 @@ tasks:
     ...
 ```
 
+### Step 7: Write .forge/tasks-summary.md
+
+Produce a human-readable summary alongside the YAML:
+- **Day-by-day ship view**: which tasks ship on which days (estimated)
+- **Critical path**: the longest dependency chain — this sets the minimum timeline
+- **Risk days**: days with the highest-complexity tasks or most integration points
+- **Parallel work opportunities**: tasks that can run simultaneously with different engineers
+- **Buffer recommendations**: where to add slack based on task size and uncertainty
+
 ## Verification
 
+- [ ] `.forge/tasks-summary.md` written with ship view and critical path
 - [ ] All user stories from PRD covered by at least one task
 - [ ] No task touches more than 3 modules
 - [ ] Every task has at least 2 acceptance criteria
