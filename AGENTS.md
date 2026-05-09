@@ -23,6 +23,12 @@ Something broke / unexpected behavior  →  debugging-and-recovery
 Review code / validate PR               →  code-review-and-quality
 Commit / branch / prepare PR            →  git-workflow
 Deploy / launch / pre-launch check      →  shipping-and-launch
+Research competitors                    →  competitive-analysis
+Analyze scalability / capacity          →  scalability-analysis
+Security & compliance review            →  security-and-compliance
+Plan go-to-market / find customers      →  gtm-strategy
+Validate decisions externally           →  cross-validation
+Redact before sharing                   →  redaction-and-cleanup
 ```
 
 ## Lifecycle Mapping
@@ -39,6 +45,12 @@ For tools that don't support slash commands, follow this internal lifecycle:
 | VERIFY  | debugging-and-recovery       | Something broke                      |
 | REVIEW  | code-review-and-quality      | Code ready for review                |
 | SHIP    | shipping-and-launch          | All tasks done, ready to deploy      |
+| COMPETE | competitive-analysis         | PRD exists, entering a market        |
+| SCALE   | scalability-analysis         | Architecture exists, need growth plan|
+| SECURE  | security-and-compliance      | Handles sensitive data               |
+| LAUNCH  | gtm-strategy                 | Product ready for market             |
+| VALIDATE| cross-validation             | Major decisions need external input  |
+| REDACT  | redaction-and-cleanup        | Sharing docs externally              |
 
 ## The .forge/ Artifact Chain
 
@@ -56,6 +68,15 @@ Each phase produces an artifact consumed by the next:
 .forge/tasks.yaml       (planning-and-task-breakdown output)
          ↓
 code + commits          (incremental-implementation output)
+
+.forge/competitive.md              (competitive-analysis output)
+.forge/scalability.md              (scalability-analysis output)
+.forge/security.md                 (security-and-compliance output)
+.forge/gtm.md                      (gtm-strategy output)
+.forge/cross-validation-prompt.md  (cross-validation output, phase 1)
+.forge/cross-validation-synthesis.md (cross-validation output, phase 2)
+.forge/redaction-manifest.md       (redaction-and-cleanup output)
+.forge/redacted/*                  (redaction-and-cleanup output)
 ```
 
 A phase must not start without its input artifact. If the artifact is missing, run the preceding phase first.
@@ -118,3 +139,5 @@ Specialist personas for dispatch via Task tool:
 | Test Engineer | `agents/test-engineer.md` | TDD coaching, test quality review |
 | Code Reviewer | `agents/code-reviewer.md` | PR review, contract validation |
 | Security Auditor | `agents/security-auditor.md` | Threat modeling, hardening |
+| Competitive Analyst | `agents/competitive-analyst.md` | Competitor research, positioning |
+| Compliance Officer | `agents/compliance-officer.md` | Regulatory, privacy, certifications |
