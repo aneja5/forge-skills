@@ -31,6 +31,7 @@ Pressure-test a raw idea through Socratic questioning. One question per turn, ea
 | "I can infer the business model" | Never infer. Ask. You will be wrong. |
 | "The MVP is clear" | MVPs defined without drilling risks are over-scoped |
 | "We can resolve distribution later" | If you can't name channel + motion now, the idea isn't ready |
+| "We covered the important branches" | Important by whose criteria? Distribution and Risks are the most-skipped and the most-costly to miss. |
 
 ## Red Flags
 
@@ -40,6 +41,7 @@ Pressure-test a raw idea through Socratic questioning. One question per turn, ea
 - User can't name a single person who has this problem today
 - Business model is "we'll figure it out later"
 - Founder fit answer is "I'm passionate about this space"
+- Interview stopped before all 7 branches because "the idea is clear enough" or "we ran out of time"
 
 ## Behavior Rules
 
