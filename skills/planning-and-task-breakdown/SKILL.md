@@ -1,6 +1,6 @@
 ---
 name: planning-and-task-breakdown
-description: Break a PRD and architecture into a .forge/tasks.yaml of sized, ordered, independently-executable tasks. Use when .forge/prd.md and .forge/architecture.md exist and the work needs to be decomposed before implementation begins.
+description: Use when .forge/prd.md and .forge/architecture.md exist and the work needs to be decomposed before implementation, when sizing tasks for a sprint, when mapping dependencies between modules, or when a critical path needs to be identified before parallel work begins.
 ---
 
 # Planning and Task Breakdown

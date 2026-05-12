@@ -1,6 +1,6 @@
 ---
 name: idea-griller
-description: Socratic interview that pressure-tests a raw idea before writing a spec. Drills across 7 branches — problem, founder fit, solution, business model, distribution, risks, MVP — where every question builds on the previous answer. Outputs .forge/idea-brief.md. Use when user describes a new idea, project, or feature and wants to think it through before planning.
+description: Use when user describes a new idea, project, or feature they haven't fully thought through, when an idea needs to be pressure-tested before writing a spec, when assumptions about users, business model, or distribution are unstated, or when the user wants to surface what they don't know before committing engineering effort.
 ---
 
 # Idea Griller

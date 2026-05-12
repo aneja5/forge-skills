@@ -1,6 +1,6 @@
 ---
 name: triage-issue
-description: Triage a bug or issue by exploring the codebase to find root cause, then create a GitHub issue with a TDD-based fix plan. Use when user reports a bug, wants to file an issue, mentions "triage", or wants to investigate and plan a fix for a problem.
+description: Use when user reports a bug, wants to file an issue, mentions "triage", when investigating a production problem before fixing it, when planning a fix that needs a TDD-shaped GitHub issue, or when a bug needs root-cause analysis before assignment.
 ---
 
 # Triage Issue

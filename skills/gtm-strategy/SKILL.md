@@ -1,6 +1,6 @@
 ---
 name: gtm-strategy
-description: Build a go-to-market strategy with ICP definition, wedge feature, pilot program design, sales channels, ROI calculator, and case study template. Outputs .forge/gtm.md. Use when user says "go to market", "GTM", "how do we sell this", "find customers", or needs a structured launch plan.
+description: Use when user says "go to market", "GTM", "how do we sell this", "find customers", when planning a launch, when defining the ideal customer profile, when designing a pilot program before broad launch, or when a structured sales motion needs to be documented.
 ---
 
 # GTM Strategy

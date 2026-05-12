@@ -1,6 +1,6 @@
 ---
 name: architecture-and-contracts
-description: Design system architecture and write interface contracts from a PRD. Outputs .forge/architecture.md (system overview + tech decisions), .forge/contracts/ (per-module interface contracts precise enough for parallel implementation), and .forge/adr/ (architecture decision records). Use when .forge/prd.md exists and the system needs a structural design before task breakdown.
+description: Use when .forge/prd.md exists and the system needs a structural design before task breakdown, when modules will be implemented in parallel and need interface contracts to prevent integration failures, or when non-obvious technical decisions need to be recorded for future reference.
 ---
 
 # Architecture and Contracts

@@ -1,6 +1,6 @@
 ---
 name: cross-validation
-description: Generate a self-contained validation prompt for external reviewers, then synthesize their responses into consensus/disagreement analysis. Two-phase flow with a human step in the middle. Outputs .forge/cross-validation-prompt.md and .forge/cross-validation-synthesis.md. Use when user says "validate this", "get feedback", "cross-validate", "what are we missing", or wants external review of major decisions.
+description: Use when user says "validate this", "get feedback", "cross-validate", "what are we missing", when seeking external review before committing to major decisions, when stress-testing a design with senior reviewers, or when reviewer responses need to be synthesized into actionable changes.
 ---
 
 # Cross-Validation

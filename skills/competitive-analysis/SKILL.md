@@ -1,6 +1,6 @@
 ---
 name: competitive-analysis
-description: Research competitors and produce a competitive landscape document with feature matrices, pricing comparisons, win/lose scenarios, positioning statements, and objection responses. Outputs .forge/competitive.md. Use when user says "research competitors", "competitive analysis", "how do we compare to X", or needs to understand the competitive landscape before GTM.
+description: Use when user says "research competitors", "competitive analysis", "how do we compare to X", when planning go-to-market and needs competitive positioning, when assessing the competitive landscape before launch, or when objection handling and win/lose scenarios need to be documented.
 ---
 
 # Competitive Analysis

@@ -1,6 +1,6 @@
 ---
 name: redaction-and-cleanup
-description: Redact sensitive information from .forge/ documents for external sharing. Copies files to .forge/redacted/ and replaces sensitive content with consistent placeholders. NEVER modifies original files. Outputs .forge/redaction-manifest.md and cleaned files in .forge/redacted/. Use when user says "redact", "clean up for sharing", "remove sensitive info", "prepare for external", or needs to share documents without exposing internal data.
+description: Use when user says "redact", "clean up for sharing", "remove sensitive info", "prepare for external", when sharing .forge/ artifacts with investors or external reviewers, when sanitizing documents before external publication, or when pricing/credentials/strategy must be removed before sharing.
 ---
 
 # Redaction and Cleanup

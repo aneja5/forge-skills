@@ -1,6 +1,6 @@
 ---
 name: code-review-and-quality
-description: Review code changes across five axes — correctness, contracts, readability, security, performance. Validates that implementation matches .forge/contracts/ interfaces and task acceptance criteria. Use when a task is complete and ready for review, or when reviewing a PR.
+description: Use when a task is complete and ready for review, when reviewing a PR, when validating an implementation against its contract, when checking quality before merging, or when a five-axis quality gate is needed before approving code.
 ---
 
 # Code Review and Quality

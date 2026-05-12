@@ -1,6 +1,6 @@
 ---
 name: incremental-implementation
-description: Execute tasks from .forge/tasks.yaml one at a time using thin vertical slices. Reads the task's contracts, implements the minimum code to satisfy acceptance criteria, and commits after each task. Use when .forge/tasks.yaml exists and implementation is starting.
+description: Use when .forge/tasks.yaml exists and implementation is starting, when executing a planned task list one task at a time, when a feature must ship in independently-verifiable slices, or when contracts in .forge/contracts/ need to be implemented against acceptance criteria.
 ---
 
 # Incremental Implementation

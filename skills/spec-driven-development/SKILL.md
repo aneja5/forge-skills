@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: Create a PRD through user interview and codebase exploration, output as .forge/prd.md. Use when user wants to write a spec, create a PRD, or plan a new feature before implementation begins.
+description: Use when user wants to write a spec, create a PRD, or plan a new feature before implementation begins, when .forge/idea-brief.md exists and is ready to formalize, when requirements need to be captured before architecture or planning, or when a feature's scope and acceptance criteria need to be documented.
 ---
 
 # Spec-Driven Development

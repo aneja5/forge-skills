@@ -1,6 +1,6 @@
 ---
 name: using-forge-skills
-description: Discovers and invokes forge skills. Use when starting a session or when you need to discover which skill applies to the current task. This is the meta-skill that governs how all other forge skills are discovered and invoked.
+description: Use when starting a session, when you need to discover which forge skill applies to the current task, when uncertain which skill to invoke for a request, or when a session begins and the pipeline should be loaded.
 ---
 
 # Using Forge Skills

@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Atomic commits with meaningful messages, clean branch strategy, and safe merge practices. Use when committing work, creating branches, preparing PRs, or resolving merge conflicts.
+description: Use when committing work, creating branches, preparing PRs, resolving merge conflicts, when grouping related changes into commits, when cleaning up history before merging, or when deciding what should be a separate commit vs squashed.
 ---
 
 # Git Workflow

@@ -1,6 +1,6 @@
 ---
 name: scalability-analysis
-description: Analyze system scalability with capacity math, bottleneck identification, scale-out triggers, cost projections, and migration decision points. Outputs .forge/scalability.md. Use when user asks "will this scale", "scalability", "capacity planning", "what breaks at 10x", or needs to understand growth limits and costs.
+description: Use when user asks "will this scale", "scalability", "capacity planning", "what breaks at 10x", when projecting cost at growth milestones, when identifying the next bottleneck before it hits production, or when planning a migration from monolith to distributed architecture.
 ---
 
 # Scalability Analysis

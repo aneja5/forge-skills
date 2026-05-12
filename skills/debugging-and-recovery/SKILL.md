@@ -1,6 +1,6 @@
 ---
 name: debugging-and-recovery
-description: Investigate a bug or unexpected behavior, find the root cause, write a failing test that reproduces it, then fix and guard. Use when something is broken, a test is failing, or behavior is wrong. Do not guess — reproduce first.
+description: Use when something is broken, a test is failing, behavior is wrong, when investigating a production incident, when a user reports a bug, when a feature works locally but not in another environment, or when the system behaves differently than the contract specifies.
 ---
 
 # Debugging and Recovery

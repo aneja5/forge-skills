@@ -1,6 +1,6 @@
 ---
 name: shipping-and-launch
-description: Pre-launch gate — run through code quality, security, performance, accessibility, infrastructure, and documentation checks before deploying. Use before any production deployment or release. Defines the rollback plan before proceeding.
+description: Use before any production deployment or release, when preparing to launch a feature, when validating release readiness, when a rollback plan is needed before shipping, or when a pre-launch gate is required before approving a deploy.
 ---
 
 # Shipping and Launch
