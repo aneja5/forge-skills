@@ -16,20 +16,35 @@ Task arrives
     │
     ├── Raw idea, not yet pressure-tested? ────────→ idea-griller
     ├── Ready to write a spec/PRD? ────────────────→ spec-driven-development
-    │     └── .forge/idea-brief.md exists? ─────────→ (read it, skip answered questions)
-    ├── Have .forge/prd.md, need architecture? ────→ architecture-and-contracts
+    ├── Have prd.md, need architecture? ───────────→ architecture-and-contracts
+    ├── Design REST endpoints / API contracts? ────→ api-design
+    ├── Schema / migrations / query design? ───────→ database-design
+    ├── Establish design tokens / component lib? ──→ design-system
+    ├── Modal vs sheet / expand vs nav decisions? ─→ interaction-patterns
+    ├── Research competitors / positioning? ───────→ competitive-analysis
+    ├── Will this scale / capacity planning? ──────→ scalability-analysis
+    ├── Security / compliance / PII / SOC 2? ──────→ security-and-compliance
+    ├── Go-to-market / how to sell this? ──────────→ gtm-strategy
+    ├── Validate decisions / get external input? ──→ cross-validation
     ├── Have architecture, need tasks? ────────────→ planning-and-task-breakdown
-    ├── Have .forge/tasks.yaml, implementing? ─────→ incremental-implementation
+    ├── 3+ independent tasks, run in parallel? ────→ parallel-execution-strategy
+    ├── Need realistic demo / test data? ──────────→ seed-data-and-fixtures
+    ├── Define test pyramid / coverage targets? ───→ testing-strategy
+    ├── Have tasks.yaml, implementing? ────────────→ incremental-implementation
     │     └── Need test-first discipline? ──────────→ tdd
+    ├── Error handling / retries / resilience? ────→ error-handling-and-resilience
+    ├── Logging / monitoring / alerts? ────────────→ observability
+    ├── Latency / cost / LLM budgets? ─────────────→ performance-and-cost-optimization
+    ├── Outage / postmortem / runbook? ────────────→ incident-response-and-postmortems
     ├── Something broke or behaves wrong? ─────────→ debugging-and-recovery
+    ├── Bug triage → GitHub issue + fix plan? ─────→ triage-issue
     ├── Code ready for review? ────────────────────→ code-review-and-quality
+    ├── Tech debt / refactor / rewrite plan? ──────→ refactoring-and-tech-debt
+    ├── WCAG / a11y / keyboard / screen reader? ───→ accessibility
+    ├── Doc rot / README / changelog discipline? ──→ documentation-hygiene
+    ├── Sales / investor demo script? ─────────────→ demo-narrative
     ├── Committing / branching? ───────────────────→ git-workflow
     ├── Deploying or launching? ───────────────────→ shipping-and-launch
-    ├── Research competitors / positioning? ───────→ competitive-analysis
-    ├── Go-to-market / how to sell this? ──────────→ gtm-strategy
-    ├── Security / compliance / PII / SOC 2? ──────→ security-and-compliance
-    ├── Will this scale / capacity planning? ──────→ scalability-analysis
-    ├── Validate decisions / get external input? ──→ cross-validation
     ├── Redact / prepare for external sharing? ────→ redaction-and-cleanup
     ├── Creating or editing a forge-skill? ────────→ writing-skills
     └── Stress-testing a design? ──────────────────→ (relentless questioning — ask one branch per turn)
@@ -38,45 +53,28 @@ Task arrives
 ## The Forge Pipeline
 
 ```
-/grill  →  /spec   →  /architect  →  /plan   →  /build  →  /review  →  /ship
-  │           │            │            │           │           │          │
-idea-      spec-      architecture-  planning-  incremental  code-     shipping-
-griller    driven     and-contracts  and-task-  implement-   review-   and-launch
-           develop-                  breakdown  ation        and-
-           ment                                             quality
-  │           │            │            │           │
-  ▼           ▼            ▼            ▼           ▼
-.forge/    .forge/    .forge/arch-  .forge/    passing
-idea-      prd.md     itecture.md   tasks.yaml tests +
-brief.md              .forge/                  commits
-                      contracts/*
-                      .forge/adr/*
+/grill → /spec → /architect → /plan → /build → /review → /ship
 ```
 
-Each stage consumes the previous stage's artifact. You can join mid-pipeline if you have the artifact.
-
-## The .forge/ Handoff Chain
-
-| Artifact | Produced by | Consumed by |
-|----------|-------------|-------------|
-| `.forge/idea-brief.md` | idea-griller | spec-driven-development |
-| `.forge/prd.md` | spec-driven-development | architecture-and-contracts, planning-and-task-breakdown |
-| `.forge/architecture.md` | architecture-and-contracts | planning-and-task-breakdown, incremental-implementation |
-| `.forge/contracts/*.md` | architecture-and-contracts | incremental-implementation, code-review-and-quality |
-| `.forge/adr/*.md` | architecture-and-contracts | (reference for all future decisions) |
-| `.forge/tasks.yaml` | planning-and-task-breakdown | incremental-implementation |
+Each stage consumes the previous stage's artifact. Join mid-pipeline if the artifact already exists. The full `.forge/` artifact chain is in `AGENTS.md` (15+ artifacts; the design phase fans out across architecture, api-design, database-design, design-system, interaction-patterns, and the validation skills).
 
 ## Agent Team
 
-Five specialist personas available via the Task tool or dispatch:
+Eleven specialist personas available via the Task tool or dispatch:
 
 | Agent | File | When to invoke |
 |-------|------|----------------|
 | **Architect** | `agents/architect.md` | Designing system structure, evaluating tech decisions |
 | **Project Manager** | `agents/project-manager.md` | Task breakdown, dependency ordering, scope management |
-| **Test Engineer** | `agents/test-engineer.md` | Test strategy, TDD coaching, coverage gaps |
+| **Test Engineer** | `agents/test-engineer.md` | TDD coaching, test quality review |
 | **Code Reviewer** | `agents/code-reviewer.md` | PR review, contract validation, quality gates |
 | **Security Auditor** | `agents/security-auditor.md` | Threat modeling, input validation, hardening |
+| **Competitive Analyst** | `agents/competitive-analyst.md` | Competitor research, positioning |
+| **Compliance Officer** | `agents/compliance-officer.md` | Regulatory, privacy, certifications |
+| **Reliability Engineer** | `agents/reliability-engineer.md` | Errors, observability, incidents, performance |
+| **Data Engineer** | `agents/data-engineer.md` | Schema, migrations, query performance |
+| **QA Engineer** | `agents/qa-engineer.md` | Test strategy, quality gates |
+| **Design Engineer** | `agents/design-engineer.md` | Visual system, interaction, accessibility |
 
 ## Core Operating Behaviors
 
@@ -114,16 +112,7 @@ Touch only what you're asked to touch. Do NOT refactor adjacent code, add unaske
 
 Every skill includes a verification checklist. A task is not complete until verification passes. "It looks right" is not verification.
 
-## Lifecycle Sequence
-
-1. **Define** → `idea-griller` — pressure-test the idea, output `.forge/idea-brief.md`
-2. **Specify** → `spec-driven-development` — PRD, output `.forge/prd.md`
-3. **Design** → `architecture-and-contracts` — system design + interface contracts
-4. **Plan** → `planning-and-task-breakdown` — output `.forge/tasks.yaml`
-5. **Build** → `incremental-implementation` + `tdd` — one task at a time
-6. **Verify** → `debugging-and-recovery` — reproduce → isolate → fix → guard
-7. **Review** → `code-review-and-quality` — validate against contracts
-8. **Ship** → `git-workflow` + `shipping-and-launch` — clean history, pre-launch gate
+Full lifecycle (define → ship → operate → polish → share) and the complete `.forge/` artifact chain are documented in `AGENTS.md`. Read it for cross-phase decisions.
 
 ## Anti-Rationalization
 
