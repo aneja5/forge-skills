@@ -32,7 +32,8 @@ forge-skills/
 │   ├── security-and-compliance/     # Security assessment → .forge/security.md
 │   ├── scalability-analysis/        # Capacity planning → .forge/scalability.md
 │   ├── cross-validation/            # External review → .forge/cross-validation-*.md
-│   └── redaction-and-cleanup/       # Redact for sharing → .forge/redacted/
+│   ├── redaction-and-cleanup/       # Redact for sharing → .forge/redacted/
+│   └── writing-skills/              # Meta-skill for contributors (TDD for skills)
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
 │   ├── project-manager.md           # Task breakdown, dependency ordering
@@ -63,6 +64,11 @@ forge-skills/
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
+├── tests/                           # Pressure scenarios + RED/GREEN test results
+│   ├── METHODOLOGY.md               # TDD-for-skills cycle
+│   ├── idea-griller/                # Test scenarios and results
+│   ├── architecture-and-contracts/
+│   └── spec-driven-development/
 ├── docs/                            # Guides and explanations
 ├── install.sh                       # Single-skill installer
 ├── CLAUDE.md                        # This file
@@ -109,6 +115,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Ship    | git-workflow                 | —          | completed tasks      | atomic commits + PR               |
 | Ship    | shipping-and-launch          | /ship      | ready PR             | go/no-go decision                 |
 | Triage  | triage-issue                 | —          | bug report           | GitHub issue + TDD plan           |
+| Meta    | writing-skills               | —          | new skill / edit     | tested skill + scenarios + results|
 | Analyze | competitive-analysis         | /compete   | prd.md               | .forge/competitive.md             |
 | Analyze | gtm-strategy                 | /gtm       | prd.md + competitive.md | .forge/gtm.md                  |
 | Analyze | security-and-compliance      | /secure    | architecture.md + contracts/ | .forge/security.md         |
@@ -162,11 +169,26 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 - A framework or runtime — it's Markdown files and shell scripts
 - A replacement for thinking — skills guide the thinking process, not bypass it
 
+## Testing Skills
+
+Skills are pressure-tested using TDD-for-skills methodology (see `tests/METHODOLOGY.md`):
+- **RED** — run pressure scenario without skill, document failures verbatim
+- **GREEN** — run with skill loaded, verify compliance
+- **REFACTOR** — close any new rationalizations the agent invented
+
+Tests live in `tests/<skill>/scenarios.md` (3+ scenarios) and `tests/<skill>/results.md` (verbatim outputs).
+
+**Iron Law:** no skill ships without a failing test first. See `skills/writing-skills/SKILL.md` for the full contribution flow.
+
 ## Adding a New Skill
 
-1. Create `skills/<name>/SKILL.md` with all required sections (see skill anatomy in docs/)
-2. Add supporting files to `skills/<name>/` if needed
-3. If it fits the pipeline, add a slash command in `commands/<name>.md`
-4. Update the skills tables in README.md and this file
-5. Keep SKILL.md under 150 lines
-6. Update `using-forge-skills/SKILL.md` skill discovery flowchart if the skill has a new trigger pattern
+1. Read `skills/writing-skills/SKILL.md` first
+2. Write `tests/<name>/scenarios.md` with 3+ pressure scenarios
+3. Run RED — record verbatim subagent outputs in `tests/<name>/results.md`
+4. Create `skills/<name>/SKILL.md` (under 150 lines, CSO-compliant description, all required sections)
+5. Add supporting files to `skills/<name>/` if needed
+6. Run GREEN — verify the skill closes the failures
+7. REFACTOR until no new rationalizations appear
+8. If it fits the pipeline, add a slash command in `commands/<name>.md`
+9. Update skills tables in README.md and this file
+10. Update `using-forge-skills/SKILL.md` discovery flowchart if the skill has a new trigger pattern

@@ -1,7 +1,7 @@
 {
   "name": "forge-skills",
-  "description": "Agentic Engineering toolkit — 18 skills, 7 agent personas, 13 slash commands. From /grill to /ship.",
-  "version": "2.0.0",
+  "description": "Agentic Engineering toolkit — 19 skills, 7 agent personas, 13 slash commands. From /grill to /ship. TDD-tested skills.",
+  "version": "2.1.0",
   "author": {
     "name": "Sahil Aneja"
   },

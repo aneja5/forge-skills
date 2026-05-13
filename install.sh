@@ -6,7 +6,8 @@
 #                   debugging-and-recovery, code-review-and-quality, git-workflow,
 #                   shipping-and-launch, triage-issue, competitive-analysis,
 #                   gtm-strategy, security-and-compliance, scalability-analysis,
-#                   cross-validation, redaction-and-cleanup, using-forge-skills
+#                   cross-validation, redaction-and-cleanup, writing-skills,
+#                   using-forge-skills
 
 set -e
 
@@ -34,6 +35,7 @@ if [ -z "$SKILL" ]; then
   echo "  scalability-analysis       — capacity math + cost projections"
   echo "  cross-validation           — external reviewer prompt + synthesis"
   echo "  redaction-and-cleanup      — redact .forge/ for external sharing"
+  echo "  writing-skills             — meta-skill: TDD for new skill contributions"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
 fi

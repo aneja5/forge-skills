@@ -2,7 +2,7 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 18 skills, and 7 specialist agent personas.
+Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 19 skills, and 7 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
 
 Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
@@ -183,7 +183,8 @@ forge-skills/
 │   ├── security-and-compliance/
 │   ├── scalability-analysis/
 │   ├── cross-validation/
-│   └── redaction-and-cleanup/
+│   ├── redaction-and-cleanup/
+│   └── writing-skills/              # Meta-skill for contributors
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md
 │   ├── project-manager.md
@@ -204,12 +205,18 @@ forge-skills/
 ├── .claude-plugin/
 │   ├── plugin.json                  # Plugin manifest
 │   └── marketplace.json             # Marketplace listing
+├── tests/                           # Pressure scenarios + RED/GREEN results
+│   ├── METHODOLOGY.md
+│   ├── idea-griller/
+│   ├── architecture-and-contracts/
+│   └── spec-driven-development/
 ├── docs/
 │   ├── getting-started.md
 │   ├── skill-anatomy.md
 │   ├── cursor-setup.md
 │   ├── the-forge-pipeline.md
-│   └── examples.md
+│   ├── examples.md
+│   └── HOW-TO-USE.md
 ├── install.sh
 ├── LICENSE
 ├── CLAUDE.md
@@ -220,13 +227,30 @@ forge-skills/
 
 ---
 
+## Testing
+
+Skills are pressure-tested against fresh subagents using **TDD-for-skills** methodology adapted from [Superpowers' writing-skills](https://github.com/obra/superpowers/tree/main/skills/writing-skills):
+
+- **RED** — run a pressure scenario on a fresh subagent without the skill. Document verbatim failures and rationalizations.
+- **GREEN** — run the same scenario with the skill loaded. Verify compliance and cited sections.
+- **REFACTOR** — close any new rationalizations the agent invented.
+
+Test results live in `tests/<skill>/results.md`. See [tests/METHODOLOGY.md](tests/METHODOLOGY.md) for the full cycle and the [writing-skills](skills/writing-skills/SKILL.md) skill for contributors.
+
+**Iron Law:** *No skill ships without a failing test first.*
+
+---
+
 ## Contributing
 
-1. Create `skills/<name>/SKILL.md` — follow the anatomy in [docs/skill-anatomy.md](docs/skill-anatomy.md)
-2. Keep SKILL.md under 150 lines — extract templates/checklists to supporting files
-3. Add a slash command in `commands/` if it fits the pipeline
-4. Update the skills table in this README
-5. Update `using-forge-skills/SKILL.md` if the skill has a new trigger pattern
+1. Read `skills/writing-skills/SKILL.md` — it encodes the contribution flow
+2. Create `tests/<name>/scenarios.md` first (3+ pressure scenarios)
+3. Run RED — record verbatim subagent failures in `tests/<name>/results.md`
+4. Write `skills/<name>/SKILL.md` (under 150 lines, CSO-compliant description, follow [docs/skill-anatomy.md](docs/skill-anatomy.md))
+5. Run GREEN — verify the skill closes the failures
+6. REFACTOR until no new rationalizations appear
+7. Add slash command in `commands/` if it fits the pipeline
+8. Update the skills table, `using-forge-skills` discovery flowchart, `install.sh`, and CLAUDE.md
 
 ---
 
