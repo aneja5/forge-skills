@@ -331,6 +331,18 @@ explains WHY. Doc-rot prevention via dates, code permalinks, owners.
 Keep-a-Changelog format per release.
 ```
 
+### Cross-cutting
+
+**`forge-sync` → `.forge/sync-report.md`** — Check `.forge/` artifact freshness against the canonical dependency graph. Read-only diagnosis; produces the cascade order to re-sync.
+```
+/sync
+
+Scan every .forge/ artifact for forge:meta headers. Compare timestamps
+against references/forge-dependency-graph.md. Report what's stale,
+what's up to date, and the exact skill cascade order to bring
+everything back in sync.
+```
+
 ---
 
 ## 3. The Artifact Chain
@@ -586,6 +598,13 @@ Bug: form submission silently fails on Safari iOS 16. Triage and write the GitHu
 /docs — Audit our README. Subdirectory entry-point docs. CHANGELOG discipline.
 /docs — Comment policy: explain WHY. Find every comment that restates the code.
 /docs — Dead-link scan across the repo. Fix or delete.
+```
+
+### forge-sync
+```
+/sync — I updated the PRD. What's stale?
+/sync — Run a sync check before I start building.
+/sync — The architecture changed. What needs regenerating?
 ```
 
 ---

@@ -48,7 +48,8 @@ forge-skills/
 │   ├── refactoring-and-tech-debt/   # Debt registry + strangler-fig → .forge/tech-debt-registry.md
 │   ├── demo-narrative/              # Demo script + fallbacks → .forge/demo-narrative.md
 │   ├── documentation-hygiene/       # README + changelog policy → .forge/docs-policy.md
-│   └── writing-skills/              # Meta-skill for contributors (TDD for skills)
+│   ├── writing-skills/              # Meta-skill for contributors (TDD for skills)
+│   └── forge-sync/                  # Check .forge/ artifact freshness → .forge/sync-report.md
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
 │   ├── project-manager.md           # Task breakdown, dependency ordering
@@ -65,14 +66,16 @@ forge-skills/
 │   ├── contract-templates.md        # Interface contract + ADR formats
 │   ├── idea-evaluation.md           # Per-branch resolution criteria for idea-griller
 │   ├── testing-patterns.md          # Good/bad tests, mocking rules, TDD patterns
-│   └── security-checklist.md        # OWASP checklist, severity levels
-├── commands/                        # 28 slash commands for the full lifecycle
+│   ├── security-checklist.md        # OWASP checklist, severity levels
+│   └── forge-dependency-graph.md    # Canonical .forge/ dependency tree (read by forge-sync)
+├── commands/                        # 29 slash commands for the full lifecycle
 │   ├── grill.md spec.md architect.md plan.md build.md review.md ship.md
 │   ├── compete.md gtm.md secure.md scale.md validate.md redact.md
 │   ├── api.md db.md design.md interaction.md
 │   ├── parallel.md seed.md test-strategy.md
 │   ├── errors.md observe.md perf.md incident.md
-│   └── a11y.md debt.md demo.md docs.md
+│   ├── a11y.md debt.md demo.md docs.md
+│   └── sync.md
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
@@ -165,6 +168,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Polish  | refactoring-and-tech-debt    | /debt      | codebase             | .forge/tech-debt-registry.md      |
 | Polish  | demo-narrative               | /demo      | prd.md + seed-data.md | .forge/demo-narrative.md         |
 | Polish  | documentation-hygiene        | /docs      | repo                 | .forge/docs-policy.md             |
+| Sync    | forge-sync                   | /sync      | every .forge/ file   | .forge/sync-report.md             |
 
 ## Conventions
 

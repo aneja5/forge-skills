@@ -47,6 +47,7 @@ Task arrives
     ├── Deploying or launching? ───────────────────→ shipping-and-launch
     ├── Redact / prepare for external sharing? ────→ redaction-and-cleanup
     ├── Creating or editing a forge-skill? ────────→ writing-skills
+    ├── Upstream artifact changed — what's stale? ─→ forge-sync
     └── Stress-testing a design? ──────────────────→ (relentless questioning — ask one branch per turn)
 ```
 

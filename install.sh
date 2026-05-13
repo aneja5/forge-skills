@@ -12,7 +12,8 @@
 #                   testing-strategy, error-handling-and-resilience, observability,
 #                   performance-and-cost-optimization, incident-response-and-postmortems,
 #                   accessibility, refactoring-and-tech-debt, demo-narrative,
-#                   documentation-hygiene, writing-skills, using-forge-skills
+#                   documentation-hygiene, writing-skills, forge-sync,
+#                   using-forge-skills
 
 set -e
 
@@ -56,6 +57,7 @@ if [ -z "$SKILL" ]; then
   echo "  demo-narrative             — demo script + scenes + fallbacks"
   echo "  documentation-hygiene      — README, changelog, doc-rot prevention"
   echo "  writing-skills             — meta-skill: TDD for new skill contributions"
+  echo "  forge-sync                 — check .forge/ artifact freshness + cascade order"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
 fi

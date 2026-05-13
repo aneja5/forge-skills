@@ -76,6 +76,7 @@ Write demo script + dry-run plan         →  demo-narrative
 Deploy / launch / pre-launch check       →  shipping-and-launch
 Redact before sharing externally         →  redaction-and-cleanup
 Creating or editing a forge-skill        →  writing-skills
+Check if artifacts are stale             →  forge-sync
 ```
 
 ## Lifecycle Mapping
@@ -115,6 +116,7 @@ For tools that don't support slash commands, follow this internal lifecycle:
 | GIT       | git-workflow                       | Committing, branching, or preparing a PR                         |
 | SHIP      | shipping-and-launch                | All tasks done, ready to deploy                                  |
 | REDACT    | redaction-and-cleanup              | Sharing docs externally                                          |
+| SYNC      | forge-sync                         | Upstream artifact changed; check what's stale before re-building |
 | META      | writing-skills                     | Creating or editing a forge-skill                                |
 
 ## The .forge/ Artifact Chain
@@ -168,7 +170,12 @@ Phase 6 — Polish & ship
 Phase 7 — Share externally
 .forge/redaction-manifest.md    (redaction-and-cleanup)
 .forge/redacted/*               (redaction-and-cleanup)
+
+Cross-cutting — chain consistency
+.forge/sync-report.md           (forge-sync — reads every .forge/ file + references/forge-dependency-graph.md)
 ```
+
+Every artifact-producing skill prepends a `<!-- forge:meta -->` header to its output (`generated_by`, `generated_at`, `depends_on`, `content_hash`). The headers are the source of truth for `forge-sync`'s staleness check. See `references/forge-dependency-graph.md` for the canonical dependency tree.
 
 A phase must not start without its input artifact. If the artifact is missing, run the preceding phase first.
 
