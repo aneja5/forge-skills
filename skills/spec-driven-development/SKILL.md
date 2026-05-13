@@ -55,9 +55,11 @@ Check for `.forge/idea-brief.md`. If it exists, read it. Skip questions already 
 
 If no brief: ask the user for a detailed description of the problem and solutions they've considered. Let them speak fully before asking follow-up questions.
 
-### Step 2: Explore the codebase
+### Step 2: Explore the codebase (greenfield-aware)
 
-Use the Agent tool with subagent_type=Explore. Understand current architecture, patterns, and where new modules would attach. Verify the user's assertions against the actual code.
+**Conditional.** Before dispatching the Explore agent, check whether a codebase exists:
+- If the repo has source files (any `src/`, `lib/`, `app/`, language-specific entry points, or >5 source files at root), dispatch the Agent tool with `subagent_type=Explore`. Understand current architecture, patterns, and where new modules would attach. Verify the user's assertions against the actual code.
+- If the repo is **empty or near-empty** (only `README.md`, `package.json`-shaped manifest, `.gitignore`, or no source files at all), **skip the Explore step**. Note in the PRD under "Codebase context": *"Greenfield — no existing code explored."* Do not dispatch Explore against an empty tree; the agent has nothing to find and the wasted turn obscures the actual state.
 
 ### Step 3: Interview to shared understanding
 
