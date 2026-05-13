@@ -2,7 +2,7 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Structured workflows that turn a raw idea into shipped code through 7 pipeline stages, 19 skills, and 7 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
+Structured workflows that turn a raw idea into shipped, operated, and demoed code through 7 pipeline stages, 33 skills, and 11 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
 
 Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
@@ -10,7 +10,7 @@ Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this 
 
 ## Your AI Engineering Team
 
-Seven specialist agents, available via the Task tool:
+Eleven specialist agents, available via the Task tool:
 
 | Agent | Role |
 |-------|------|
@@ -21,6 +21,10 @@ Seven specialist agents, available via the Task tool:
 | **Security Auditor** | Threat modeling, OWASP prevention, hardening |
 | **Competitive Analyst** | Market research, feature matrices, positioning |
 | **Compliance Officer** | Regulatory assessment, data governance, certification |
+| **Reliability Engineer** | Errors, observability, incidents, performance — the person who gets paged |
+| **Data Engineer** | Schema, migrations, query performance, data integrity |
+| **QA Engineer** | Test strategy, quality gates — the person who breaks things before users do |
+| **Design Engineer** | Design system, interaction patterns, accessibility, visual quality |
 
 Each agent has a defined role, push-back behavior, and quality bar. See `agents/` for the full personas.
 
@@ -60,9 +64,25 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 | `/scale` | Analyze | `scalability-analysis` | `architecture.md` | `.forge/scalability.md` |
 | `/validate` | Validate | `cross-validation` | `.forge/` artifacts | `.forge/cross-validation-*.md` |
 | `/redact` | Share | `redaction-and-cleanup` | `.forge/` artifacts | `.forge/redacted/` |
+| `/api` | Design | `api-design` | `prd.md` | `.forge/api-design.md` |
+| `/db` | Design | `database-design` | `prd.md` + `architecture.md` | `.forge/database-design.md` + `migrations-policy.md` |
+| `/design` | Design | `design-system` | `prd.md` | `.forge/design-system.md` |
+| `/interaction` | Design | `interaction-patterns` | `design-system.md` | `.forge/interaction-patterns.md` |
+| `/parallel` | Plan | `parallel-execution-strategy` | `tasks.yaml` | `.forge/parallel-plan.md` |
+| `/seed` | Plan | `seed-data-and-fixtures` | `architecture.md` + `database-design.md` | `.forge/seed-data.md` |
+| `/test-strategy` | Plan | `testing-strategy` | `prd.md` | `.forge/testing-strategy.md` |
+| `/errors` | Operate | `error-handling-and-resilience` | `architecture.md` | `.forge/error-handling.md` |
+| `/observe` | Operate | `observability` | `architecture.md` | `.forge/observability.md` |
+| `/perf` | Operate | `performance-and-cost-optimization` | `architecture.md` | `.forge/performance-budget.md` |
+| `/incident` | Operate | `incident-response-and-postmortems` | live incident or service inventory | `.forge/incident-response.md` |
+| `/a11y` | Polish | `accessibility` | UI surfaces | `.forge/accessibility.md` |
+| `/debt` | Polish | `refactoring-and-tech-debt` | codebase | `.forge/tech-debt-registry.md` |
+| `/demo` | Polish | `demo-narrative` | `prd.md` + `seed-data.md` | `.forge/demo-narrative.md` |
+| `/docs` | Polish | `documentation-hygiene` | repo | `.forge/docs-policy.md` |
 | — | Verify | `debugging-and-recovery` | bug report | fix + regression test |
 | — | Ship | `git-workflow` | completed tasks | atomic commits + PR |
 | — | Triage | `triage-issue` | bug report | GitHub issue + TDD plan |
+| — | Meta | `writing-skills` | new skill spec | tested skill + scenarios + results |
 
 Add `.forge/` to `.gitignore` for local-only, or commit it to share context across the team.
 
@@ -148,6 +168,10 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | Security Auditor | `agents/security-auditor.md` | Threat modeling, OWASP review |
 | Competitive Analyst | `agents/competitive-analyst.md` | Market research, positioning |
 | Compliance Officer | `agents/compliance-officer.md` | Regulatory assessment, certification |
+| Reliability Engineer | `agents/reliability-engineer.md` | Errors, observability, incidents, performance |
+| Data Engineer | `agents/data-engineer.md` | Schema, migrations, query performance |
+| QA Engineer | `agents/qa-engineer.md` | Test strategy, quality gates |
+| Design Engineer | `agents/design-engineer.md` | Visual system, interaction, accessibility |
 
 ### Reference Checklists
 
@@ -184,6 +208,21 @@ forge-skills/
 │   ├── scalability-analysis/
 │   ├── cross-validation/
 │   ├── redaction-and-cleanup/
+│   ├── api-design/
+│   ├── database-design/
+│   ├── design-system/
+│   ├── interaction-patterns/
+│   ├── parallel-execution-strategy/
+│   ├── seed-data-and-fixtures/
+│   ├── testing-strategy/
+│   ├── error-handling-and-resilience/
+│   ├── observability/
+│   ├── performance-and-cost-optimization/
+│   ├── incident-response-and-postmortems/
+│   ├── accessibility/
+│   ├── refactoring-and-tech-debt/
+│   ├── demo-narrative/
+│   ├── documentation-hygiene/
 │   └── writing-skills/              # Meta-skill for contributors
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md
@@ -192,13 +231,17 @@ forge-skills/
 │   ├── code-reviewer.md
 │   ├── security-auditor.md
 │   ├── competitive-analyst.md
-│   └── compliance-officer.md
+│   ├── compliance-officer.md
+│   ├── reliability-engineer.md
+│   ├── data-engineer.md
+│   ├── qa-engineer.md
+│   └── design-engineer.md
 ├── references/                      # Shared checklists and templates
 │   ├── contract-templates.md
 │   ├── idea-evaluation.md
 │   ├── testing-patterns.md
 │   └── security-checklist.md
-├── commands/                        # /grill /spec /architect /plan /build /review /ship + 6 more
+├── commands/                        # 28 slash commands across the full lifecycle
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh
