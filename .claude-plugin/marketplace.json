@@ -14,7 +14,7 @@
         "source": "github",
         "repo": "aneja5/forge-skills"
       },
-      "description": "Agentic Engineering toolkit — 19 skills, 7 agent personas, 13 slash commands. From /grill to /ship. TDD-tested skills.",
+      "description": "Agentic Engineering toolkit — 33 skills, 11 agent personas, 28 slash commands. Full lifecycle from /grill to /ship to /incident to /demo. TDD-tested skills.",
       "homepage": "https://github.com/aneja5/forge-skills",
       "repository": "https://github.com/aneja5/forge-skills",
       "license": "MIT",
