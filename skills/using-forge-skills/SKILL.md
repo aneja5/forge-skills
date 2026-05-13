@@ -31,6 +31,7 @@ Task arrives
     ├── Will this scale / capacity planning? ──────→ scalability-analysis
     ├── Validate decisions / get external input? ──→ cross-validation
     ├── Redact / prepare for external sharing? ────→ redaction-and-cleanup
+    ├── Creating or editing a forge-skill? ────────→ writing-skills
     └── Stress-testing a design? ──────────────────→ (relentless questioning — ask one branch per turn)
 ```
 
