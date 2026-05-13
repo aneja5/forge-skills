@@ -44,6 +44,8 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 > **Install:** `/plugin marketplace add aneja5/forge-skills` then `/plugin install forge-skills@forge-skills`
 >
 > **New here?** Read [docs/HOW-TO-USE.md](docs/HOW-TO-USE.md) — a 10-minute walkthrough with copy-paste prompts for every skill.
+>
+> **Need patterns and a setup guide?** Read [docs/cookbook.md](docs/cookbook.md) — `Setup: Adding Forge to Your Project` plus situational patterns (greenfield, mid-project, brownfield, parallel, demo prep, incident).
 
 ---
 
