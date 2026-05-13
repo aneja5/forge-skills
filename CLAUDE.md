@@ -33,6 +33,21 @@ forge-skills/
 │   ├── scalability-analysis/        # Capacity planning → .forge/scalability.md
 │   ├── cross-validation/            # External review → .forge/cross-validation-*.md
 │   ├── redaction-and-cleanup/       # Redact for sharing → .forge/redacted/
+│   ├── api-design/                  # REST conventions, error envelopes → .forge/api-design.md
+│   ├── database-design/             # Schema + migrations → .forge/database-design.md + migrations-policy.md
+│   ├── design-system/               # Tokens + components → .forge/design-system.md
+│   ├── interaction-patterns/        # Modal/sheet/expand decisions → .forge/interaction-patterns.md
+│   ├── parallel-execution-strategy/ # Multi-agent dispatch → .forge/parallel-plan.md
+│   ├── seed-data-and-fixtures/      # Realistic data → .forge/seed-data.md
+│   ├── testing-strategy/            # Test pyramid + coverage → .forge/testing-strategy.md
+│   ├── error-handling-and-resilience/ # Retries + circuit breakers → .forge/error-handling.md
+│   ├── observability/               # Logs + traces + alerts → .forge/observability.md
+│   ├── performance-and-cost-optimization/ # Latency + cost budgets → .forge/performance-budget.md
+│   ├── incident-response-and-postmortems/ # Severity + runbooks → .forge/incident-response.md
+│   ├── accessibility/               # WCAG AA baseline → .forge/accessibility.md
+│   ├── refactoring-and-tech-debt/   # Debt registry + strangler-fig → .forge/tech-debt-registry.md
+│   ├── demo-narrative/              # Demo script + fallbacks → .forge/demo-narrative.md
+│   ├── documentation-hygiene/       # README + changelog policy → .forge/docs-policy.md
 │   └── writing-skills/              # Meta-skill for contributors (TDD for skills)
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
@@ -41,26 +56,23 @@ forge-skills/
 │   ├── code-reviewer.md             # PR review, contract validation
 │   ├── security-auditor.md          # Threat modeling, hardening
 │   ├── competitive-analyst.md       # Market research, positioning
-│   └── compliance-officer.md        # Regulatory assessment, certification
+│   ├── compliance-officer.md        # Regulatory assessment, certification
+│   ├── reliability-engineer.md      # Errors, observability, incidents, performance
+│   ├── data-engineer.md             # Schema, migrations, query performance
+│   ├── qa-engineer.md               # Test strategy, quality gates
+│   └── design-engineer.md           # Visual system, interaction, accessibility
 ├── references/                      # Shared checklists linked from skills
 │   ├── contract-templates.md        # Interface contract + ADR formats
 │   ├── idea-evaluation.md           # Per-branch resolution criteria for idea-griller
 │   ├── testing-patterns.md          # Good/bad tests, mocking rules, TDD patterns
 │   └── security-checklist.md        # OWASP checklist, severity levels
-├── commands/                        # Slash commands for the full lifecycle
-│   ├── grill.md                     # /grill → idea-griller
-│   ├── spec.md                      # /spec → spec-driven-development
-│   ├── architect.md                 # /architect → architecture-and-contracts
-│   ├── plan.md                      # /plan → planning-and-task-breakdown
-│   ├── build.md                     # /build → incremental-implementation + tdd
-│   ├── review.md                    # /review → code-review-and-quality
-│   ├── ship.md                      # /ship → shipping-and-launch
-│   ├── compete.md                   # /compete → competitive-analysis
-│   ├── gtm.md                      # /gtm → gtm-strategy
-│   ├── secure.md                    # /secure → security-and-compliance
-│   ├── scale.md                     # /scale → scalability-analysis
-│   ├── validate.md                  # /validate → cross-validation
-│   └── redact.md                    # /redact → redaction-and-cleanup
+├── commands/                        # 28 slash commands for the full lifecycle
+│   ├── grill.md spec.md architect.md plan.md build.md review.md ship.md
+│   ├── compete.md gtm.md secure.md scale.md validate.md redact.md
+│   ├── api.md db.md design.md interaction.md
+│   ├── parallel.md seed.md test-strategy.md
+│   ├── errors.md observe.md perf.md incident.md
+│   └── a11y.md debt.md demo.md docs.md
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
@@ -96,6 +108,22 @@ Skills produce and consume artifacts in `.forge/`:
 .forge/cross-validation-synthesis.md ← cross-validation (reads reviewer responses)
 .forge/redaction-manifest.md         ← redaction-and-cleanup
 .forge/redacted/       ← redaction-and-cleanup (copies, never modifies originals)
+.forge/api-design.md           ← api-design
+.forge/database-design.md      ← database-design
+.forge/migrations-policy.md    ← database-design
+.forge/design-system.md        ← design-system
+.forge/interaction-patterns.md ← interaction-patterns
+.forge/parallel-plan.md        ← parallel-execution-strategy (reads tasks.yaml)
+.forge/seed-data.md            ← seed-data-and-fixtures
+.forge/testing-strategy.md     ← testing-strategy
+.forge/error-handling.md       ← error-handling-and-resilience
+.forge/observability.md        ← observability
+.forge/performance-budget.md   ← performance-and-cost-optimization
+.forge/incident-response.md    ← incident-response-and-postmortems
+.forge/accessibility.md        ← accessibility
+.forge/tech-debt-registry.md   ← refactoring-and-tech-debt
+.forge/demo-narrative.md       ← demo-narrative
+.forge/docs-policy.md          ← documentation-hygiene
 ```
 
 Never skip ahead without the previous artifact. You can join mid-pipeline if you have the artifact.
@@ -122,6 +150,21 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Analyze | scalability-analysis         | /scale     | architecture.md      | .forge/scalability.md             |
 | Validate| cross-validation             | /validate  | .forge/ artifacts    | cross-validation-*.md             |
 | Share   | redaction-and-cleanup        | /redact    | .forge/ artifacts    | .forge/redacted/                  |
+| Design  | api-design                   | /api       | prd.md               | .forge/api-design.md              |
+| Design  | database-design              | /db        | prd.md + architecture.md | .forge/database-design.md + migrations-policy.md |
+| Design  | design-system                | /design    | prd.md               | .forge/design-system.md           |
+| Design  | interaction-patterns         | /interaction | design-system.md   | .forge/interaction-patterns.md    |
+| Plan    | parallel-execution-strategy  | /parallel  | tasks.yaml           | .forge/parallel-plan.md           |
+| Plan    | seed-data-and-fixtures       | /seed      | architecture.md + database-design.md | .forge/seed-data.md     |
+| Plan    | testing-strategy             | /test-strategy | prd.md           | .forge/testing-strategy.md        |
+| Operate | error-handling-and-resilience | /errors   | architecture.md      | .forge/error-handling.md          |
+| Operate | observability                | /observe   | architecture.md      | .forge/observability.md           |
+| Operate | performance-and-cost-optimization | /perf | architecture.md      | .forge/performance-budget.md      |
+| Operate | incident-response-and-postmortems | /incident | live incident or service list | .forge/incident-response.md |
+| Polish  | accessibility                | /a11y      | UI surfaces          | .forge/accessibility.md           |
+| Polish  | refactoring-and-tech-debt    | /debt      | codebase             | .forge/tech-debt-registry.md      |
+| Polish  | demo-narrative               | /demo      | prd.md + seed-data.md | .forge/demo-narrative.md         |
+| Polish  | documentation-hygiene        | /docs      | repo                 | .forge/docs-policy.md             |
 
 ## Conventions
 
