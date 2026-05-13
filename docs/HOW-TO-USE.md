@@ -187,35 +187,202 @@ Run the six-domain pre-launch gate. Output go/no-go + rollback
 plan.
 ```
 
+### Design-phase additions (v3.0)
+
+After `architecture-and-contracts`, four design-layer skills deepen specific surfaces.
+
+**`api-design` → `.forge/api-design.md`** — REST conventions, error envelopes, versioning, pagination, idempotency.
+```
+/api
+
+Define the error envelope schema, versioning policy, pagination
+shape, and idempotency rules for every public endpoint.
+```
+
+**`database-design` → `.forge/database-design.md` + `.forge/migrations-policy.md`** — schema conventions, FK rules, migration safety, query review.
+```
+/db
+
+Set naming conventions, audit columns, migration guardrails
+(reversibility, idempotency, locking-aware), and the query-review
+checklist. Identify partition candidates.
+```
+
+**`design-system` → `.forge/design-system.md`** — semantic token layer, primitive components with all 6 states, dark-mode parity.
+```
+/design
+
+Establish brand foundation, two-layer tokens (reference + semantic),
+spacing/radius/motion scales, primitive components (Button / Input /
+Card) with default/hover/active/focus-visible/disabled/loading/error.
+```
+
+**`interaction-patterns` → `.forge/interaction-patterns.md`** — modal-vs-sheet, expand-vs-navigate, optimistic UI, undo vs confirm.
+```
+/interaction
+
+Decide the canonical pattern per interaction primitive. Mobile modals
+are bottom sheets. Destructive actions get undo or confirm — never
+neither. 44pt tap target minimum.
+```
+
+### Plan-phase additions
+
+**`parallel-execution-strategy` → `.forge/parallel-plan.md`** — file-conflict matrix, worktree isolation, merge order, integration-test cadence.
+```
+/parallel
+
+Read .forge/tasks.yaml. Identify dependency-free groups, build
+file-conflict matrix, assign one branch + one worktree per task,
+fix the merge order before dispatch.
+```
+
+**`seed-data-and-fixtures` → `.forge/seed-data.md`** — realistic data for dev, tests, and demos. Idempotent factories with overrides.
+```
+/seed
+
+Inventory entities needing seed. Define realistic distributions
+(names across cultures, timestamps with curves, weighted statuses).
+Write idempotent factories keyed by stable IDs. Edge cases included.
+```
+
+**`testing-strategy` → `.forge/testing-strategy.md`** — test pyramid, mocking boundaries, coverage targets, flake policy, CI gates.
+```
+/test-strategy
+
+Identify critical user paths. Set test level per path
+(unit/integration/e2e). Mock at seams, never internals. Per-component
+coverage targets. Flake quarantine policy.
+```
+
+### Operate, observe, respond
+
+**`error-handling-and-resilience` → `.forge/error-handling.md`** — failure classification, retries with backoff, circuit breakers, user-facing messages.
+```
+/errors
+
+Classify every failure mode as transient / permanent /
+user-correctable. Add timeouts, max-attempts, deadlines, idempotency
+keys. Document compensation for irreversible flows.
+```
+
+**`observability` → `.forge/observability.md`** — correlation IDs, golden signals, SLOs, alert thresholds, runbook links, log redaction.
+```
+/observe
+
+Define trace ID propagation. List golden signals (RED) per service.
+SLOs with page-worthy vs ticket-worthy thresholds. Every alert links
+a runbook. PII redaction documented.
+```
+
+**`performance-and-cost-optimization` → `.forge/performance-budget.md`** — latency budgets, LLM cost budgets, cache strategy, bundle limits.
+```
+/perf
+
+Set latency budgets per request type. LLM cost budget per call type
+with max_tokens. Cache key schema + TTLs + invalidation events.
+Frontend bundle <200KB initial JS.
+```
+
+**`incident-response-and-postmortems` → `.forge/incident-response.md`** — severity definitions, response flow, runbook template, blameless postmortems.
+```
+/incident
+
+Define Sev1-4 with response SLAs. Declare → mitigate → communicate
+→ resolve → review flow. Runbook per critical service. Blameless
+postmortem template.
+```
+
+### Polish, ship, share
+
+**`accessibility` → `.forge/accessibility.md`** — WCAG AA baseline, semantic HTML, ARIA discipline, keyboard nav, contrast, reduced-motion.
+```
+/a11y
+
+Audit semantic HTML usage. Review ARIA (sparingly). Verify keyboard
+nav, focus return on overlay close, 4.5:1 contrast on body, prefers-
+reduced-motion respected.
+```
+
+**`refactoring-and-tech-debt` → `.forge/tech-debt-registry.md`** — debt registry with triggers, strangler-fig for rewrites, refactor-only PRs.
+```
+/debt
+
+Walk the codebase. Inventory debt with location, cost-to-fix,
+cost-of-not-fixing, owner, trigger (third-occurrence, adjacent-work,
+budget-breach). Assign pattern per item.
+```
+
+**`demo-narrative` → `.forge/demo-narrative.md`** — scripted scenes, wow moments, fallbacks, dry-run checklist.
+```
+/demo
+
+Audience + goal + one key insight. 5-7 scenes (setup → tension →
+wow → resolution). Named seed function and fallback GIF per scene.
+Dry-run within 24h.
+```
+
+**`documentation-hygiene` → `.forge/docs-policy.md`** — README standards, in-code comment policy (WHY not WHAT), changelog discipline.
+```
+/docs
+
+Define README standard for repo and subdirectories. Comment policy
+explains WHY. Doc-rot prevention via dates, code permalinks, owners.
+Keep-a-Changelog format per release.
+```
+
 ---
 
 ## 3. The Artifact Chain
 
 ```
-idea-brief.md
+idea-brief.md (idea-griller)
      ↓
-   prd.md ──────────────┬─────────────┬──────────────┐
-     ↓                  ↓             ↓              ↓
-architecture.md    competitive.md   gtm.md     (skipped: rebuild later)
-+ contracts/            ↓             
-+ adr/             gtm.md (also reads competitive.md)
+   prd.md (spec-driven-development)
      ↓
-  ┌──┴──┬──────────┬──────────┐
-  ↓     ↓          ↓          ↓
-tasks  security  scalability  cross-validation
-.yaml  .md       .md          -prompt.md
-  ↓
-code + commits
-  ↓
-review → ship
+── DESIGN FAN-OUT ─────────────────────────────────────────────
+architecture.md + contracts/ + adr/    (architecture-and-contracts)
+api-design.md                          (api-design)
+database-design.md + migrations-policy (database-design)
+design-system.md                       (design-system)
+interaction-patterns.md                (interaction-patterns)
+     ↓
+── VALIDATE BEFORE BUILDING ───────────────────────────────────
+competitive.md  scalability.md  security.md  gtm.md
+cross-validation-prompt.md → cross-validation-synthesis.md
+     ↓
+── PLAN ───────────────────────────────────────────────────────
+tasks.yaml + tasks-summary.md  (planning-and-task-breakdown)
+parallel-plan.md               (parallel-execution-strategy)
+seed-data.md                   (seed-data-and-fixtures)
+testing-strategy.md            (testing-strategy)
+     ↓
+── BUILD & OPERATE ────────────────────────────────────────────
+code + commits         (incremental-implementation + tdd)
+error-handling.md      (error-handling-and-resilience)
+observability.md       (observability)
+performance-budget.md  (performance-and-cost-optimization)
+incident-response.md   (incident-response-and-postmortems)
+     ↓
+── POLISH & SHIP ──────────────────────────────────────────────
+accessibility.md       (accessibility)
+tech-debt-registry.md  (refactoring-and-tech-debt)
+demo-narrative.md      (demo-narrative)
+docs-policy.md         (documentation-hygiene)
+     ↓
+review → ship → (optional) redaction-manifest.md + redacted/
 ```
 
 **What happens if you skip a step:**
 
 - Skip `idea-griller` → spec-driven-development asks the questions itself (slower, less focused).
 - Skip `architecture-and-contracts` → tasks.yaml has unclear module boundaries; parallel work will conflict.
+- Skip `design-system` → 50 components with 50 different spacing values when you go to add the 51st.
+- Skip `error-handling-and-resilience` / `observability` → first 3am page has no runbook and no dashboard to look at.
+- Skip `parallel-execution-strategy` → 5 agents merge into the same file and produce conflicts that take longer to resolve than the work took to produce.
 - Skip `planning-and-task-breakdown` → incremental-implementation has no plan, agent improvises.
 - Skip `cross-validation` → no external pressure-test; you find out about gaps in production.
+- Skip `accessibility` / `documentation-hygiene` → retrofitting costs 5-10x.
 
 **Restart from the middle:**
 
@@ -314,6 +481,111 @@ Production is throwing a NullPointerException in OrderService::finalize. Triage.
 ### triage-issue
 ```
 Bug: form submission silently fails on Safari iOS 16. Triage and write the GitHub issue + TDD plan.
+```
+
+### api-design
+```
+/api — Define error envelope, versioning, pagination shape, idempotency for /v1/orders, /v1/payments.
+/api — Audit our existing endpoints. Every 200-with-error gets flagged.
+/api — Public-vs-internal boundary review. Tag every endpoint.
+```
+
+### database-design
+```
+/db — Set conventions for a new Postgres schema. FK rules, audit columns, soft-delete policy.
+/db — Audit migrations from the last quarter. Flag ALTER TABLE without locking review.
+/db — EXPLAIN every hot-path query. Identify partition candidates over 100M rows.
+```
+
+### design-system
+```
+/design — Build a token system for a B2B SaaS dashboard. Tailwind + TypeScript. WCAG AA.
+/design — Audit our component library — find every raw hex and every missing state.
+/design — Add dark mode parity. Semantic layer remapping, not a rewrite.
+```
+
+### interaction-patterns
+```
+/interaction — Decide: modal vs bottom sheet on mobile. Optimistic vs pessimistic UI for edits.
+/interaction — Audit our destructive actions. Every one needs undo or confirm.
+/interaction — Map the keyboard contract — Esc, Tab order, focus return on overlay close.
+```
+
+### seed-data-and-fixtures
+```
+/seed — Build seed scenarios for our demo narrative — 5 scenes, idempotent, realistic.
+/seed — Replace lorem ipsum across the dev environment with culturally-varied real-feeling data.
+/seed — Add edge cases — long names, all-caps, missing optional fields, overflow counts.
+```
+
+### testing-strategy
+```
+/test-strategy — Define the pyramid for our app. Critical paths get e2e. Mock at HTTP, not at modules.
+/test-strategy — Audit our test suite for internal mocks. List violations.
+/test-strategy — Flake rate is 4%. Triage the top 10 offenders and write the quarantine policy.
+```
+
+### parallel-execution-strategy
+```
+/parallel — Read tasks.yaml. Build file-conflict matrix and dispatch plan for 5 parallel agents.
+/parallel — Tasks T-002 and T-004 both touch auth/middleware.ts. Resolve before dispatch.
+/parallel — Set worktree assignments, branch names, merge order, integration-test cadence.
+```
+
+### error-handling-and-resilience
+```
+/errors — Service makes 3 external API calls. Classify failures, add timeouts, retries, circuit breakers.
+/errors — Inventory failure modes for the payment flow. Define compensation actions.
+/errors — Build the user-facing error message catalog. Stable codes, non-technical text.
+```
+
+### observability
+```
+/observe — Define golden signals for the API gateway. SLOs, alerts, runbook links.
+/observe — Add trace ID propagation through every service. Audit log redaction for PII.
+/observe — Audit our alerts. Flag every alert that fires >10x/day without ack — fatigue.
+```
+
+### performance-and-cost-optimization
+```
+/perf — Set latency budgets per endpoint. Profile the top 3 by traffic. Identify cache candidates.
+/perf — Our LLM bill 4x'd last month. Set per-call cost budget, model selection rationale, token caps.
+/perf — Frontend bundle is 480KB initial. Split per route, lazy-load editors and charts.
+```
+
+### incident-response-and-postmortems
+```
+/incident — Production is down. Declare Sev1. Mitigate first, root-cause later. Run the comms cadence.
+/incident — Write the postmortem for yesterday's outage. Blameless. Action items with owners.
+/incident — Define severity levels and on-call procedures. Write the runbook for auth service.
+```
+
+### refactoring-and-tech-debt
+```
+/debt — Walk the codebase for tech debt. Inventory with triggers, owners, costs.
+/debt — Plan a strangler-fig migration off the legacy auth module. Don't big-bang it.
+/debt — This workaround is in 3 places. Extract it. Refactor-only PR — no behavior change.
+```
+
+### accessibility
+```
+/a11y — Audit our app for WCAG AA. Semantic HTML, ARIA, keyboard, contrast, reduced-motion.
+/a11y — Find every div with onClick. Replace with button or document why not.
+/a11y — Run the screen reader checklist on the checkout flow. VoiceOver iOS first.
+```
+
+### demo-narrative
+```
+/demo — Series-A pitch in 3 days. 30 min slot, 18 min demo. Script the scenes.
+/demo — Audience: VP of Engineering at a 500-person SaaS. Goal: pilot agreement. One key insight.
+/demo — Add fallback GIFs for every wow moment. Dry-run tomorrow.
+```
+
+### documentation-hygiene
+```
+/docs — Audit our README. Subdirectory entry-point docs. CHANGELOG discipline.
+/docs — Comment policy: explain WHY. Find every comment that restates the code.
+/docs — Dead-link scan across the repo. Fix or delete.
 ```
 
 ---
