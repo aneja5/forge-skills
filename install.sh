@@ -6,8 +6,13 @@
 #                   debugging-and-recovery, code-review-and-quality, git-workflow,
 #                   shipping-and-launch, triage-issue, competitive-analysis,
 #                   gtm-strategy, security-and-compliance, scalability-analysis,
-#                   cross-validation, redaction-and-cleanup, writing-skills,
-#                   using-forge-skills
+#                   cross-validation, redaction-and-cleanup, api-design,
+#                   database-design, design-system, interaction-patterns,
+#                   parallel-execution-strategy, seed-data-and-fixtures,
+#                   testing-strategy, error-handling-and-resilience, observability,
+#                   performance-and-cost-optimization, incident-response-and-postmortems,
+#                   accessibility, refactoring-and-tech-debt, demo-narrative,
+#                   documentation-hygiene, writing-skills, using-forge-skills
 
 set -e
 
@@ -35,6 +40,21 @@ if [ -z "$SKILL" ]; then
   echo "  scalability-analysis       — capacity math + cost projections"
   echo "  cross-validation           — external reviewer prompt + synthesis"
   echo "  redaction-and-cleanup      — redact .forge/ for external sharing"
+  echo "  api-design                 — REST conventions, error envelopes, versioning"
+  echo "  database-design            — schema + migrations + query review"
+  echo "  design-system              — semantic tokens + component library"
+  echo "  interaction-patterns       — modal vs sheet, expand vs nav, tap targets"
+  echo "  parallel-execution-strategy — multi-agent dispatch from tasks.yaml"
+  echo "  seed-data-and-fixtures     — realistic demo + test data"
+  echo "  testing-strategy           — test pyramid + coverage targets + flake policy"
+  echo "  error-handling-and-resilience — retries, timeouts, circuit breakers"
+  echo "  observability              — logs + traces + metrics + alerts"
+  echo "  performance-and-cost-optimization — latency + LLM cost budgets"
+  echo "  incident-response-and-postmortems — severity, runbooks, postmortems"
+  echo "  accessibility              — WCAG AA baseline + keyboard + screen reader"
+  echo "  refactoring-and-tech-debt  — debt registry + strangler-fig rewrites"
+  echo "  demo-narrative             — demo script + scenes + fallbacks"
+  echo "  documentation-hygiene      — README, changelog, doc-rot prevention"
   echo "  writing-skills             — meta-skill: TDD for new skill contributions"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
