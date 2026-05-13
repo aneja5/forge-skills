@@ -122,6 +122,10 @@ Within 24h of the demo:
 - [ ] Demo fits in time budget with 20% buffer
 - [ ] Demo-runner can articulate the one key insight without notes
 
+### Step 8: Header
+
+Prepend a `forge:meta` header to `.forge/demo-narrative.md` (`generated_by: demo-narrative`, `depends_on: [.forge/seed-data.md]` if `.forge/seed-data.md` exists else `[]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/demo-narrative.md` written

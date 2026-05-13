@@ -103,7 +103,7 @@ Prioritize by likelihood × impact. Top 5 threats get specific mitigations.
 
 ## Output
 
-Write `.forge/security.md` with all sections above.
+Write `.forge/security.md` with all sections above. Prepend a `forge:meta` header (`generated_by: security-and-compliance`, `depends_on: [.forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "Security assessment written to `.forge/security.md`."
 

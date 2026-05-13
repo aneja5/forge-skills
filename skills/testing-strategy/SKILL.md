@@ -100,6 +100,10 @@ In `.forge/testing-strategy.md`:
 - What's allowed to block merge (failing tests, coverage drop on critical modules)
 - What's monitoring-only (flake rate, suite duration trend)
 
+### Step 8: Header
+
+Prepend a `forge:meta` header to `.forge/testing-strategy.md` (`generated_by: testing-strategy`, `depends_on: [.forge/prd.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/testing-strategy.md` written with per-component coverage targets and rationale

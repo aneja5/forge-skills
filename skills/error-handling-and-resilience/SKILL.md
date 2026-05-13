@@ -92,6 +92,10 @@ For any operation that crosses a boundary (payment, email send, external write, 
 - Define the compensation action if a downstream step fails
 - Document the reconciliation job
 
+### Step 7: Header
+
+Prepend a `forge:meta` header to `.forge/error-handling.md` (`generated_by: error-handling-and-resilience`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/error-handling.md` written

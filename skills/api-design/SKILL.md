@@ -104,6 +104,10 @@ Choose one mechanism (URI `/v1/`, header `Accept: application/vnd.api+json;versi
 
 In `.forge/api-design.md`: list every endpoint as `public` (versioned, deprecation-aware, hardened) or `internal` (faster iteration, still auth-gated, never reachable from internet). Internal endpoints get their own subdomain or VPC routing. Mixing the two on the same hostname guarantees future leaks.
 
+### Step 7: Header
+
+Prepend a `forge:meta` header (`generated_by: api-design`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/api-design.md` written

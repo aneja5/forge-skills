@@ -80,7 +80,7 @@ Tell reviewers exactly how to structure their response: numbered answers matchin
 
 ### Step 5: Write the prompt
 
-Write `.forge/cross-validation-prompt.md` with: context, questions, and response format.
+Write `.forge/cross-validation-prompt.md` with: context, questions, and response format. Prepend a `forge:meta` header (`generated_by: cross-validation`, `depends_on: [.forge/prd.md, .forge/architecture.md]` plus any other artifacts embedded in the prompt, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 **Pause**: "Prompt written to `.forge/cross-validation-prompt.md`. Send this to your reviewers. When you have responses, run `/validate` again with the responses to generate the synthesis."
 
@@ -103,7 +103,7 @@ From disagreements and suggestions, produce:
 
 ### Step 8: Write synthesis
 
-Write `.forge/cross-validation-synthesis.md` with: consensus summary per question, actionable changes list, and a "best ideas we hadn't considered" section.
+Write `.forge/cross-validation-synthesis.md` with: consensus summary per question, actionable changes list, and a "best ideas we hadn't considered" section. Prepend a `forge:meta` header (`generated_by: cross-validation`, `depends_on: [.forge/cross-validation-prompt.md]` + reviewer responses, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`).
 
 ## Verification
 

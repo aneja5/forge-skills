@@ -78,7 +78,15 @@ Iterate until approved.
 
 ### Step 6: Write .forge/tasks.yaml
 
+Prepend a `forge:meta` header (`generated_by: planning-and-task-breakdown`, `depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`) — comment-style for YAML (`# forge:meta ...`). Same header on `.forge/tasks-summary.md`. See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ```yaml
+# forge:meta
+#   generated_by: planning-and-task-breakdown
+#   generated_at: 2026-05-13T12:00:00Z
+#   depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]
+#   content_hash: <first 8 chars of sha256>
+
 tasks:
   - id: T001
     title: "User can submit registration form"

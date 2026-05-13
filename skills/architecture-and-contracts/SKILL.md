@@ -86,7 +86,7 @@ Include a cost model section in the architecture:
 
 ### Step 7: Write architecture.md
 
-Write `.forge/architecture.md` with system overview, component diagram, tech stack table, cost model section, and a table of all contracts with their module names and file paths.
+Write `.forge/architecture.md` with system overview, component diagram, tech stack table, cost model section, and a table of all contracts with their module names and file paths. Prepend a `forge:meta` header (`generated_by: architecture-and-contracts`, `depends_on: [.forge/prd.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). Same header convention on every file under `.forge/contracts/` and `.forge/adr/`. See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 ### Step 8: Expansion documents (optional)
 

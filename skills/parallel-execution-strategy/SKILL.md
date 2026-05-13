@@ -136,6 +136,8 @@ Sections:
 - Integration test cadence
 - Fallback for conflicts that emerge mid-run
 
+Prepend a `forge:meta` header (`generated_by: parallel-execution-strategy`, `depends_on: [.forge/tasks.yaml]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/parallel-plan.md` written

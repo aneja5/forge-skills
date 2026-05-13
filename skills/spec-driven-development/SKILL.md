@@ -69,11 +69,18 @@ Identify major modules to build or modify. Prefer deep modules — small interfa
 
 ### Step 5: Write .forge/prd.md
 
-Create `.forge/` if it doesn't exist. Write using the template below.
+Create `.forge/` if it doesn't exist. Prepend a `forge:meta` dependency header (`generated_by: spec-driven-development`, `depends_on: [.forge/idea-brief.md]` if it exists else `[]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8 chars>`) — see [forge-dependency-graph](../../references/forge-dependency-graph.md). Then write using the template below.
 
 ## PRD Template
 
 ```markdown
+<!-- forge:meta
+generated_by: spec-driven-development
+generated_at: 2026-05-13T12:00:00Z
+depends_on: [.forge/idea-brief.md]
+content_hash: <first 8 chars of sha256>
+-->
+
 # PRD: [Feature Name]
 
 ## Problem Statement

@@ -93,6 +93,10 @@ For multi-tenant systems:
 - Application-side defense (every query filters by `tenant_id`) + DB-side defense (RLS) — both, not either-or
 - The contract from `architecture-and-contracts` MUST specify which tables are tenant-scoped
 
+### Step 7: Headers
+
+Prepend a `forge:meta` header on both `.forge/database-design.md` and `.forge/migrations-policy.md` (`generated_by: database-design`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/database-design.md` written with naming conventions, soft-delete policy, partition strategy

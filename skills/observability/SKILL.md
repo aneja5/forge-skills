@@ -108,6 +108,10 @@ Plus one "user journey" dashboard per critical path from `.forge/testing-strateg
 - Audit log retention: per compliance (1+ years)
 - PII redaction rules: list every field that must be hashed, redacted, or excluded entirely (cross-reference `security-and-compliance` skill's PII inventory)
 
+### Step 8: Header
+
+Prepend a `forge:meta` header to `.forge/observability.md` (`generated_by: observability`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+
 ## Verification
 
 - [ ] `.forge/observability.md` written

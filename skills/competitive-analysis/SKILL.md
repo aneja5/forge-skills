@@ -89,7 +89,7 @@ Answer: what do we have that competitors can't easily copy? Data? Network effect
 
 ## Output
 
-Write `.forge/competitive.md` with all sections above.
+Write `.forge/competitive.md` with all sections above. Prepend a `forge:meta` header (`generated_by: competitive-analysis`, `depends_on: [.forge/prd.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "Competitive analysis written to `.forge/competitive.md`. Run `/gtm` to build the go-to-market strategy."
 
