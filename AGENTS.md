@@ -101,6 +101,7 @@ For tools that don't support slash commands, follow this internal lifecycle:
 | FORK      | parallel-execution-strategy        | 3+ independent tasks ready in `tasks.yaml`                       |
 | FILL      | seed-data-and-fixtures             | Demoing, testing, or seeding dev environment                     |
 | BUILD     | incremental-implementation         | `.forge/tasks.yaml` exists                                       |
+| TDD       | tdd                                | Implementing a feature test-first within BUILD                   |
 | VERIFY    | testing-strategy                   | Defining test approach for a new project or after a flake spike  |
 | OPERATE   | error-handling-and-resilience      | Service is real, must not fail silently                          |
 | OBSERVE   | observability                      | Service deployed; "how will I know" needs an answer              |

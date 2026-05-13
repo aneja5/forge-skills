@@ -166,6 +166,21 @@ Five-axis review of the diff: correctness, contracts, tests,
 security, simplicity. Block merge if any axis fails.
 ```
 
+### "Commit and prepare the PR"
+**→** `git-workflow`
+
+No `.forge/` artifact — this one shapes git history directly. Atomic
+commits per logical change, conventional commit prefixes
+(`feat:` / `fix:` / `refactor:` / `docs:` / `test:` / `chore:`),
+no-behavior-change refactors land before behavior changes that depend
+on them, and commit messages explain the WHY, not just the WHAT.
+
+```
+Commit these changes. 3 distinct logical units across 8 files —
+split them: refactor first, then CSRF feature with its docs, then
+the avatar feature. Conventional commit messages explaining why.
+```
+
 ### "Ready to share externally"
 **→** `redaction-and-cleanup` **→** `.forge/redacted/`
 
@@ -605,6 +620,35 @@ Bug: form submission silently fails on Safari iOS 16. Triage and write the GitHu
 /sync — I updated the PRD. What's stale?
 /sync — Run a sync check before I start building.
 /sync — The architecture changed. What needs regenerating?
+```
+
+### git-workflow
+```
+Commit these 8 modified files. Split into atomic commits by logical change.
+Refactor before feature in the commit order.
+Conventional commit messages — explain the WHY, not just the file list.
+```
+
+### For contributors
+
+These skills don't fit the user-facing pipeline — they're for people working on forge-skills itself.
+
+#### writing-skills
+```
+Write a new skill for code formatting. Use TDD-for-skills:
+RED scenario first, observe baseline, write the skill,
+GREEN run, refactor.
+I'll only commit after we have the test results.
+```
+```
+Audit the rationalizations table in skills/observability — are these
+the verbatim quotes we observed in RED, or invented at our desk?
+```
+```
+Review this draft SKILL.md against the writing-skills anatomy.
+Does it have all 7 sections? Is the description CSO-compliant
+(triggers only, no workflow summary)? Are the Red Flags
+agent-level behaviors or project-level conditions?
 ```
 
 ---
