@@ -13,7 +13,7 @@
 #                   performance-and-cost-optimization, incident-response-and-postmortems,
 #                   accessibility, refactoring-and-tech-debt, demo-narrative,
 #                   documentation-hygiene, writing-skills, forge-sync,
-#                   using-forge-skills
+#                   forge-migrate, using-forge-skills
 
 set -e
 
@@ -58,6 +58,7 @@ if [ -z "$SKILL" ]; then
   echo "  documentation-hygiene      — README, changelog, doc-rot prevention"
   echo "  writing-skills             — meta-skill: TDD for new skill contributions"
   echo "  forge-sync                 — check .forge/ artifact freshness + cascade order"
+  echo "  forge-migrate              — backfill forge:meta headers on legacy .forge/ files"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
 fi
@@ -66,18 +67,59 @@ DEST=".claude/skills/$SKILL"
 mkdir -p "$DEST"
 
 echo "Installing $SKILL..."
-curl -sL "$BASE_URL/skills/$SKILL/SKILL.md" -o "$DEST/SKILL.md"
+curl -fsSL "$BASE_URL/skills/$SKILL/SKILL.md" -o "$DEST/SKILL.md"
 
 # Install supporting files for skills that have them
 case "$SKILL" in
   idea-griller)
-    curl -sL "$BASE_URL/skills/$SKILL/evaluation-criteria.md" -o "$DEST/evaluation-criteria.md"
+    curl -fsSL "$BASE_URL/skills/$SKILL/evaluation-criteria.md" -o "$DEST/evaluation-criteria.md"
     ;;
   tdd)
     for f in deep-modules.md interface-design.md mocking.md refactoring.md tests.md; do
-      curl -sL "$BASE_URL/skills/$SKILL/$f" -o "$DEST/$f"
+      curl -fsSL "$BASE_URL/skills/$SKILL/$f" -o "$DEST/$f"
     done
     ;;
 esac
 
-echo "✓ Installed $SKILL to $DEST"
+# Post-install verification (issue #33)
+# Catch silent-failure modes where curl returned empty/error pages but the file was still written.
+verify_install() {
+  local target="$DEST/SKILL.md"
+
+  if [ ! -f "$target" ]; then
+    echo "✗ Install failed: $target not written"
+    return 1
+  fi
+
+  if [ ! -s "$target" ]; then
+    echo "✗ Install failed: $target is empty (network error or 404?)"
+    rm -f "$target"
+    return 1
+  fi
+
+  if ! head -1 "$target" | grep -q '^---$'; then
+    echo "✗ Install failed: $target does not start with YAML frontmatter (got an error page instead?)"
+    head -3 "$target"
+    rm -f "$target"
+    return 1
+  fi
+
+  if ! grep -q "^name: " "$target"; then
+    echo "✗ Install failed: $target missing 'name:' field in frontmatter"
+    rm -f "$target"
+    return 1
+  fi
+
+  return 0
+}
+
+if verify_install; then
+  echo "✓ Installed $SKILL to $DEST"
+else
+  echo ""
+  echo "Troubleshooting:"
+  echo "  • Check network: curl -I $BASE_URL/skills/$SKILL/SKILL.md"
+  echo "  • Verify skill name spelling against the list above"
+  echo "  • Re-run this script after fixing"
+  exit 1
+fi

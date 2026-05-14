@@ -136,7 +136,15 @@ Sections:
 - Integration test cadence
 - Fallback for conflicts that emerge mid-run
 
-Prepend a `forge:meta` header (`generated_by: parallel-execution-strategy`, `depends_on: [.forge/tasks.yaml]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Prepend a `forge:meta` header (`generated_by: parallel-execution-strategy`, `generated_at: <ISO 8601 UTC with Z suffix>`, `content_hash: <sha256 first 8 over body, excluding the forge:meta block>`).
+
+**Transitive depends_on:** `parallel-plan.md` builds on `tasks.yaml`, which itself depends on `prd.md`, `architecture.md`, and `contracts/*`. List the full transitive upstream set:
+
+```
+depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*, .forge/tasks.yaml]
+```
+
+Listing only `[.forge/tasks.yaml]` is wrong — if `prd.md` changes but `tasks.yaml` hasn't been re-run yet, `parallel-plan.md` would appear UP_TO_DATE despite the chain being stale. See [forge-dependency-graph: co-output rule](../../references/forge-dependency-graph.md#co-output-rule).
 
 ## Verification
 

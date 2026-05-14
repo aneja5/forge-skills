@@ -35,10 +35,12 @@ Scan every `.forge/` artifact for `<!-- forge:meta -->` headers, cross-reference
 ## Red Flags
 
 - `architecture.md` references modules not in `.forge/contracts/`
-- `tasks.yaml` references contracts that don't exist
+- `tasks.yaml` references contracts that don't exist on disk
 - PRD describes features not in architecture
 - `generated_at` timestamps show downstream older than upstream
-- Multiple `.forge/` artifacts with no `forge:meta` headers (untracked)
+- `generated_at` strings are not UTC (no `Z` suffix, or contain `+`/`-` offset)
+- An artifact's on-disk content sha256 doesn't match its stored `content_hash` (hand-edited after generation)
+- Multiple `.forge/` artifacts with no `forge:meta` headers (untracked → run `/forge-migrate`)
 - User running `/build` without checking sync first
 
 ## Core Process
@@ -46,6 +48,19 @@ Scan every `.forge/` artifact for `<!-- forge:meta -->` headers, cross-reference
 ### Step 1: Scan headers
 
 For every file under `.forge/`, extract the `<!-- forge:meta -->` block (or `# forge:meta` for YAML). Capture: `generated_by`, `generated_at`, `depends_on`, `content_hash`. Artifacts without a header are recorded as "untracked".
+
+For each header, **validate** before trusting:
+- `generated_at` MUST be ISO 8601 UTC with `Z` suffix. If it contains an offset (`+05:30`, `-08:00`) or no zone marker, flag as **INVALID_TIMESTAMP** and recommend re-running the source skill.
+- `content_hash` must be 8 hex chars. Anything else → **INVALID_HASH** (re-run source skill).
+
+### Step 1b: Recompute content_hash and compare
+
+For every tracked artifact, recompute sha256 over the file body with the `forge:meta` block stripped, take the first 8 hex chars, and compare against the stored `content_hash`.
+
+- Match → trust the header.
+- Mismatch → mark **MODIFIED** (hand-edited after generation). Downstream is potentially stale even if `generated_at` is newer than upstream's. Recommend the user either re-run the source skill (to bless the edit) or revert the manual change.
+
+`MODIFIED` is a higher-severity signal than `STALE`: stale means "upstream moved on," modified means "we lost the chain of provenance entirely."
 
 ### Step 2: Load the canonical graph
 
@@ -59,9 +74,21 @@ Build the dependency DAG. Walk it depth-first to produce a topological order: `i
 
 For each artifact `A` with non-empty `depends_on`:
 - If a dependency `D` doesn't exist on disk — mark `A` as **MISSING_DEP** (the chain is broken).
+- If `D` is **MODIFIED** (hand-edited; see Step 1b) — mark `A` as **STALE** (upstream content drifted out of band).
 - If `D` has a header and `D.generated_at > A.generated_at` — mark `A` as **STALE**.
-- If `D` has no header (legacy) — mark `A` as **UNKNOWN** (can't verify; recommend re-run).
+- If `D` has no header (legacy) — mark `A` as **UNKNOWN** (can't verify; recommend `/forge-migrate` then re-run).
 - Otherwise — **UP_TO_DATE**.
+
+### Step 4b: Detect orphaned contract references
+
+`tasks.yaml` and `parallel-plan.md` reference contracts by name. If the architecture step was re-run and a contract was renamed (`payment-service.md` → `billing-service.md`), the reference in `tasks.yaml` will dangle even though both files have current timestamps.
+
+For each artifact that lists contract references:
+- Extract every `.forge/contracts/<name>.md` reference (from `contracts:` fields in `tasks.yaml`, from prose in `tasks-summary.md` and `parallel-plan.md`).
+- Check each exists on disk.
+- Any missing reference → mark the referencing artifact as **BROKEN_REF** with the dangling filename quoted.
+
+**`BROKEN_REF` is higher severity than `STALE`** — stale means re-running fixes it; broken-ref means the dependency graph itself is inconsistent and someone must reconcile the naming.
 
 ### Step 5: Build the cascade
 
@@ -71,14 +98,24 @@ Stale artifacts cascade downstream. If `architecture.md` is stale, every artifac
 
 ```markdown
 # .forge/ Sync Report
-Generated: <ISO 8601 timestamp>
+Generated: <ISO 8601 UTC timestamp with Z suffix>
+
+## Broken references (chain inconsistent — fix first)
+| Artifact | Dangling reference | Action |
+|---|---|---|
+| .forge/tasks.yaml | .forge/contracts/payment-service.md | Reconcile rename or re-run /architect + /plan |
+
+## Modified artifacts (hand-edited after generation)
+| Artifact | Stored hash | Disk hash | Action |
+|---|---|---|---|
+| .forge/prd.md | a3f1b2c4 | 9d8e7f6a | Re-run /spec to bless edits OR revert manual change |
 
 ## Stale artifacts (action required)
 | Artifact | Depends on | Last generated | Dependency updated | Action |
 |---|---|---|---|---|
-| .forge/architecture.md | .forge/prd.md | 2026-05-10 | 2026-05-13 | Run /architect |
-| .forge/contracts/*.md | .forge/architecture.md | 2026-05-10 | (stale parent) | Run /architect |
-| .forge/tasks.yaml | .forge/prd.md + architecture.md | 2026-05-10 | (stale parent) | Run /plan |
+| .forge/architecture.md | .forge/prd.md | 2026-05-10T09:00:00Z | 2026-05-13T14:22:00Z | Run /architect |
+| .forge/contracts/*.md | .forge/architecture.md | 2026-05-10T09:00:00Z | (stale parent) | Run /architect |
+| .forge/tasks.yaml | .forge/prd.md + architecture.md + contracts/* | 2026-05-10T09:00:00Z | (stale parent) | Run /plan |
 
 ## Cascade order
 Run these skills in order to fully sync:
@@ -88,13 +125,18 @@ Run these skills in order to fully sync:
 ## Up to date
 | Artifact | Last generated |
 |---|---|
-| .forge/idea-brief.md | 2026-05-08 |
-| .forge/testing-strategy.md | 2026-05-12 |
+| .forge/idea-brief.md | 2026-05-08T11:30:00Z |
+| .forge/testing-strategy.md | 2026-05-12T16:45:00Z |
 
 ## No header (untracked)
 | Artifact | Note |
 |---|---|
-| .forge/design-system.md | Generated before headers were added. Re-run /design to add tracking. |
+| .forge/design-system.md | Generated before headers were added. Run /forge-migrate then re-run /design to refresh. |
+
+## Schema violations
+| Artifact | Issue |
+|---|---|
+| .forge/observability.md | generated_at is `2026-05-12T10:00:00+05:30` — must be UTC with Z suffix. Re-run /observe. |
 ```
 
 Also prepend a `forge:meta` header to `.forge/sync-report.md` itself (`generated_by: forge-sync`, `depends_on: every .forge/ file scanned`).
@@ -109,7 +151,10 @@ If stale: print the cascade order and ask: **"Run these in order? Y/n"** — but
 
 - [ ] Every stale artifact is identified with a specific cascade action
 - [ ] Cascade order is topologically sorted (no downstream runs before its upstream)
-- [ ] Report includes stale, up-to-date, AND no-header sections (completeness over brevity)
-- [ ] No false positives — artifact marked stale only when `D.generated_at > A.generated_at`
+- [ ] Report includes stale, up-to-date, no-header, modified, broken-ref, AND schema-violation sections
+- [ ] No false positives — artifact marked stale only when `D.generated_at > A.generated_at` OR a dep is MODIFIED
+- [ ] `content_hash` recomputed and compared for every tracked artifact (catches manual edits)
+- [ ] `generated_at` validated as UTC with Z suffix (catches timezone drift)
+- [ ] Contract references in `tasks.yaml` and `parallel-plan.md` checked against disk (catches orphans)
 - [ ] `forge-sync` does NOT regenerate anything; it only reports
-- [ ] `.forge/sync-report.md` written with its own `forge:meta` header
+- [ ] `.forge/sync-report.md` written with its own `forge:meta` header (UTC, Z suffix, valid hash)

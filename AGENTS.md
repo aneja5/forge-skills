@@ -77,6 +77,7 @@ Deploy / launch / pre-launch check       →  shipping-and-launch
 Redact before sharing externally         →  redaction-and-cleanup
 Creating or editing a forge-skill        →  writing-skills
 Check if artifacts are stale             →  forge-sync
+Legacy .forge/ files lack headers        →  forge-migrate
 ```
 
 ## Lifecycle Mapping
@@ -118,6 +119,7 @@ For tools that don't support slash commands, follow this internal lifecycle:
 | SHIP      | shipping-and-launch                | All tasks done, ready to deploy                                  |
 | REDACT    | redaction-and-cleanup              | Sharing docs externally                                          |
 | SYNC      | forge-sync                         | Upstream artifact changed; check what's stale before re-building |
+| MIGRATE   | forge-migrate                      | Upgraded across forge-skills versions; legacy .forge/ files lack headers |
 | META      | writing-skills                     | Creating or editing a forge-skill                                |
 
 ## The .forge/ Artifact Chain
@@ -174,6 +176,7 @@ Phase 7 — Share externally
 
 Cross-cutting — chain consistency
 .forge/sync-report.md           (forge-sync — reads every .forge/ file + references/forge-dependency-graph.md)
+(in-place header backfill)      (forge-migrate — writes forge:meta onto legacy .forge/ files; no new artifact)
 ```
 
 Every artifact-producing skill prepends a `<!-- forge:meta -->` header to its output (`generated_by`, `generated_at`, `depends_on`, `content_hash`). The headers are the source of truth for `forge-sync`'s staleness check. See `references/forge-dependency-graph.md` for the canonical dependency tree.

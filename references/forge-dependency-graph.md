@@ -4,6 +4,50 @@ The canonical dependency map for all `.forge/` artifacts. This file is the sourc
 
 > **Update this graph when adding new skills that produce `.forge/` artifacts.**
 
+## `forge:meta` header schema
+
+Every artifact-producing skill MUST prepend a header to its output. This is the source of truth that `forge-sync` reads.
+
+```
+<!-- forge:meta
+generated_by: <skill-name>
+generated_at: <ISO 8601 UTC with Z suffix>
+depends_on: [<list of .forge/ paths>]
+content_hash: <first 8 chars of sha256 over the file body excluding this header>
+-->
+```
+
+For YAML files, use comment form:
+
+```
+# forge:meta
+#   generated_by: <skill-name>
+#   generated_at: <ISO 8601 UTC with Z suffix>
+#   depends_on: [<list of .forge/ paths>]
+#   content_hash: <first 8 chars of sha256 over the file body excluding this header>
+```
+
+**Schema rules — enforced by `forge-sync`:**
+
+1. **`generated_at` MUST be UTC with `Z` suffix.** Example: `2026-05-14T08:30:00Z`. Local-time strings or offset suffixes (`+05:30`) are rejected — string comparison across timezones produces false staleness signals.
+2. **`content_hash` is sha256 of the file body with the `forge:meta` block stripped**, truncated to the first 8 hex characters. If the on-disk content's hash doesn't match the stored hash, the artifact is **MODIFIED** (hand-edited after generation) and downstream is potentially stale even if `generated_at` is current.
+3. **`depends_on` lists every `.forge/` artifact the skill READ to produce this output.** Glob patterns allowed (`.forge/contracts/*.md`). See "co-output rule" below for multi-output skills.
+4. **`generated_by` is the kebab-case skill name** — must match an entry in `references/forge-dependency-graph.md`'s "Artifact-producing skills" table.
+
+## Co-output rule
+
+When one skill produces multiple artifacts in a single run (e.g., `planning-and-task-breakdown` writes both `tasks.yaml` and `tasks-summary.md`), **every co-output shares the upstream dependency set**. Not the immediate sibling.
+
+| Skill | Co-outputs | Shared `depends_on` |
+|---|---|---|
+| `planning-and-task-breakdown` | `tasks.yaml`, `tasks-summary.md` | `[prd.md, architecture.md, contracts/*]` — both files |
+| `parallel-execution-strategy` | `parallel-plan.md` | `[prd.md, architecture.md, contracts/*, tasks.yaml]` — transitive |
+| `architecture-and-contracts` | `architecture.md`, `contracts/*.md`, `adr/*.md` | `[prd.md]` — all three groups |
+| `database-design` | `database-design.md`, `migrations-policy.md` | `[architecture.md]` — both files |
+| `cross-validation` | `cross-validation-prompt.md`, `cross-validation-synthesis.md` | inputs depend on what was reviewed |
+
+**Why:** the alternative ("derivative" semantic where `tasks-summary` only depends on `tasks.yaml`) creates a silent staleness bug. If `prd.md` is edited after generation, only `tasks.yaml` is flagged stale; `tasks-summary.md` passes UP_TO_DATE because its single declared dep shares its generation timestamp. By pinning co-output to the full upstream set, both artifacts flip stale together.
+
 ## Chained dependencies
 
 ```
@@ -97,7 +141,7 @@ When a downstream artifact is regenerated, no upstream cascade is required — s
 | `gtm-strategy` | `.forge/gtm.md` | `.forge/prd.md` + `.forge/competitive.md` |
 | `testing-strategy` | `.forge/testing-strategy.md` | `.forge/prd.md` |
 | `planning-and-task-breakdown` | `.forge/tasks.yaml`, `.forge/tasks-summary.md` | `.forge/prd.md` + `.forge/architecture.md` + `.forge/contracts/*.md` |
-| `parallel-execution-strategy` | `.forge/parallel-plan.md` | `.forge/tasks.yaml` |
+| `parallel-execution-strategy` | `.forge/parallel-plan.md` | `.forge/prd.md` + `.forge/architecture.md` + `.forge/contracts/*.md` + `.forge/tasks.yaml` (transitive — see co-output rule) |
 | `cross-validation` | `.forge/cross-validation-prompt.md`, `.forge/cross-validation-synthesis.md` | any `.forge/` artifact |
 | `design-system` | `.forge/design-system.md` | — (independent) |
 | `interaction-patterns` | `.forge/interaction-patterns.md` | — (independent) |

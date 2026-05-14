@@ -78,7 +78,9 @@ Iterate until approved.
 
 ### Step 6: Write .forge/tasks.yaml
 
-Prepend a `forge:meta` header (`generated_by: planning-and-task-breakdown`, `depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`) — comment-style for YAML (`# forge:meta ...`). Same header on `.forge/tasks-summary.md`. See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Prepend a `forge:meta` header (`generated_by: planning-and-task-breakdown`, `depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 UTC with Z suffix>`, `content_hash: <sha256 first 8 over body, excluding the forge:meta block>`) — comment-style for YAML (`# forge:meta ...`).
+
+**Co-output rule:** `tasks.yaml` and `tasks-summary.md` are co-generated in this single skill run. Both files MUST carry the **same** `depends_on` list (`[.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`). Do NOT write `tasks-summary.md` with `depends_on: [.forge/tasks.yaml]` — that creates a silent staleness bug where a PRD edit flips `tasks.yaml` stale but leaves `tasks-summary.md` UP_TO_DATE. See [forge-dependency-graph: co-output rule](../../references/forge-dependency-graph.md#co-output-rule).
 
 ```yaml
 # forge:meta
@@ -115,7 +117,9 @@ tasks:
 
 ### Step 7: Write .forge/tasks-summary.md
 
-Produce a human-readable summary alongside the YAML:
+Produce a human-readable summary alongside the YAML. Prepend its own `forge:meta` header with the **same** `depends_on` set as `tasks.yaml` (`[.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`) — see the co-output rule above. Use `<!-- forge:meta ... -->` (Markdown, not YAML comment form).
+
+Contents:
 - **Day-by-day ship view**: which tasks ship on which days (estimated)
 - **Critical path**: the longest dependency chain — this sets the minimum timeline
 - **Risk days**: days with the highest-complexity tasks or most integration points
