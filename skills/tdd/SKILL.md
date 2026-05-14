@@ -38,6 +38,17 @@ Tests verify behavior through public interfaces, not implementation details. One
 - Test breaks on refactor when behavior didn't change
 - All tests written before any implementation ("horizontal slicing")
 - Test verifies through side effects or database state instead of interface
+- `.forge/testing-strategy.md` exists but was not read before writing the first test (its per-module coverage decisions override TDD defaults)
+
+## Precedence with testing-strategy
+
+If `.forge/testing-strategy.md` exists, **read it first.** It is the authoritative source for per-module test policy. TDD's default is "every behavior gets a test"; the strategy may carve exceptions:
+
+- Module marked **integration-only** → skip unit tests for that module; write the integration test instead. The RED step is still required — it just lives at the integration layer.
+- Module marked **contract-only** (verified by consumer-driven contracts) → write the contract test, not a unit test.
+- Module marked **no-test** (rare; usually trivial glue) → document the exception in your commit message and skip the test step. If you find yourself doing this often, the strategy is too permissive — file `/feedback` targeting `.forge/testing-strategy.md`.
+
+When testing-strategy and a task's `acceptance_criteria` disagree about coverage, the task's acceptance criteria win for that task — but file `/feedback` targeting `.forge/testing-strategy.md` so the strategy gets updated next sprint.
 
 ## Anti-Pattern: Horizontal Slices
 
@@ -60,6 +71,7 @@ Each test responds to what you learned from the previous implementation cycle.
 
 ### 1. Plan before coding
 
+- [ ] Read `.forge/testing-strategy.md` if it exists; note per-module coverage exceptions
 - [ ] Confirm public interface changes with user (or with task's contract from `.forge/contracts/`)
 - [ ] List behaviors to test — not implementation steps
 - [ ] Design interface for [testability](interface-design.md)

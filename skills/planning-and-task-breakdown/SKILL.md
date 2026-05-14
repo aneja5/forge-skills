@@ -70,6 +70,20 @@ Rules:
 
 For each task, list which other tasks must complete first. Build the dependency graph. Identify the critical path and which tasks can run in parallel.
 
+### Step 4b: Tag tasks with shaping skills (optional but recommended)
+
+For each task, decide which other forge-skills shape the implementation and add a `skills:` field. This is read by `incremental-implementation` before the first test is written, loading the relevant constraints into context at the moment they're needed.
+
+Common patterns:
+- UI work touching components → include `design-system`, `accessibility`
+- Interaction shape decisions (modal vs sheet, expand vs nav) → include `interaction-patterns`
+- New REST endpoints → include `api-design`
+- Migrations or schema changes → include `database-design`
+- Tasks producing observability or alerts → include `observability`
+- Tasks with non-trivial error paths → include `error-handling-and-resilience`
+
+Omit the field if the task is pure plumbing with no domain-shaping skill applicable. Leaving it blank is fine — `incremental-implementation` treats `skills:` as optional and backward compatible.
+
 ### Step 5: Quiz the user
 
 Present the breakdown. For each task: title, size, dependencies, acceptance criteria. Ask: granularity right? Dependencies correct? Any tasks to merge or split?
@@ -96,6 +110,7 @@ tasks:
     phase: 1
     depends_on: []
     contracts: [UserService, SessionService]
+    skills: [api-design, design-system, accessibility]   # optional — read by /build before first test
     acceptance_criteria:
       - Given valid email+password, form submission creates a user and redirects to dashboard
       - Given duplicate email, submission returns inline validation error
@@ -108,10 +123,16 @@ tasks:
       - UserService (new)
       - registration route handler (new)
       - registration form component (new)
+    status: pending          # pending | in_progress | done | split | blocked
+    started_at: null
+    completed_at: null
+    commit: null
+    notes: []
 
   - id: T002
     title: "..."
     depends_on: [T001]
+    status: pending
     ...
 ```
 
@@ -133,6 +154,8 @@ Contents:
 - [ ] No task touches more than 3 modules
 - [ ] Every task has at least 2 acceptance criteria
 - [ ] Every task has a verification step (what proves it's done)
+- [ ] Every task has lifecycle fields initialized: `status: pending`, `started_at: null`, `completed_at: null`, `commit: null`, `notes: []`
+- [ ] UI tasks tagged with `design-system` + `accessibility`; endpoint tasks tagged with `api-design`; schema tasks tagged with `database-design`
 - [ ] Dependency graph has no cycles
 - [ ] No XL tasks without a spike or decomposition plan
 - [ ] Task descriptions use module/contract names, not file paths

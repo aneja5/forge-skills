@@ -76,10 +76,20 @@ Explicit list of what this module does NOT handle:
 File: `.forge/adr/NNN-<decision-slug>.md`
 
 ```markdown
+<!-- forge:meta
+generated_by: architecture-and-contracts
+generated_at: 2026-05-14T09:00:00Z
+last_reviewed_at: 2026-05-14T09:00:00Z
+depends_on: [.forge/prd.md]
+content_hash: <first 8 chars of sha256>
+-->
+
 # ADR-NNN: <Title>
 
 - **Date**: YYYY-MM-DD
 - **Status**: Accepted | Superseded by ADR-NNN | Deprecated
+- **Superseded by**: (filled in only when status flips to Superseded)
+- **Supersedes**: (filled in if this ADR replaces an earlier one)
 
 ## Context
 
@@ -108,7 +118,20 @@ What was decided. State it clearly in one or two sentences.
 |--------|-------------|
 | Option A | [reason] |
 | Option B | [reason] |
+
+## Review log
+
+- 2026-05-14 — Created.
 ```
+
+### ADR lifecycle
+
+- **Creation:** `Status: Accepted`. Both `generated_at` and `last_reviewed_at` set to now-UTC.
+- **Re-affirmation:** During an ADR review pass (every ~90 days, or before adjacent feature work), the team confirms the decision still holds. Update `last_reviewed_at` to now-UTC. Append a line to the review log: `<date> — Re-affirmed; <reason>.`
+- **Supersession:** A new ADR replaces the decision. The new ADR sets `Supersedes: ADR-N`. The old ADR's body updates `Status: Superseded by ADR-N+1` and `Superseded by: ADR-N+1`; `last_reviewed_at` bumps to now-UTC. The old ADR stays in `.forge/adr/` as a historical record.
+- **Deprecation without replacement:** `Status: Deprecated`. Add a review-log line with the reason. The decision is no longer active but is preserved.
+
+`forge-sync` flags ADRs with `Status: Accepted` and `last_reviewed_at` older than 90 days as **REVIEW_DUE** — a soft signal (does not block downstream work) that the decision deserves a fresh look.
 
 ---
 

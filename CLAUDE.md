@@ -50,7 +50,8 @@ forge-skills/
 │   ├── documentation-hygiene/       # README + changelog policy → .forge/docs-policy.md
 │   ├── writing-skills/              # Meta-skill for contributors (TDD for skills)
 │   ├── forge-sync/                  # Check .forge/ artifact freshness → .forge/sync-report.md
-│   └── forge-migrate/               # Backfill forge:meta headers on legacy .forge/ files (in-place)
+│   ├── forge-migrate/               # Backfill forge:meta headers on legacy .forge/ files (in-place)
+│   └── feedback/                    # File reverse-cascade entries → .forge/feedback/*.md
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md                 # System design, contracts, ADRs
 │   ├── project-manager.md           # Task breakdown, dependency ordering
@@ -69,7 +70,7 @@ forge-skills/
 │   ├── testing-patterns.md          # Good/bad tests, mocking rules, TDD patterns
 │   ├── security-checklist.md        # OWASP checklist, severity levels
 │   └── forge-dependency-graph.md    # Canonical .forge/ dependency tree (read by forge-sync)
-├── commands/                        # 30 slash commands for the full lifecycle
+├── commands/                        # 31 slash commands for the full lifecycle
 │   ├── grill.md spec.md architect.md plan.md build.md review.md ship.md
 │   ├── compete.md gtm.md secure.md scale.md validate.md redact.md
 │   ├── api.md db.md design.md interaction.md
@@ -171,6 +172,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Polish  | documentation-hygiene        | /docs      | repo                 | .forge/docs-policy.md             |
 | Sync    | forge-sync                   | /sync      | every .forge/ file   | .forge/sync-report.md             |
 | Migrate | forge-migrate                | /forge-migrate | legacy .forge/ files (no headers) | in-place forge:meta backfill |
+| Feedback| feedback                     | /feedback  | one upstream artifact + a downstream finding | .forge/feedback/<ts>-<source>.md |
 
 ## Conventions
 

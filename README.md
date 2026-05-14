@@ -2,7 +2,7 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Structured workflows that turn a raw idea into shipped, operated, and demoed code through 7 pipeline stages, 36 skills, and 11 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
+Structured workflows that turn a raw idea into shipped, operated, and demoed code through 7 pipeline stages, 37 skills, and 11 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
 
 Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
@@ -83,6 +83,7 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 | `/docs` | Polish | `documentation-hygiene` | repo | `.forge/docs-policy.md` |
 | `/sync` | Cross-cutting | `forge-sync` | every `.forge/` file + dependency graph | `.forge/sync-report.md` |
 | `/forge-migrate` | Cross-cutting | `forge-migrate` | legacy `.forge/` files lacking headers | in-place `forge:meta` backfill |
+| `/feedback` | Cross-cutting | `feedback` | one upstream artifact + a downstream finding | `.forge/feedback/<ts>-<source>.md` |
 | — | Verify | `debugging-and-recovery` | bug report | fix + regression test |
 | — | Ship | `git-workflow` | completed tasks | atomic commits + PR |
 | — | Triage | `triage-issue` | bug report | GitHub issue + TDD plan |
@@ -229,7 +230,8 @@ forge-skills/
 │   ├── documentation-hygiene/
 │   ├── writing-skills/              # Meta-skill for contributors
 │   ├── forge-sync/                  # Check .forge/ artifact freshness
-│   └── forge-migrate/               # Backfill forge:meta headers on legacy .forge/ files
+│   ├── forge-migrate/               # Backfill forge:meta headers on legacy .forge/ files
+│   └── feedback/                    # Reverse-cascade entries (downstream → upstream)
 ├── agents/                          # Specialist agent personas
 │   ├── architect.md
 │   ├── project-manager.md
@@ -247,7 +249,7 @@ forge-skills/
 │   ├── idea-evaluation.md
 │   ├── testing-patterns.md
 │   └── security-checklist.md
-├── commands/                        # 30 slash commands across the full lifecycle
+├── commands/                        # 31 slash commands across the full lifecycle
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh

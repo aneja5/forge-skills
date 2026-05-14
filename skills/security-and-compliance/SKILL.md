@@ -103,9 +103,23 @@ Prioritize by likelihood × impact. Top 5 threats get specific mitigations.
 
 ## Output
 
-Write `.forge/security.md` with all sections above. Prepend a `forge:meta` header (`generated_by: security-and-compliance`, `depends_on: [.forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Write `.forge/security.md` with all sections above. Prepend a `forge:meta` header (`generated_by: security-and-compliance`, `depends_on: [.forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 UTC with Z>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "Security assessment written to `.forge/security.md`."
+
+### Step 9: File feedback for architecture-impacting findings
+
+`.forge/security.md` is downstream of `.forge/architecture.md`. Findings that imply architecture changes (add a WAF, change a data store, add an API gateway, introduce a secrets manager, refactor tenant isolation) cannot be auto-cascaded — they require a human decision.
+
+For each such finding, invoke the `feedback` skill to file `.forge/feedback/<timestamp>-secure.md`:
+- `target_artifact: .forge/architecture.md`
+- `severity: NEEDS_REVIEW` (not FEEDBACK_PENDING — the user decides whether to absorb the change)
+- `finding:` what was discovered + the threat being mitigated
+- `recommended_change:` the specific architectural addition (component, placement, integration point)
+
+Do NOT edit `architecture.md` directly. The user reviews the entry and either runs `/architect` to absorb the change or marks the entry DEFERRED with reasoning.
+
+The same protocol applies for `scalability-analysis` when it recommends architectural changes (sharding strategy, read replicas, cache tier insertion).
 
 ## Verification
 
@@ -117,3 +131,4 @@ After writing: "Security assessment written to `.forge/security.md`."
 - [ ] Certification roadmap has specific timelines
 - [ ] Multi-tenant isolation strategy is explicit (if applicable)
 - [ ] `.forge/security.md` written
+- [ ] For every finding that implies architecture changes (WAF, gateway, data-store swap, isolation refactor): a `feedback` entry was filed targeting `.forge/architecture.md` with severity `NEEDS_REVIEW`. No direct edits to `architecture.md`.

@@ -82,14 +82,43 @@ These can be generated at any point in the pipeline. They don't have an enforced
 .forge/interaction-patterns.md
 .forge/seed-data.md
 .forge/accessibility.md
-.forge/demo-narrative.md          (depends on .forge/seed-data.md if it exists)
+.forge/demo-narrative.md          (soft: .forge/seed-data.md)
 .forge/docs-policy.md
 .forge/performance-budget.md
 .forge/incident-response.md
 .forge/tech-debt-registry.md
 ```
 
-`demo-narrative.md` is the one "soft" dependency in this list — if `.forge/seed-data.md` exists, the demo scenes should reference its named scenarios. If it doesn't, the demo skill produces its own seed-data requirements.
+## Soft dependencies
+
+A **soft dependency** is a read-only reference that shapes an artifact's content but isn't part of the strict cascade. If a soft upstream changes, the downstream is *potentially* outdated but does not require regeneration — the user reviews and decides.
+
+```
+.forge/design-system.md
+   ├─(soft)▶ .forge/interaction-patterns.md   (uses tokens for motion/spacing)
+   ├─(soft)▶ .forge/accessibility.md          (uses tokens for color contrast checks)
+   └─(soft)▶ .forge/demo-narrative.md         (UI screenshots align to tokens)
+
+.forge/interaction-patterns.md
+   └─(soft)▶ .forge/accessibility.md          (keyboard model intersects with a11y)
+
+.forge/seed-data.md
+   └─(soft)▶ .forge/demo-narrative.md         (scene scenarios reference seeded entities)
+```
+
+`forge-sync` reports soft-stale artifacts in their own section (**SOFT_STALE**), distinct from `STALE` — they do NOT block downstream regeneration, but the user should re-read affected files before shipping.
+
+To declare a soft dependency in a `forge:meta` header, use a separate `soft_depends_on` field:
+
+```
+<!-- forge:meta
+generated_by: accessibility
+generated_at: 2026-05-14T10:00:00Z
+depends_on: []
+soft_depends_on: [.forge/design-system.md, .forge/interaction-patterns.md]
+content_hash: 3f9a2b1c
+-->
+```
 
 ## Externally-fed artifacts
 
@@ -99,7 +128,30 @@ These can be generated at any point in the pipeline. They don't have an enforced
 .forge/redaction-manifest.md         (produced by redaction-and-cleanup, reads any .forge/ artifact)
 .forge/redacted/*                    (produced by redaction-and-cleanup, copies of originals)
 .forge/sync-report.md                (produced by forge-sync, reads every .forge/ file)
+.forge/feedback/*.md                 (produced by feedback skill from any downstream stage, targets one upstream artifact)
 ```
+
+## Reverse-cascade: feedback entries
+
+The forward chain (`idea → prd → arch → tasks → code`) is one-directional, but real projects discover problems downstream that imply changes upstream. The `feedback` skill captures these as structured entries under `.forge/feedback/<timestamp>-<source>.md`.
+
+Each entry declares:
+- `source` — stage that discovered the issue (build, review, security, scalability, incident, …)
+- `target_artifact` — the upstream `.forge/` file that needs revision
+- `status` — `PENDING` | `RESOLVED` | `DEFERRED`
+- `finding` — what was discovered
+- `recommended_change` — what should change in the target artifact
+
+`forge-sync` reads `.forge/feedback/` and, for each PENDING entry, marks the **target_artifact** as **FEEDBACK_PENDING** (a separate state from STALE). When the upstream skill re-runs, it reads all PENDING entries targeting its output and addresses them; after writing, it flips matching entries to `RESOLVED` with a `resolved_at` timestamp.
+
+**Severity order:**
+
+```
+BROKEN_REF  >  MODIFIED  >  FEEDBACK_PENDING  >  NEEDS_REVIEW  >  STALE  >  SOFT_STALE  >  UP_TO_DATE
+```
+
+- `NEEDS_REVIEW` is a sibling state for findings that recommend a human decision but no auto-cascade (e.g., a security finding that suggests adding a WAF — the human chooses whether to update architecture).
+- All states above `UP_TO_DATE` block `/build` and `/ship` until resolved or explicitly dismissed.
 
 ## Cascade rules
 
@@ -114,15 +166,75 @@ When an upstream artifact changes, every downstream artifact is potentially stal
 | `competitive.md` | `gtm.md` |
 | `tasks.yaml` | `tasks-summary.md`, `parallel-plan.md` |
 | `seed-data.md` | `demo-narrative.md` (scene seed functions may need re-naming) |
+| feedback entry filed | target_artifact flipped to FEEDBACK_PENDING; downstream of target inherits STALE on next sync |
 
-When a downstream artifact is regenerated, no upstream cascade is required — staleness flows downward only.
+Forward cascade flows downward only — regenerating a downstream artifact does NOT mark its upstreams stale. **Reverse cascade is opt-in**, mediated by feedback entries: an upstream is never auto-marked stale because a downstream changed; instead, the downstream skill (or a human) files a feedback entry that flags the upstream for review.
+
+## Cross-artifact precedence (when two skills define the same thing)
+
+Some skills produce overlapping definitions. When they conflict, the contract artifact wins:
+
+| Concern | Authoritative source | Subordinate sources (must conform) |
+|---|---|---|
+| Module boundaries, types, error cases | `.forge/contracts/<module>.md` | `.forge/api-design.md`, `.forge/database-design.md` |
+| HTTP envelope, error shape, versioning policy | `.forge/api-design.md` | per-endpoint definitions inside contracts |
+| Per-module test coverage policy | `.forge/testing-strategy.md` | `tdd` skill's default ("every module needs unit tests") |
+| Schema, migrations, query patterns | `.forge/database-design.md` | architecture.md's data-flow prose |
+
+**Rule:** skills that produce subordinate artifacts MUST read the authoritative source first if it exists. `api-design` reads `contracts/` before defining endpoints; `tdd` reads `testing-strategy.md` before deciding to write unit tests; etc. `forge-sync` flags **CONFLICT** when two artifacts define the same operation/endpoint/module with divergent shapes.
+
+## Task lifecycle schema (`tasks.yaml`)
+
+`planning-and-task-breakdown` emits initial state; `incremental-implementation` mutates state in place.
+
+```yaml
+tasks:
+  - id: T-001
+    title: "..."
+    size: M
+    depends_on: []
+    contracts: [PaymentService]
+    skills: [api-design, database-design]   # optional — context-loaded by incremental-implementation
+    acceptance_criteria: [...]
+    verification: [...]
+    status: pending          # pending | in_progress | done | split | blocked
+    started_at: null         # ISO 8601 UTC; set when status flips to in_progress
+    completed_at: null       # ISO 8601 UTC; set when status flips to done
+    commit: null             # short sha; set on done
+    notes: []                # free-form log of mid-task discoveries
+```
+
+**Status semantics:**
+- `pending` — emitted by planning; no work started
+- `in_progress` — `incremental-implementation` picked this task; `started_at` set; only ONE task per agent in this state at a time
+- `done` — acceptance criteria verified; `completed_at` + `commit` set
+- `split` — task was decomposed mid-flight; replaced by new task IDs listed in `notes`. The split task itself is closed.
+- `blocked` — discovered an unmet dependency; `notes` records the blocker. `incremental-implementation` files a feedback entry.
+
+`forge-sync` reports `tasks.yaml` as **TASKS_DIVERGED** when ≥3 tasks have been split, blocked, or have non-empty `notes` since the last `/plan` run — signal that the plan no longer matches reality and re-planning is due.
+
+## ADR review-due semantics
+
+ADRs encode decisions, not requirements — they don't go stale on a clock, but they can become factually wrong as the system evolves. To detect drift:
+
+- Every ADR carries `status` (`Accepted` | `Superseded by ADR-NNN` | `Deprecated`) in its body.
+- Every ADR carries `last_reviewed_at` in its `forge:meta` (ISO 8601 UTC). Set on creation; updated whenever the ADR is reaffirmed during a review pass.
+- `forge-sync` flags ADRs whose `last_reviewed_at` is older than 90 days AND whose status is `Accepted` as **REVIEW_DUE**. This is a soft signal — does not block downstream work — but surfaces in the report so the user remembers to revisit.
+
+When an ADR is superseded, the superseding ADR (`ADR-N+1`) updates the old ADR's `status` line to `Superseded by ADR-N+1` and bumps its `last_reviewed_at`. The old ADR stays in `.forge/adr/` as a historical record.
 
 ## How `forge-sync` uses this graph
 
 1. Read this file as the canonical dependency tree.
-2. Scan every file in `.forge/` for `<!-- forge:meta -->` headers.
-3. For each artifact with dependencies, compare `generated_at` of downstream against `generated_at` of upstream. Downstream older than upstream = stale.
-4. Walk the cascade table above to produce the topologically-sorted list of skills to re-run.
+2. Scan every file in `.forge/` for `<!-- forge:meta -->` headers (validate UTC + hash).
+3. For each artifact with dependencies, compare `generated_at` of downstream against `generated_at` of upstream. Downstream older than upstream = STALE.
+4. Recompute each file's content hash; mismatch → MODIFIED.
+5. Read `.forge/feedback/` for PENDING entries; target artifacts → FEEDBACK_PENDING.
+6. Scan ADRs for `last_reviewed_at` > 90 days old → REVIEW_DUE.
+7. Compare `tasks.yaml` task statuses; ≥3 tasks split/blocked since last /plan → TASKS_DIVERGED.
+8. Cross-check `api-design.md` and `contracts/` for operation-shape conflicts → CONFLICT.
+9. Compare `.forge/sync-report.md` `generated_at` against newest `.forge/` mtime; if any artifact is newer → flag sync-report itself as SELF_STALE in the next run.
+10. Walk the cascade table to produce the topologically-sorted list of skills to re-run.
 
 ## Artifact-producing skills (canonical list)
 
@@ -154,3 +266,5 @@ When a downstream artifact is regenerated, no upstream cascade is required — s
 | `refactoring-and-tech-debt` | `.forge/tech-debt-registry.md` | — (independent) |
 | `redaction-and-cleanup` | `.forge/redaction-manifest.md`, `.forge/redacted/*` | any `.forge/` artifact |
 | `forge-sync` | `.forge/sync-report.md` | every `.forge/` file + this graph |
+| `feedback` | `.forge/feedback/<timestamp>-<source>.md` | the target_artifact being annotated |
+| `forge-migrate` | (in-place header backfill) | every legacy `.forge/` file |

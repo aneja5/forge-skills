@@ -39,16 +39,29 @@ Pick the next ready task from `.forge/tasks.yaml`, load its contracts from `.for
 - Committing with a message that doesn't reference the task ID
 - Acceptance criteria not verifiable after implementation
 - Task marked done before verification step passes
+- `.forge/tasks.yaml` not updated mid-flight when a task is split or blocked (the plan diverges silently)
+- Editing `.forge/contracts/<X>.md` inline when build reveals the contract is wrong (file `/feedback` instead)
+- Skipping `skills:` tag reads — implementing UI without loading `design-system`, writing migrations without loading `database-design`
 
 ## Core Process
 
 ### Step 1: Select the next task
 
-Read `.forge/tasks.yaml`. Find all tasks where `depends_on` tasks are complete and the task is not started. Pick the highest-priority unblocked task (or ask the user if multiple are ready).
+Read `.forge/tasks.yaml`. Find all tasks where `status: pending` (or unset) AND every task in `depends_on` has `status: done`. Pick the highest-priority unblocked task (or ask the user if multiple are ready).
+
+Immediately mark the selected task in place:
+- `status: in_progress`
+- `started_at: <ISO 8601 UTC with Z>`
+
+Write the file back. The mutation is per-task — do not rewrite the whole `tasks.yaml`. Re-emit only the `forge:meta` `generated_at`/`content_hash` if the file as a whole was touched (status flips count); the `depends_on` set does not change.
 
 ### Step 2: Load context
 
-Read the task's acceptance criteria and verification steps. Read each contract listed in the task's `contracts` field from `.forge/contracts/`. Load only the files_likely_affected — don't read the whole codebase.
+Read the task's acceptance criteria and verification steps. Read each contract listed in the task's `contracts` field from `.forge/contracts/`. Load only the `files_likely_affected` — don't read the whole codebase.
+
+**Skill-tagged context load (#41):** if the task has a `skills:` field (e.g., `[design-system, accessibility, api-design]`), read `skills/<each>/SKILL.md` BEFORE writing the first test. These tags exist precisely because the task touches a domain whose rules are encoded in another skill. Skipping them means the implementation will recreate problems those skills exist to prevent.
+
+If `.forge/testing-strategy.md` exists, also read it — per-module coverage decisions there override TDD defaults.
 
 ### Step 3: Implement with TDD
 
@@ -83,16 +96,36 @@ git commit -m "[T001] <task title>
 
 ### Step 6: Mark done
 
-Update `.forge/tasks.yaml`: set the task status to `done`. Check if any blocked tasks are now unblocked. Report progress to user.
+Update `.forge/tasks.yaml` in place:
+- `status: done`
+- `completed_at: <ISO 8601 UTC with Z>`
+- `commit: <short sha of the commit from Step 5>`
+
+Check if any tasks whose `depends_on` is now fully satisfied. Report progress to user.
+
+### Step 7: Mid-task discoveries — split, block, or feedback
+
+If during Steps 2-4 you discovered the task can't complete as-scoped, do NOT silently continue. Update `.forge/tasks.yaml` and (if upstream is wrong) file a feedback entry:
+
+- **Scope creep discovered** → split the task. Mark the original `status: split`. Append new task IDs into the `notes` array describing the split. Add new task entries for the carved-out work. Do not implement the carved-out work in this run.
+- **Unmet dependency surfaced** → set `status: blocked`. Append the blocker to `notes`. Stop work on this task. Pick the next ready task.
+- **The CONTRACT is wrong** (refund endpoint missing, wrong type, missing error case) → run `/feedback` to file `.forge/feedback/<timestamp>-build.md` targeting the broken contract. Do NOT edit the contract inline. Mark the task `status: blocked` with `notes` referencing the feedback entry path. The contract update happens via `/architect` re-run.
+- **The TEST STRATEGY contradicts what you need to write** → file `/feedback` targeting `.forge/testing-strategy.md`. Continue per the strategy's current text for now.
+
+After ≥3 such events in a sprint, `forge-sync` will flag `TASKS_DIVERGED` — at that point, run `/plan` to re-baseline before picking the next task.
 
 ## Verification
 
 Before marking any task done:
 
+- [ ] Task started: `status: in_progress` + `started_at` set when work began
+- [ ] All `skills:` tags read (if any listed) BEFORE first test was written
+- [ ] `.forge/testing-strategy.md` consulted if it exists
 - [ ] All acceptance criteria in tasks.yaml satisfied
 - [ ] All verification steps in tasks.yaml passed
 - [ ] No files touched outside the task's scope (or explicitly justified)
 - [ ] Contract invariants not violated (check against `.forge/contracts/`)
 - [ ] Tests verify behavior through public interface, not implementation details
 - [ ] Commit message references task ID
-- [ ] `.forge/tasks.yaml` updated with task status
+- [ ] `.forge/tasks.yaml` updated: `status: done`, `completed_at`, `commit` (short sha)
+- [ ] If mid-flight discoveries occurred: split tasks were added, OR a feedback entry was filed, OR the task was marked blocked with a reason — never silently absorbed

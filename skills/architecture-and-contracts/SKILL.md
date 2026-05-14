@@ -76,6 +76,24 @@ Each contract must define:
 
 For each non-obvious decision made in steps 3-4, write an ADR at `.forge/adr/NNN-<slug>.md`. Use the format in [contract-templates.md](../../references/contract-templates.md).
 
+**Required fields:**
+- `forge:meta` header with `last_reviewed_at` set equal to `generated_at` on creation.
+- Body header lines: `Status:` (Accepted on creation), `Superseded by:` (blank), `Supersedes:` (blank unless this ADR replaces a previous one).
+- Review log: one initial line `<date> — Created.`
+
+When this skill re-runs and the user identifies a decision that has been superseded:
+1. Write the new ADR (`ADR-N+1`) with `Supersedes: ADR-N`.
+2. Update the old ADR's body: `Status: Superseded by ADR-N+1`, `Superseded by: ADR-N+1`, bump `last_reviewed_at` to now-UTC, append a review-log line.
+
+### Step 5b: Address pending feedback
+
+Before re-writing architecture or contracts on a re-run, read `.forge/feedback/*.md`. For every entry where `status: PENDING` AND `target_artifact` is one of this skill's outputs (`architecture.md`, `contracts/*.md`, `adr/*.md`):
+
+1. Address the recommended change in the regenerated artifact.
+2. Update the feedback entry in place: `status: RESOLVED`, `resolved_at: <now UTC>`, `resolved_by: <commit short sha or "manual">`. Append a brief note describing what changed.
+
+If a feedback entry's recommendation is rejected (the team decides the current artifact is correct), mark it `status: DEFERRED` with a reason in the body. Do not delete feedback entries — they are historical record.
+
 ### Step 6: Cost modeling
 
 Include a cost model section in the architecture:
@@ -101,11 +119,14 @@ These are deeper dives on specific sections. Generate only when explicitly reque
 ## Verification
 
 - [ ] `.forge/prd.md` read in full
+- [ ] On re-run: all PENDING feedback entries targeting architecture.md / contracts/ / adr/ addressed AND marked RESOLVED with `resolved_at` + `resolved_by`
 - [ ] Every module from the PRD has a contract in `.forge/contracts/`
 - [ ] Every contract has input types, output types, error types, and invariants
 - [ ] No contract says "TBD" in any required field
 - [ ] Architecture document uses component names, not file paths
 - [ ] At least one ADR written (even "use existing patterns" is a decision)
+- [ ] Every ADR has `last_reviewed_at` set on creation (== `generated_at`)
+- [ ] Superseded ADRs have `Status: Superseded by ADR-NNN` AND `Superseded by:` field filled
 - [ ] Cost model section included with per-unit costs and scaling curve
 - [ ] `.forge/architecture.md` written with component diagram
 - [ ] Contract table in architecture.md lists all contract files

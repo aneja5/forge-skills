@@ -102,9 +102,21 @@ For each data store:
 
 ## Output
 
-Write `.forge/scalability.md` with all sections above. Prepend a `forge:meta` header (`generated_by: scalability-analysis`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Write `.forge/scalability.md` with all sections above. Prepend a `forge:meta` header (`generated_by: scalability-analysis`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 UTC with Z>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "Scalability analysis written to `.forge/scalability.md`."
+
+### Step 8: File feedback for architecture-impacting findings
+
+Findings that imply architecture changes (sharding strategy, read-replica topology, cache-tier insertion, queue-based decoupling, switching to a different data store) require a human decision and cannot be auto-cascaded.
+
+For each such finding, invoke the `feedback` skill to file `.forge/feedback/<timestamp>-scale.md`:
+- `target_artifact: .forge/architecture.md`
+- `severity: NEEDS_REVIEW`
+- `finding:` the bottleneck + the projected scale point where it bites
+- `recommended_change:` the specific architectural change (component, placement, rollout sequencing)
+
+Do NOT edit `architecture.md` directly. The user reviews and either runs `/architect` to absorb or marks the entry DEFERRED.
 
 ## Verification
 
@@ -116,3 +128,4 @@ After writing: "Scalability analysis written to `.forge/scalability.md`."
 - [ ] Data lifecycle policy defined for every data store
 - [ ] At least 10x and 100x scale targets analyzed
 - [ ] `.forge/scalability.md` written
+- [ ] For every finding that implies architecture changes: a `feedback` entry was filed targeting `.forge/architecture.md` with severity `NEEDS_REVIEW`. No direct edits to `architecture.md`.

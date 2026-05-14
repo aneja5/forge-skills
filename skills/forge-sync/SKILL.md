@@ -90,6 +90,48 @@ For each artifact that lists contract references:
 
 **`BROKEN_REF` is higher severity than `STALE`** — stale means re-running fixes it; broken-ref means the dependency graph itself is inconsistent and someone must reconcile the naming.
 
+### Step 4c: Read `.forge/feedback/` for reverse-cascade entries
+
+For every file under `.forge/feedback/`:
+- Read its `forge:meta` and body.
+- If `status: PENDING`:
+  - Extract `target_artifact` (from the `depends_on` field in the header — single-element list).
+  - Mark the target artifact as **FEEDBACK_PENDING** (or **NEEDS_REVIEW** if the body's `Severity:` line says so).
+  - Carry the entry's path into the report so the user can read the finding.
+- If `status: RESOLVED` or `status: DEFERRED`: skip; informational only.
+
+A target artifact in `FEEDBACK_PENDING` or `NEEDS_REVIEW` state cascades **STALE** to its downstream — the upstream is known-incomplete, so anything downstream that depends on it is suspect.
+
+### Step 4d: Cross-artifact conflict detection
+
+For each pair where the cross-precedence table in the dependency graph says one artifact must conform to another:
+- `api-design.md` operation/endpoint definitions vs each `contracts/<module>.md` `Provides` section
+- `database-design.md` schema fields vs `contracts/` `Input Types`/`Output Types`
+
+When operations/types defined in both diverge in shape (name match, but different signature/fields), mark the subordinate artifact as **CONFLICT** with the divergence quoted. The contract artifact wins; the subordinate must update.
+
+### Step 4e: ADR review-due and tasks-diverged
+
+For each ADR under `.forge/adr/`:
+- If `last_reviewed_at` is more than 90 days old AND status is `Accepted` → **REVIEW_DUE** (soft signal, does not cascade).
+
+For `.forge/tasks.yaml`:
+- Count tasks with `status: split` or `status: blocked` since the last `/plan` run (compare against `generated_at` of the file).
+- If ≥3 → **TASKS_DIVERGED** (recommend re-running `/plan`).
+
+### Step 4f: Sync-report self-staleness (#27)
+
+After determining all the above, also check `.forge/sync-report.md` (the previous run's output, if it exists):
+- If any tracked artifact has `generated_at` newer than `sync-report.md`'s `generated_at` → previous sync report is **SELF_STALE**. Mention this in the new report's preamble so the user knows the prior report was misleading.
+
+### Step 4g: Soft dependencies
+
+For each artifact whose `forge:meta` contains a `soft_depends_on` field:
+- Apply the same `generated_at` comparison against each entry as Step 4 does for `depends_on`.
+- If any soft upstream is newer → **SOFT_STALE** (separate section in the report; does NOT cascade to downstream as STALE).
+
+Soft-stale is advisory. The user reviews; the downstream is not blocked.
+
 ### Step 5: Build the cascade
 
 Stale artifacts cascade downstream. If `architecture.md` is stale, every artifact depending on it is implicitly stale even if its own headers haven't tripped. Walk the graph: a stale node taints all descendants. The cascade list is the topologically-sorted set of skills to re-run, deduplicated.
@@ -99,6 +141,7 @@ Stale artifacts cascade downstream. If `architecture.md` is stale, every artifac
 ```markdown
 # .forge/ Sync Report
 Generated: <ISO 8601 UTC timestamp with Z suffix>
+Previous report status: SELF_STALE (3 artifacts changed since last sync at 2026-05-12T08:00:00Z)
 
 ## Broken references (chain inconsistent — fix first)
 | Artifact | Dangling reference | Action |
@@ -110,6 +153,17 @@ Generated: <ISO 8601 UTC timestamp with Z suffix>
 |---|---|---|---|
 | .forge/prd.md | a3f1b2c4 | 9d8e7f6a | Re-run /spec to bless edits OR revert manual change |
 
+## Feedback pending (reverse cascade)
+| Target artifact | Severity | Source | Entry |
+|---|---|---|---|
+| .forge/contracts/payment-service.md | FEEDBACK_PENDING | build (T-042) | .forge/feedback/2026-05-14T103000Z-build.md |
+| .forge/architecture.md | NEEDS_REVIEW | secure | .forge/feedback/2026-05-13T160000Z-secure.md |
+
+## Conflicts (subordinate artifact diverges from authoritative)
+| Subordinate | Authoritative | Divergence | Action |
+|---|---|---|---|
+| .forge/api-design.md `POST /payments/refund` | .forge/contracts/payment-service.md `refund()` | api-design lists no idempotency key; contract requires it | Update api-design |
+
 ## Stale artifacts (action required)
 | Artifact | Depends on | Last generated | Dependency updated | Action |
 |---|---|---|---|---|
@@ -117,10 +171,26 @@ Generated: <ISO 8601 UTC timestamp with Z suffix>
 | .forge/contracts/*.md | .forge/architecture.md | 2026-05-10T09:00:00Z | (stale parent) | Run /architect |
 | .forge/tasks.yaml | .forge/prd.md + architecture.md + contracts/* | 2026-05-10T09:00:00Z | (stale parent) | Run /plan |
 
+## Soft-stale (advisory — review before shipping)
+| Artifact | Soft upstream changed | Action |
+|---|---|---|
+| .forge/accessibility.md | .forge/design-system.md updated 2026-05-13T14:00:00Z | Re-read tokens; refresh contrast checks if relevant |
+
+## Tasks diverged
+| Artifact | Detail | Action |
+|---|---|---|
+| .forge/tasks.yaml | 4 tasks split, 1 blocked since last /plan run | Run /plan to re-baseline |
+
+## ADRs due for review (>90 days)
+| ADR | Last reviewed | Status |
+|---|---|---|
+| .forge/adr/003-event-bus.md | 2026-02-10 | Accepted — re-affirm or supersede |
+
 ## Cascade order
-Run these skills in order to fully sync:
-1. /architect — updates architecture.md + contracts/ + adr/
-2. /plan — updates tasks.yaml + tasks-summary.md
+Run these skills in order to fully sync (excluding NEEDS_REVIEW items, which require human decision first):
+1. Address feedback entries (re-run /architect to incorporate FEEDBACK_PENDING items targeting contracts/)
+2. /architect — updates architecture.md + contracts/ + adr/
+3. /plan — updates tasks.yaml + tasks-summary.md
 
 ## Up to date
 | Artifact | Last generated |
@@ -151,10 +221,16 @@ If stale: print the cascade order and ask: **"Run these in order? Y/n"** — but
 
 - [ ] Every stale artifact is identified with a specific cascade action
 - [ ] Cascade order is topologically sorted (no downstream runs before its upstream)
-- [ ] Report includes stale, up-to-date, no-header, modified, broken-ref, AND schema-violation sections
-- [ ] No false positives — artifact marked stale only when `D.generated_at > A.generated_at` OR a dep is MODIFIED
+- [ ] Report includes stale, up-to-date, no-header, modified, broken-ref, feedback-pending, conflict, soft-stale, tasks-diverged, ADR review-due, AND schema-violation sections
+- [ ] No false positives — artifact marked stale only when `D.generated_at > A.generated_at` OR a dep is MODIFIED/FEEDBACK_PENDING/NEEDS_REVIEW
 - [ ] `content_hash` recomputed and compared for every tracked artifact (catches manual edits)
 - [ ] `generated_at` validated as UTC with Z suffix (catches timezone drift)
 - [ ] Contract references in `tasks.yaml` and `parallel-plan.md` checked against disk (catches orphans)
+- [ ] `.forge/feedback/*.md` PENDING entries surfaced; targets flipped to FEEDBACK_PENDING or NEEDS_REVIEW
+- [ ] `api-design.md` ↔ `contracts/*.md` operation shapes cross-checked for CONFLICT
+- [ ] Soft dependencies (`soft_depends_on` field) checked; SOFT_STALE reported separately from STALE
+- [ ] ADRs older than 90 days with status `Accepted` flagged as REVIEW_DUE
+- [ ] `tasks.yaml` split/blocked counts inspected → TASKS_DIVERGED if ≥3
+- [ ] Previous `.forge/sync-report.md` checked against newest `.forge/` mtime; SELF_STALE noted in preamble if applicable
 - [ ] `forge-sync` does NOT regenerate anything; it only reports
 - [ ] `.forge/sync-report.md` written with its own `forge:meta` header (UTC, Z suffix, valid hash)

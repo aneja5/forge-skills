@@ -46,7 +46,26 @@ Define the project's API conventions *before* endpoints proliferate. Output is `
 - `OFFSET`/`LIMIT` pagination on a feed that will exceed 10k rows
 - A field added to a response is the only change — no version bump, no deprecation notice
 
+## Precedence with architecture contracts
+
+`.forge/contracts/<module>.md` is the **authoritative source** for module boundaries, operations, types, and error cases. `api-design.md` is the **subordinate** that defines how those operations map to HTTP (verbs, paths, envelope shape, error codes, versioning).
+
+**Rule:** If `.forge/contracts/` exists, **read every contract first.** Your API design must be consistent with the operations and error types they define. If a contract specifies `RefundError` with cases `TransactionNotFound | RefundWindowExpired | AlreadyRefunded`, the matching HTTP design must surface those exact codes — no inventing new ones, no collapsing them into a generic 400.
+
+If a contract is missing an operation you need to expose (e.g., the PRD calls for refunds but `PaymentService` contract has no `refund`), do NOT add it to `api-design.md` alone — file `/feedback` targeting the contract so it gets updated upstream. Otherwise the two artifacts will diverge and `forge-sync` will flag a CONFLICT.
+
+If no contracts exist yet, `api-design.md` may define the envelope policy in isolation, but the module boundaries it references will be back-filled when `architecture-and-contracts` runs.
+
 ## Core Process
+
+### Step 0: Read existing contracts (if any)
+
+Glob `.forge/contracts/*.md`. For each contract found:
+- Extract every operation in `Provides`
+- Extract input/output types
+- Extract error types and their conditions
+
+Hold these as the source of truth. Every endpoint you design must trace back to a contract operation (or be flagged as new and worth a feedback entry).
 
 ### Step 1: Define base conventions
 
@@ -110,6 +129,9 @@ Prepend a `forge:meta` header (`generated_by: api-design`, `depends_on: [.forge/
 
 ## Verification
 
+- [ ] Existing `.forge/contracts/*.md` read (or noted as absent); every endpoint traces back to a contract operation
+- [ ] No endpoint invents an error code that contradicts the contract's named errors
+- [ ] If a needed operation is missing from contracts, a `/feedback` entry was filed targeting the contract — not silently added here
 - [ ] `.forge/api-design.md` written
 - [ ] Every endpoint returns errors in the standard envelope (code, message, request_id)
 - [ ] Every endpoint has a version (URI, header, or query) — none unversioned

@@ -14,7 +14,7 @@
         "source": "github",
         "repo": "aneja5/forge-skills"
       },
-      "description": "Agentic Engineering toolkit — 36 skills, 11 agent personas, 30 slash commands. Full lifecycle from /grill to /ship to /incident to /demo. forge:meta dependency headers, content-hash + UTC chain integrity, /sync + /forge-migrate. TDD-tested skills.",
+      "description": "Agentic Engineering toolkit — 37 skills, 11 agent personas, 31 slash commands. Full lifecycle from /grill to /ship to /incident to /demo. Bidirectional artifact chain: forge:meta headers + /sync + /forge-migrate + /feedback reverse cascade. Task lifecycle in tasks.yaml. ADR review-due signals. TDD-tested skills.",
       "homepage": "https://github.com/aneja5/forge-skills",
       "repository": "https://github.com/aneja5/forge-skills",
       "license": "MIT",
