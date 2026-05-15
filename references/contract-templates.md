@@ -81,7 +81,9 @@ generated_by: architecture-and-contracts
 generated_at: 2026-05-14T09:00:00Z
 last_reviewed_at: 2026-05-14T09:00:00Z
 depends_on: [.forge/prd.md]
-content_hash: <first 8 chars of sha256>
+generated_from:
+  .forge/prd.md: <prd.md's content_hash at this moment>
+content_hash: <first 8 chars of sha256 over this ADR's body>
 -->
 
 # ADR-NNN: <Title>

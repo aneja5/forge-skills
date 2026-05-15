@@ -110,7 +110,7 @@ State the design promise: *"Someone using Product A and Product B should feel th
 
 ### Step 8: Write `.forge/brand-identity.md`
 
-Sections in this order: Essence, Logo, Color, Typography, Voice, Iconography & Illustration, Multi-product. Prepend a `forge:meta` header (`generated_by: brand-and-identity`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: []`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Sections in this order: Essence, Logo, Color, Typography, Voice, Iconography & Illustration, Multi-product. Prepend a `forge:meta` header (`generated_by: brand-and-identity`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: []` — independent, no upstream, `generated_from: {}`, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 ## Verification
 

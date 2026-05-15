@@ -99,7 +99,7 @@ Structure for capturing pilot results:
 
 ## Output
 
-Write `.forge/gtm.md` with all sections above. Prepend a `forge:meta` header (`generated_by: gtm-strategy`, `depends_on: [.forge/prd.md, .forge/competitive.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Write `.forge/gtm.md` with all sections above. Prepend a `forge:meta` header (`generated_by: gtm-strategy`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/prd.md, .forge/competitive.md]` — paths only, never hashes, `generated_from: {.forge/prd.md: <hash>, .forge/competitive.md: <hash>}` — each upstream's content_hash AT generation time, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "GTM strategy written to `.forge/gtm.md`."
 

@@ -122,7 +122,7 @@ If not data-heavy, skip — don't invent patterns to fill the section.
 
 ### Step 9: Write `.forge/data-visualization.md`
 
-Section order: upstream-read confirmation, chart selection rules, color encoding, axis + labels, responsive behavior, empty states, animation, domain-specific patterns. Prepend a `forge:meta` header (`generated_by: data-visualization`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/design-system.md, .forge/component-library.md]`, `content_hash: <sha256 first 8>`).
+Section order: upstream-read confirmation, chart selection rules, color encoding, axis + labels, responsive behavior, empty states, animation, domain-specific patterns. Prepend a `forge:meta` header (`generated_by: data-visualization`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/design-system.md, .forge/component-library.md]` — paths only, never hashes, `generated_from: {.forge/design-system.md: <hash>, .forge/component-library.md: <hash>}` — each upstream's content_hash AT generation time, `content_hash: <sha256 first 8 of THIS file's body>`).
 
 ## Verification
 

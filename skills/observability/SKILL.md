@@ -110,7 +110,7 @@ Plus one "user journey" dashboard per critical path from `.forge/testing-strateg
 
 ### Step 8: Header
 
-Prepend a `forge:meta` header to `.forge/observability.md` (`generated_by: observability`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Prepend a `forge:meta` header to `.forge/observability.md` (`generated_by: observability`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/architecture.md]` — paths only, never hashes, `generated_from: {.forge/architecture.md: <upstream content_hash AT generation time>}`, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 ## Verification
 

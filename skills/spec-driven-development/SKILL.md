@@ -71,7 +71,7 @@ Identify major modules to build or modify. Prefer deep modules — small interfa
 
 ### Step 5: Write .forge/prd.md
 
-Create `.forge/` if it doesn't exist. Prepend a `forge:meta` dependency header (`generated_by: spec-driven-development`, `depends_on: [.forge/idea-brief.md]` if it exists else `[]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8 chars>`) — see [forge-dependency-graph](../../references/forge-dependency-graph.md). Then write using the template below.
+Create `.forge/` if it doesn't exist. Prepend a `forge:meta` dependency header (`generated_by: spec-driven-development`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/idea-brief.md]` if it exists else `[]` — paths only, never hashes, `generated_from: {.forge/idea-brief.md: <upstream content_hash AT generation time>}` if idea-brief exists else `{}`, `content_hash: <sha256 first 8 of THIS file's body>`) — see [forge-dependency-graph](../../references/forge-dependency-graph.md). Then write using the template below.
 
 ## PRD Template
 
@@ -80,7 +80,9 @@ Create `.forge/` if it doesn't exist. Prepend a `forge:meta` dependency header (
 generated_by: spec-driven-development
 generated_at: 2026-05-13T12:00:00Z
 depends_on: [.forge/idea-brief.md]
-content_hash: <first 8 chars of sha256>
+generated_from:
+  .forge/idea-brief.md: <idea-brief.md's content_hash at this moment>
+content_hash: <first 8 chars of sha256 over this PRD's body>
 -->
 
 # PRD: [Feature Name]

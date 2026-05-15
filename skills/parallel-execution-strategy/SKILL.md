@@ -136,12 +136,18 @@ Sections:
 - Integration test cadence
 - Fallback for conflicts that emerge mid-run
 
-Prepend a `forge:meta` header (`generated_by: parallel-execution-strategy`, `generated_at: <ISO 8601 UTC with Z suffix>`, `content_hash: <sha256 first 8 over body, excluding the forge:meta block>`).
+Prepend a `forge:meta` header (`generated_by: parallel-execution-strategy`, `generated_at: <ISO 8601 UTC with Z>`, `content_hash: <sha256 first 8 over THIS file's body, excluding the forge:meta block>`).
 
-**Transitive depends_on:** `parallel-plan.md` builds on `tasks.yaml`, which itself depends on `prd.md`, `architecture.md`, and `contracts/*`. List the full transitive upstream set:
+**Transitive depends_on:** `parallel-plan.md` builds on `tasks.yaml`, which itself depends on `prd.md`, `architecture.md`, and `contracts/*`. List the full transitive upstream set in `depends_on` (paths only — never hashes) AND capture each upstream's `content_hash` AT generation time in `generated_from`:
 
 ```
 depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*, .forge/tasks.yaml]
+generated_from:
+  .forge/prd.md: <prd.md's content_hash at this moment>
+  .forge/architecture.md: <architecture.md's content_hash at this moment>
+  .forge/contracts/auth-service.md: <hash>   # one entry per resolved glob match
+  .forge/contracts/payment-service.md: <hash>
+  .forge/tasks.yaml: <tasks.yaml's content_hash at this moment>
 ```
 
 Listing only `[.forge/tasks.yaml]` is wrong — if `prd.md` changes but `tasks.yaml` hasn't been re-run yet, `parallel-plan.md` would appear UP_TO_DATE despite the chain being stale. See [forge-dependency-graph: co-output rule](../../references/forge-dependency-graph.md#co-output-rule).

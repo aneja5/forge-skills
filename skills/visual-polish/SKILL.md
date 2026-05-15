@@ -111,7 +111,7 @@ For every audit, list each item as pass/fail. Every failure includes:
 - A `file:line` (or route + selector) pointer
 - The smallest specific fix
 
-Prepend a `forge:meta` header (`generated_by: visual-polish`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [whichever upstream artifacts existed when this skill ran]`, `content_hash: <sha256 first 8>`).
+Prepend a `forge:meta` header (`generated_by: visual-polish`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [<each UI artifact that existed at run time>]` — paths only, never hashes, `generated_from: {<each upstream path>: <its content_hash AT generation time>}`, `content_hash: <sha256 first 8 of THIS file's body>`).
 
 After writing, report a summary: total items checked, total failed, the three highest-impact failures.
 

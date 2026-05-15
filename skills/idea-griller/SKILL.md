@@ -74,13 +74,14 @@ Work through in order. Each is a checkpoint to *reach*, not a question to *ask*.
 
 ## Output
 
-Create `.forge/` if it doesn't exist. Write `.forge/idea-brief.md` with a `forge:meta` dependency header at the top (`generated_by: idea-griller`, `depends_on: none`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8 chars>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md) for the convention. Then the brief content:
+Create `.forge/` if it doesn't exist. Write `.forge/idea-brief.md` with a `forge:meta` dependency header at the top (`generated_by: idea-griller`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: []` — independent, no upstream, `generated_from: {}`, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md) for the convention. Then the brief content:
 
 ```markdown
 <!-- forge:meta
 generated_by: idea-griller
 generated_at: 2026-05-13T12:00:00Z
 depends_on: []
+generated_from: {}
 content_hash: <first 8 chars of sha256>
 -->
 

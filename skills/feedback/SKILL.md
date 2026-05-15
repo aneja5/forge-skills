@@ -70,7 +70,9 @@ Path: `.forge/feedback/<ISO8601-UTC-with-dashes>-<source>.md` — e.g., `.forge/
 generated_by: feedback
 generated_at: 2026-05-14T10:30:00Z
 depends_on: [.forge/contracts/payment-service.md]
-content_hash: <first 8 chars of sha256>
+generated_from:
+  .forge/contracts/payment-service.md: <target's content_hash AT filing time>
+content_hash: <first 8 chars of sha256 over this entry's body>
 -->
 
 # Feedback: <short title>

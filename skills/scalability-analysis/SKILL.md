@@ -102,7 +102,7 @@ For each data store:
 
 ## Output
 
-Write `.forge/scalability.md` with all sections above. Prepend a `forge:meta` header (`generated_by: scalability-analysis`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 UTC with Z>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Write `.forge/scalability.md` with all sections above. Prepend a `forge:meta` header (`generated_by: scalability-analysis`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/architecture.md]` — paths only, never hashes, `generated_from: {.forge/architecture.md: <upstream content_hash AT generation time>}`, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 After writing: "Scalability analysis written to `.forge/scalability.md`."
 

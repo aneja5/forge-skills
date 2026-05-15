@@ -70,14 +70,21 @@ Read `references/forge-dependency-graph.md`. This is the source of truth for whi
 
 Build the dependency DAG. Walk it depth-first to produce a topological order: `idea-brief → prd → (architecture, competitive, testing-strategy) → (contracts, api-design, …, gtm, tasks) → (tasks-summary, parallel-plan)`.
 
-### Step 4: Check each artifact
+### Step 4: Check each artifact (hash-snapshot comparison)
 
 For each artifact `A` with non-empty `depends_on`:
 - If a dependency `D` doesn't exist on disk — mark `A` as **MISSING_DEP** (the chain is broken).
-- If `D` is **MODIFIED** (hand-edited; see Step 1b) — mark `A` as **STALE** (upstream content drifted out of band).
-- If `D` has a header and `D.generated_at > A.generated_at` — mark `A` as **STALE**.
-- If `D` has no header (legacy) — mark `A` as **UNKNOWN** (can't verify; recommend `/forge-migrate` then re-run).
+- For each `D` listed in `A.depends_on`:
+  - Resolve globs (`.forge/contracts/*.md` → each concrete file).
+  - Look up `A.generated_from[D]` — the snapshot of `D`'s `content_hash` at the moment `A` was generated.
+  - Compare against `D`'s CURRENT `content_hash` (from its `forge:meta`).
+  - **Mismatch** → mark `A` as **STALE** (upstream drifted from snapshot; downstream must regenerate).
+  - **No `generated_from` entry for `D`** (legacy artifact predating this schema) → fall back to timestamp comparison (`D.generated_at > A.generated_at` → STALE) and emit a soft warning to upgrade via `/forge-migrate`.
+  - **`D` is MODIFIED** (Step 1b detected hash mismatch on `D` itself) → `A` is STALE regardless of `generated_from` (the chain of provenance is broken upstream).
+- If `D` has no `forge:meta` header at all — mark `A` as **UNKNOWN** (can't verify; recommend `/forge-migrate` then re-run).
 - Otherwise — **UP_TO_DATE**.
+
+**Hash snapshots make this O(1) per dependency.** No tree walks, no cascade edits, no timestamp ambiguity. The downstream file is never modified to record upstream changes — the snapshot is frozen at generation time, and the staleness check happens at sync time.
 
 ### Step 4b: Detect orphaned contract references
 
@@ -209,7 +216,7 @@ Run these skills in order to fully sync (excluding NEEDS_REVIEW items, which req
 | .forge/observability.md | generated_at is `2026-05-12T10:00:00+05:30` — must be UTC with Z suffix. Re-run /observe. |
 ```
 
-Also prepend a `forge:meta` header to `.forge/sync-report.md` itself (`generated_by: forge-sync`, `depends_on: every .forge/ file scanned`).
+Also prepend a `forge:meta` header to `.forge/sync-report.md` itself (`generated_by: forge-sync`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [<every .forge/ file scanned>]` — paths only, never hashes, `generated_from: {<each scanned path>: <its content_hash at scan time>}`, `content_hash: <sha256 first 8 of THIS file's body>`).
 
 ### Step 7: Report to user
 

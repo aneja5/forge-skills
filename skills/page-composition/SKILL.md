@@ -112,7 +112,7 @@ The principle: every piece of information has a home at every breakpoint. Nothin
 
 ### Step 8: Write `.forge/page-composition.md`
 
-Sections in this order: upstream-read confirmation, layout system, template catalog, per-template specs, responsive philosophy, navigation transformation, content priority rules. Prepend a `forge:meta` header (`generated_by: page-composition`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/component-library.md, .forge/design-system.md, .forge/interaction-patterns.md]`, `content_hash: <sha256 first 8>`).
+Sections in this order: upstream-read confirmation, layout system, template catalog, per-template specs, responsive philosophy, navigation transformation, content priority rules. Prepend a `forge:meta` header (`generated_by: page-composition`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/component-library.md, .forge/design-system.md, .forge/interaction-patterns.md]` — paths only, never hashes, `generated_from: {.forge/component-library.md: <hash>, .forge/design-system.md: <hash>, .forge/interaction-patterns.md: <hash>}` — each upstream's content_hash AT generation time, `content_hash: <sha256 first 8 of THIS file's body>`).
 
 ## Verification
 

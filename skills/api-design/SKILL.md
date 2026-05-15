@@ -125,7 +125,7 @@ In `.forge/api-design.md`: list every endpoint as `public` (versioned, deprecati
 
 ### Step 7: Header
 
-Prepend a `forge:meta` header (`generated_by: api-design`, `depends_on: [.forge/architecture.md]`, `generated_at: <ISO 8601 now>`, `content_hash: <sha256 first 8>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
+Prepend a `forge:meta` header (`generated_by: api-design`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/architecture.md]` — paths only, never hashes, `generated_from: {.forge/architecture.md: <upstream content_hash AT generation time>}`, `content_hash: <sha256 first 8 of THIS file's body>`). See [forge-dependency-graph](../../references/forge-dependency-graph.md).
 
 ## Verification
 

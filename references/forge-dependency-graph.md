@@ -12,8 +12,11 @@ Every artifact-producing skill MUST prepend a header to its output. This is the 
 <!-- forge:meta
 generated_by: <skill-name>
 generated_at: <ISO 8601 UTC with Z suffix>
-depends_on: [<list of .forge/ paths>]
-content_hash: <first 8 chars of sha256 over the file body excluding this header>
+depends_on: [<list of .forge/ paths — paths only, NEVER hashes>]
+generated_from:
+  <upstream path>: <first 8 chars of upstream's content_hash AT generation time>
+  <upstream path>: <first 8 chars of upstream's content_hash AT generation time>
+content_hash: <first 8 chars of sha256 over THIS file's body excluding this header>
 -->
 ```
 
@@ -23,30 +26,46 @@ For YAML files, use comment form:
 # forge:meta
 #   generated_by: <skill-name>
 #   generated_at: <ISO 8601 UTC with Z suffix>
-#   depends_on: [<list of .forge/ paths>]
-#   content_hash: <first 8 chars of sha256 over the file body excluding this header>
+#   depends_on: [<list of .forge/ paths — paths only, NEVER hashes>]
+#   generated_from:
+#     <upstream path>: <first 8 chars of upstream's content_hash AT generation time>
+#   content_hash: <first 8 chars of sha256 over THIS file's body excluding this header>
 ```
 
 **Schema rules — enforced by `forge-sync`:**
 
 1. **`generated_at` MUST be UTC with `Z` suffix.** Example: `2026-05-14T08:30:00Z`. Local-time strings or offset suffixes (`+05:30`) are rejected — string comparison across timezones produces false staleness signals.
-2. **`content_hash` is sha256 of the file body with the `forge:meta` block stripped**, truncated to the first 8 hex characters. If the on-disk content's hash doesn't match the stored hash, the artifact is **MODIFIED** (hand-edited after generation) and downstream is potentially stale even if `generated_at` is current.
-3. **`depends_on` lists every `.forge/` artifact the skill READ to produce this output.** Glob patterns allowed (`.forge/contracts/*.md`). See "co-output rule" below for multi-output skills.
-4. **`generated_by` is the kebab-case skill name** — must match an entry in `references/forge-dependency-graph.md`'s "Artifact-producing skills" table.
+2. **`content_hash` is sha256 of THIS file's body with the `forge:meta` block stripped**, truncated to the first 8 hex characters. If the on-disk content's hash doesn't match the stored hash, the artifact is **MODIFIED** (hand-edited after generation) and downstream is potentially stale even if `generated_at` is current.
+3. **`depends_on` is a list of `.forge/` paths only — NEVER hashes inline.** Glob patterns allowed (`.forge/contracts/*.md`). See "co-output rule" below for multi-output skills.
+4. **`generated_from` captures a FROZEN hash snapshot of every upstream at generation time.** One entry per resolved upstream path (globs are expanded). When `forge-sync` runs, it compares each `generated_from` value against the upstream's CURRENT `content_hash`. Mismatch → downstream is STALE. **This is how staleness is detected without ever editing the downstream file.**
+5. **`generated_by` is the kebab-case skill name** — must match an entry in `references/forge-dependency-graph.md`'s "Artifact-producing skills" table.
+
+### Why `generated_from` exists (and `depends_on` never holds hashes)
+
+The naive design — putting upstream hashes inline in `depends_on` — creates a **cascade-update problem**: editing `prd.md` would require editing every downstream file's `depends_on` to record the new hash. Each downstream edit changes that file's own `content_hash`, which then requires editing its downstream, and so on. One PRD edit cascades into N file rewrites.
+
+By separating concerns:
+- `depends_on` lists *which* upstreams (paths only — never changes when content changes).
+- `generated_from` captures *what they looked like* at the moment of generation (a frozen snapshot; only the skill that generates this file ever writes it).
+- `content_hash` captures *what this file looks like now* (only edited when this file's body changes).
+
+**Result:** editing an upstream `.forge/` file requires ZERO edits to downstream files. `forge-sync` re-reads the upstream's current `content_hash` at sync time, compares against the downstream's `generated_from` snapshot, and reports STALE if they differ. The chain stays consistent without any cascade-write.
+
+Artifacts with no upstream (`idea-brief.md`, `brand-identity.md`, `interaction-patterns.md`, etc.) emit `depends_on: []` and `generated_from: {}` (or omit both).
 
 ## Co-output rule
 
-When one skill produces multiple artifacts in a single run (e.g., `planning-and-task-breakdown` writes both `tasks.yaml` and `tasks-summary.md`), **every co-output shares the upstream dependency set**. Not the immediate sibling.
+When one skill produces multiple artifacts in a single run (e.g., `planning-and-task-breakdown` writes both `tasks.yaml` and `tasks-summary.md`), **every co-output shares the upstream dependency set AND the `generated_from` snapshot**. Not the immediate sibling.
 
-| Skill | Co-outputs | Shared `depends_on` |
+| Skill | Co-outputs | Shared `depends_on` + `generated_from` upstreams |
 |---|---|---|
-| `planning-and-task-breakdown` | `tasks.yaml`, `tasks-summary.md` | `[prd.md, architecture.md, contracts/*]` — both files |
+| `planning-and-task-breakdown` | `tasks.yaml`, `tasks-summary.md` | `[prd.md, architecture.md, contracts/*]` — both files; each carries its own `content_hash` |
 | `parallel-execution-strategy` | `parallel-plan.md` | `[prd.md, architecture.md, contracts/*, tasks.yaml]` — transitive |
 | `architecture-and-contracts` | `architecture.md`, `contracts/*.md`, `adr/*.md` | `[prd.md]` — all three groups |
 | `database-design` | `database-design.md`, `migrations-policy.md` | `[architecture.md]` — both files |
 | `cross-validation` | `cross-validation-prompt.md`, `cross-validation-synthesis.md` | inputs depend on what was reviewed |
 
-**Why:** the alternative ("derivative" semantic where `tasks-summary` only depends on `tasks.yaml`) creates a silent staleness bug. If `prd.md` is edited after generation, only `tasks.yaml` is flagged stale; `tasks-summary.md` passes UP_TO_DATE because its single declared dep shares its generation timestamp. By pinning co-output to the full upstream set, both artifacts flip stale together.
+**Why:** the alternative ("derivative" semantic where `tasks-summary` only depends on `tasks.yaml`) creates a silent staleness bug. If `prd.md` is edited after generation, only `tasks.yaml` is flagged stale; `tasks-summary.md` passes UP_TO_DATE because its single declared dep shares its generation timestamp. By pinning co-output to the full upstream set — including the snapshot in `generated_from` — both artifacts flip stale together when an upstream's content_hash drifts.
 
 ## Chained dependencies
 

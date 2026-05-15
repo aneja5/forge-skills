@@ -93,7 +93,7 @@ State the forbidden patterns explicitly in the catalog:
 
 ### Step 6: Write `.forge/component-library.md`
 
-Section order: upstream-read confirmation, inventory by category, per-component specs, naming + file conventions, anti-patterns. Prepend a `forge:meta` header (`generated_by: component-library`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/design-system.md, .forge/interaction-patterns.md, .forge/brand-identity.md]`, `content_hash: <sha256 first 8>`).
+Section order: upstream-read confirmation, inventory by category, per-component specs, naming + file conventions, anti-patterns. Prepend a `forge:meta` header (`generated_by: component-library`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/design-system.md, .forge/interaction-patterns.md, .forge/brand-identity.md]` — paths only, never hashes, `generated_from: {.forge/design-system.md: <hash>, .forge/interaction-patterns.md: <hash>, .forge/brand-identity.md: <hash>}` — each upstream's content_hash AT generation time, `content_hash: <sha256 first 8 of THIS file's body>`).
 
 ## Verification
 

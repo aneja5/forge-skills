@@ -92,16 +92,20 @@ Iterate until approved.
 
 ### Step 6: Write .forge/tasks.yaml
 
-Prepend a `forge:meta` header (`generated_by: planning-and-task-breakdown`, `depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`, `generated_at: <ISO 8601 UTC with Z suffix>`, `content_hash: <sha256 first 8 over body, excluding the forge:meta block>`) — comment-style for YAML (`# forge:meta ...`).
+Prepend a `forge:meta` header (`generated_by: planning-and-task-breakdown`, `generated_at: <ISO 8601 UTC with Z>`, `depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]` — paths only, never hashes, `generated_from: {.forge/prd.md: <hash>, .forge/architecture.md: <hash>, .forge/contracts/<each-resolved>.md: <hash>}` — each upstream's content_hash AT generation time, `content_hash: <sha256 first 8 over THIS file's body, excluding the forge:meta block>`) — comment-style for YAML (`# forge:meta ...`).
 
-**Co-output rule:** `tasks.yaml` and `tasks-summary.md` are co-generated in this single skill run. Both files MUST carry the **same** `depends_on` list (`[.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`). Do NOT write `tasks-summary.md` with `depends_on: [.forge/tasks.yaml]` — that creates a silent staleness bug where a PRD edit flips `tasks.yaml` stale but leaves `tasks-summary.md` UP_TO_DATE. See [forge-dependency-graph: co-output rule](../../references/forge-dependency-graph.md#co-output-rule).
+**Co-output rule:** `tasks.yaml` and `tasks-summary.md` are co-generated in this single skill run. Both files MUST carry the **same** `depends_on` AND **same** `generated_from` set (`[.forge/prd.md, .forge/architecture.md, .forge/contracts/*]`). Do NOT write `tasks-summary.md` with `depends_on: [.forge/tasks.yaml]` — that creates a silent staleness bug where a PRD edit flips `tasks.yaml` stale but leaves `tasks-summary.md` UP_TO_DATE. See [forge-dependency-graph: co-output rule](../../references/forge-dependency-graph.md#co-output-rule).
 
 ```yaml
 # forge:meta
 #   generated_by: planning-and-task-breakdown
 #   generated_at: 2026-05-13T12:00:00Z
 #   depends_on: [.forge/prd.md, .forge/architecture.md, .forge/contracts/*]
-#   content_hash: <first 8 chars of sha256>
+#   generated_from:
+#     .forge/prd.md: <prd.md's content_hash at this moment>
+#     .forge/architecture.md: <architecture.md's content_hash at this moment>
+#     .forge/contracts/auth-service.md: <hash>   # one entry per resolved glob match
+#   content_hash: <first 8 chars of sha256 over THIS file's body>
 
 tasks:
   - id: T001
