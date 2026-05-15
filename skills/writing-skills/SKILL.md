@@ -107,6 +107,63 @@ For each new rationalization the agent invented:
 
 Re-run the scenario. Repeat until no new rationalizations appear.
 
+## `forge:meta` Convention (mandatory for artifact-producing skills)
+
+Every new skill that writes a `.forge/` artifact MUST emit a four-field header. The canonical schema is defined in [forge-dependency-graph.md](../../references/forge-dependency-graph.md#forgemeta-header-schema). The four fields:
+
+1. **`generated_by`** — kebab-case skill name (matches the artifact-producing-skills table).
+2. **`generated_at`** — ISO 8601 UTC with `Z` suffix. Never local time, never an offset.
+3. **`depends_on`** — list of `.forge/` paths only. **NEVER put hashes in `depends_on`.** Glob patterns OK.
+4. **`generated_from`** — a hash-snapshot map: each resolved upstream path → its `content_hash` at the moment THIS file was generated. One entry per upstream. Empty `{}` for independent artifacts.
+5. **`content_hash`** — sha256 first 8 chars over THIS file's body (excluding the `forge:meta` block).
+
+```markdown
+<!-- forge:meta
+generated_by: <skill-name>
+generated_at: <YYYY-MM-DDTHH:MM:SSZ>
+depends_on: [.forge/<upstream-1>.md, .forge/<upstream-2>.md]
+generated_from:
+  .forge/<upstream-1>.md: <upstream-1's content_hash at this moment>
+  .forge/<upstream-2>.md: <upstream-2's content_hash at this moment>
+content_hash: <first 8 chars of sha256 over this file's body>
+-->
+```
+
+### Why `generated_from` exists (read this — it shapes how staleness works)
+
+A naive design would inline upstream hashes inside `depends_on`:
+
+```
+# WRONG — creates cascade-update problem
+depends_on:
+  .forge/prd.md@sha256:7d8e9f0a
+```
+
+If you put hashes in `depends_on`, then **editing `prd.md` requires editing every downstream file's `depends_on`** to record the new hash. Each downstream edit changes that file's own `content_hash`, which then requires editing **its** downstream, and so on. One PRD edit cascades into N file rewrites.
+
+`generated_from` separates concerns:
+- `depends_on` is the **structural** edge — paths only, almost never changes.
+- `generated_from` is the **content snapshot** — frozen at generation time, only the skill that produced this file ever writes it.
+- `content_hash` is **this file's** own hash — only changes when this file's body changes.
+
+**Result:** editing an upstream `.forge/` file requires **ZERO** edits to downstream files. `forge-sync` reads the upstream's current `content_hash` at sync time, compares against the downstream's `generated_from` snapshot, and reports STALE on mismatch. The chain stays consistent without cascade-writes.
+
+> **NEVER put hashes in `depends_on`. That creates cascade updates.**
+
+Skills with no upstream (`idea-griller`, `brand-and-identity`, `interaction-patterns`, etc.) emit `depends_on: []` and `generated_from: {}`.
+
+For YAML artifacts (e.g., `tasks.yaml`), use comment form:
+
+```yaml
+# forge:meta
+#   generated_by: <skill>
+#   generated_at: <UTC>
+#   depends_on: [...]
+#   generated_from:
+#     <path>: <hash>
+#   content_hash: <hash>
+```
+
 ## CSO Rules for the Description
 
 The `description` field decides whether future Claude loads the skill. Rules:
@@ -142,6 +199,7 @@ Good: *"Use when user wants to write a spec, when idea-brief.md exists and is re
 - [ ] Common Rationalizations table populated from observed RED rationalizations
 - [ ] Verification checklist items are objective (file exists, section non-empty, count >= N)
 - [ ] No new rationalizations in latest GREEN run
+- [ ] If the skill writes a `.forge/` artifact: its template emits all four `forge:meta` fields (`generated_by`, `generated_at` in UTC, `depends_on` as paths-only, `generated_from` snapshot map, `content_hash`). NO hashes inline in `depends_on`.
 - [ ] Skill registered in `using-forge-skills` discovery flowchart
 - [ ] README, CLAUDE.md, install.sh updated
 
