@@ -308,6 +308,22 @@ Test results live in `tests/<skill>/results.md`. See [tests/METHODOLOGY.md](test
 
 **Iron Law:** *No skill ships without a failing test first.*
 
+### Quick integrity check without Claude Code
+
+`./bin/forge-check.sh` is a standalone bash script (macOS-friendly, uses `shasum`) that scans every `.forge/` artifact and verifies two things:
+
+1. Each file's `content_hash` matches its body's actual sha256 (catches manual edits → **MODIFIED**)
+2. Each `generated_from` snapshot still matches the upstream's current `content_hash` (catches upstream drift → **STALE**)
+
+```bash
+./bin/forge-check.sh             # checks ./.forge
+./bin/forge-check.sh path/to/.forge
+
+# Exit codes: 0 clean | 1 modified | 2 stale
+```
+
+Useful in CI, pre-commit hooks, or when sanity-checking a repo on a machine without Claude Code installed.
+
 ---
 
 ## Contributing
