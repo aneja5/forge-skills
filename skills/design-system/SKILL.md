@@ -75,7 +75,7 @@ Document every semantic token with: light hex, dark hex, WCAG contrast against i
 - **Typography:** 6-7 sizes (caption / body / body-lg / heading-sm / heading / heading-lg / display). Line height per size. Font family + weight roles (regular / medium / semibold).
 - **Spacing:** 4px or 8px grid. 6-8 stops (`0, 2, 4, 8, 12, 16, 24, 32, 48, 64`). No values outside this scale.
 - **Radius:** 3-4 values (`none, sm, md, lg, full`). One canonical radius per component type.
-- **Motion:** 3 durations (`fast 150ms / normal 250ms / slow 400ms`). 2 easings (`standard, emphasized`). Respect `prefers-reduced-motion`.
+- **Motion:** 3 durations (`fast 150ms / normal 250ms / slow 400ms`). 2 easings (`standard, emphasized`). Respect `prefers-reduced-motion`. For detailed motion conventions, generate and reference [references/motion-system.md](../../references/motion-system.md) alongside the design-system artifact.
 - **Breakpoints:** mobile-first. 3-4 stops (`sm 640 / md 768 / lg 1024 / xl 1280`). Document which is the "design target."
 
 ### Step 4: Define primitive components with all 6 states
