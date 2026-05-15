@@ -1,7 +1,7 @@
 {
   "name": "forge-skills",
-  "description": "Agentic Engineering toolkit — 37 skills, 11 agent personas, 31 slash commands. Full lifecycle from /grill to /ship to /incident to /demo. Bidirectional artifact chain: forge:meta headers + /sync + /forge-migrate + /feedback reverse cascade. Task lifecycle in tasks.yaml. ADR review-due signals. TDD-tested skills.",
-  "version": "3.3.0",
+  "description": "Agentic Engineering toolkit — 42 skills, 13 agent personas, 36 slash commands. Full UI chain (brand → design-system → components → pages → dataviz → polish) plus motion-system reference. Bidirectional artifact chain: forge:meta + /sync + /forge-migrate + /feedback. Task lifecycle in tasks.yaml. ADR review-due signals. TDD-tested skills.",
+  "version": "3.4.0",
   "author": {
     "name": "Sahil Aneja"
   },
