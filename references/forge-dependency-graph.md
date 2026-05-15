@@ -73,6 +73,22 @@ When one skill produces multiple artifacts in a single run (e.g., `planning-and-
 
 `gtm.md` reads both `.forge/prd.md` and `.forge/competitive.md`. `tasks.yaml` reads `prd.md`, `architecture.md`, and all of `contracts/`. `cross-validation-prompt.md` reads any `.forge/` artifact the user wants reviewed (typically `prd.md` + `architecture.md`).
 
+### UI chain
+
+The visual / UI artifacts form their own dependency tree rooted at `brand-identity.md`. Run in order: brand → design-system → component-library → page-composition; `data-visualization` branches off design-system + component-library; `interaction-patterns` is independent (no upstream).
+
+```
+.forge/brand-identity.md
+   └─▶ .forge/design-system.md
+         ├─▶ .forge/component-library.md
+         │     └─▶ .forge/page-composition.md
+         └─▶ .forge/data-visualization.md
+.forge/interaction-patterns.md            (independent — referenced by component-library and page-composition)
+.forge/polish-checklist.md                (depends on every UI artifact above; runs after /build, before /ship)
+```
+
+`component-library.md` reads `design-system.md` + `interaction-patterns.md` + `brand-identity.md`. `page-composition.md` reads `component-library.md` + `design-system.md` + `interaction-patterns.md`. `data-visualization.md` reads `design-system.md` + `component-library.md`. `polish-checklist.md` reads every UI artifact that exists; depending on which are present, its `depends_on` list varies per run.
+
 ## Independent artifacts (no upstream dependency)
 
 These can be generated at any point in the pipeline. They don't have an enforced upstream because their inputs are project-wide conventions, not pipeline artifacts:
@@ -166,6 +182,10 @@ When an upstream artifact changes, every downstream artifact is potentially stal
 | `competitive.md` | `gtm.md` |
 | `tasks.yaml` | `tasks-summary.md`, `parallel-plan.md` |
 | `seed-data.md` | `demo-narrative.md` (scene seed functions may need re-naming) |
+| `brand-identity.md` | `design-system.md` → component-library → page-composition + data-visualization → polish-checklist |
+| `design-system.md` | component-library → page-composition; data-visualization; polish-checklist |
+| `component-library.md` | `page-composition.md`, `data-visualization.md`, `polish-checklist.md` |
+| `interaction-patterns.md` | component-library (soft for tokens-only consumers), page-composition, polish-checklist |
 | feedback entry filed | target_artifact flipped to FEEDBACK_PENDING; downstream of target inherits STALE on next sync |
 
 Forward cascade flows downward only — regenerating a downstream artifact does NOT mark its upstreams stale. **Reverse cascade is opt-in**, mediated by feedback entries: an upstream is never auto-marked stale because a downstream changed; instead, the downstream skill (or a human) files a feedback entry that flags the upstream for review.
@@ -255,8 +275,13 @@ When an ADR is superseded, the superseding ADR (`ADR-N+1`) updates the old ADR's
 | `planning-and-task-breakdown` | `.forge/tasks.yaml`, `.forge/tasks-summary.md` | `.forge/prd.md` + `.forge/architecture.md` + `.forge/contracts/*.md` |
 | `parallel-execution-strategy` | `.forge/parallel-plan.md` | `.forge/prd.md` + `.forge/architecture.md` + `.forge/contracts/*.md` + `.forge/tasks.yaml` (transitive — see co-output rule) |
 | `cross-validation` | `.forge/cross-validation-prompt.md`, `.forge/cross-validation-synthesis.md` | any `.forge/` artifact |
-| `design-system` | `.forge/design-system.md` | — (independent) |
+| `brand-and-identity` | `.forge/brand-identity.md` | — (independent, upstream of every visual artifact) |
+| `design-system` | `.forge/design-system.md` | `.forge/brand-identity.md` (soft if absent) |
 | `interaction-patterns` | `.forge/interaction-patterns.md` | — (independent) |
+| `component-library` | `.forge/component-library.md` | `.forge/design-system.md` + `.forge/interaction-patterns.md` + `.forge/brand-identity.md` |
+| `page-composition` | `.forge/page-composition.md` | `.forge/component-library.md` + `.forge/design-system.md` + `.forge/interaction-patterns.md` |
+| `data-visualization` | `.forge/data-visualization.md` | `.forge/design-system.md` + `.forge/component-library.md` |
+| `visual-polish` | `.forge/polish-checklist.md` | every UI artifact that exists at run time |
 | `seed-data-and-fixtures` | `.forge/seed-data.md` | — (independent) |
 | `accessibility` | `.forge/accessibility.md` | — (independent) |
 | `demo-narrative` | `.forge/demo-narrative.md` | `.forge/seed-data.md` (soft, if exists) |

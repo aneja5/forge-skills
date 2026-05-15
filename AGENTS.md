@@ -25,10 +25,14 @@ Write a spec / PRD / requirements        →  spec-driven-development
 ### Design
 
 ```
+Establish brand foundations / voice      →  brand-and-identity
 Design system / write contracts          →  architecture-and-contracts
 Design REST endpoints / API contracts    →  api-design
 Design schema / migrations               →  database-design
 Establish design tokens / component lib  →  design-system
+Build a component catalog                →  component-library
+Define page templates + responsive plan  →  page-composition
+Build charts / dashboards / data display →  data-visualization
 Decide modal vs sheet, expand vs nav     →  interaction-patterns
 ```
 
@@ -70,6 +74,7 @@ Triage a bug / file an issue             →  triage-issue
 Code ready for review                    →  code-review-and-quality
 Commit / branch / prepare PR             →  git-workflow
 Make it accessible (WCAG)                →  accessibility
+Visual quality pass before ship/demo     →  visual-polish
 Pay down tech debt                       →  refactoring-and-tech-debt
 Keep docs from rotting                   →  documentation-hygiene
 Write demo script + dry-run plan         →  demo-narrative
@@ -89,11 +94,15 @@ For tools that don't support slash commands, follow this internal lifecycle:
 |-----------|------------------------------------|------------------------------------------------------------------|
 | GRILL     | idea-griller                       | Vague idea, needs pressure-testing                               |
 | SPEC      | spec-driven-development            | Ready to formalize requirements                                  |
+| BRAND     | brand-and-identity                 | New company/product, or two products need to feel related        |
 | DESIGN    | architecture-and-contracts         | `.forge/prd.md` exists                                           |
 | INTERFACE | api-design                         | Touching endpoints or designing a new API surface                |
 | DATA      | database-design                    | Touching schema, writing migrations, or reviewing queries        |
 | LOOK      | design-system                      | Touching UI without established tokens                           |
 | FEEL      | interaction-patterns               | Touching UX or deciding interaction shape                        |
+| COMPONENTS| component-library                  | Cataloging components before a UI build sprint                   |
+| PAGES     | page-composition                   | Defining page templates + responsive collapse strategy           |
+| DATAVIZ   | data-visualization                 | Building dashboards / charts / data displays                     |
 | COMPETE   | competitive-analysis               | PRD exists, entering a market                                    |
 | SCALE     | scalability-analysis               | Architecture exists, need growth plan                            |
 | SECURE    | security-and-compliance            | System handles sensitive data                                    |
@@ -111,6 +120,7 @@ For tools that don't support slash commands, follow this internal lifecycle:
 | RESPOND   | incident-response-and-postmortems  | Something broke in production                                    |
 | REPAY     | refactoring-and-tech-debt          | Third occurrence of a pattern, or before adjacent feature work   |
 | INCLUDE   | accessibility                      | Any UI shipping to users                                         |
+| POLISH    | visual-polish                      | UI built, demo/ship imminent — needs a quality pass              |
 | TELL      | demo-narrative                     | Sales / investor demo coming up                                  |
 | KEEP      | documentation-hygiene              | Repo >1 month old, doc rot visible                               |
 | DEBUG     | debugging-and-recovery             | Something broke                                                  |
@@ -135,14 +145,18 @@ Phase 1 — Define & Specify
 .forge/prd.md                   (spec-driven-development)
          ↓
 Phase 2 — Design (fans out)
+.forge/brand-identity.md        (brand-and-identity — upstream of every visual artifact)
 .forge/architecture.md          (architecture-and-contracts)
 .forge/contracts/*.md           (architecture-and-contracts)
 .forge/adr/*.md                 (architecture-and-contracts)
 .forge/api-design.md            (api-design)
 .forge/database-design.md       (database-design)
 .forge/migrations-policy.md     (database-design)
-.forge/design-system.md         (design-system)
+.forge/design-system.md         (design-system — depends on brand-identity)
 .forge/interaction-patterns.md  (interaction-patterns)
+.forge/component-library.md     (component-library — depends on design-system + interaction-patterns + brand-identity)
+.forge/page-composition.md      (page-composition — depends on component-library)
+.forge/data-visualization.md    (data-visualization — depends on design-system + component-library)
 
 Phase 3 — Validate before building
 .forge/competitive.md           (competitive-analysis)
@@ -168,6 +182,7 @@ code + commits                  (incremental-implementation + tdd)
 
 Phase 6 — Polish & ship
 .forge/accessibility.md         (accessibility)
+.forge/polish-checklist.md      (visual-polish — depends on all available UI artifacts)
 .forge/tech-debt-registry.md    (refactoring-and-tech-debt)
 .forge/demo-narrative.md        (demo-narrative)
 .forge/docs-policy.md           (documentation-hygiene)
@@ -247,6 +262,7 @@ Specialist personas for dispatch via Task tool:
 | Persona | File | Role |
 |---------|------|------|
 | Architect | `agents/architect.md` | System design, contracts, ADRs |
+| Platform Architect | `agents/platform-architect.md` | Multi-product boundaries, shared vs forked, deploy topology |
 | Project Manager | `agents/project-manager.md` | Task breakdown, dependency ordering |
 | Test Engineer | `agents/test-engineer.md` | TDD coaching, test quality review |
 | Code Reviewer | `agents/code-reviewer.md` | PR review, contract validation |
@@ -257,3 +273,4 @@ Specialist personas for dispatch via Task tool:
 | Data Engineer | `agents/data-engineer.md` | Schema, migrations, query performance |
 | QA Engineer | `agents/qa-engineer.md` | Test strategy, quality gates |
 | Design Engineer | `agents/design-engineer.md` | Visual system, interaction, accessibility |
+| Brand Strategist | `agents/brand-strategist.md` | Brand identity, voice and tone, cross-product consistency |

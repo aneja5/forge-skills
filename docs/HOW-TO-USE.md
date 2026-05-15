@@ -241,6 +241,69 @@ are bottom sheets. Destructive actions get undo or confirm — never
 neither. 44pt tap target minimum.
 ```
 
+**`brand-and-identity` → `.forge/brand-identity.md`** — upstream of everything visual. Brand essence, logo rules, brand-vs-UI color mapping, voice and tone, icon system, multi-product consistency.
+```
+/brand
+
+We're building two products. Define the brand foundation so they
+feel related — shared logo, voice, icon system; distinct product
+accent and domain icons.
+```
+```
+/brand
+
+Write voice and tone guidelines for our microcopy: button labels,
+empty states, error messages, onboarding. Concrete examples for each.
+```
+
+**`component-library` → `.forge/component-library.md`** — catalog components before the build sprint. Props with types, all 6 states, responsive behavior, accessibility, microcopy.
+```
+/components
+
+Build a component catalog for our dashboard app. We have design
+tokens and interaction patterns already. Group by category and
+include domain components (ScoreCard, RepCard, CallTimeline).
+```
+```
+/components
+
+Define the ScoreCard, RepCard, and CallTimeline components with
+all 6 states (default / hover / active / disabled / loading / error)
+and responsive behavior per breakpoint.
+```
+
+**`page-composition` → `.forge/page-composition.md`** — layout grid, page templates, responsive collapse strategy, navigation transformation per breakpoint.
+```
+/pages
+
+Define page templates for our SaaS dashboard: overview, detail,
+settings, list. Decide responsive collapse rules and what content
+relocates (not disappears) on mobile.
+```
+```
+/pages
+
+Our D2D app is mobile-first — design at 380px first, enhance for
+desktop. Define the navigation transformation: bottom tabs on
+mobile, sidebar on desktop. Sticky elements must not cover content.
+```
+
+**`data-visualization` → `.forge/data-visualization.md`** — chart-type selection rules, data color encoding, axis conventions, empty states, animation.
+```
+/dataviz
+
+We're building analytics dashboards. Define chart selection rules
+(line for trends, donut for part-of-whole, horizontal bar for
+comparison) and color encoding from design-system semantic tokens.
+```
+```
+/dataviz
+
+Standardize how score distributions and trend lines look across
+the product: histogram with performance bands, 7-day moving average
+overlay. Every chart needs an empty state and a tap-tooltip path.
+```
+
 ### Plan-phase additions
 
 **`parallel-execution-strategy` → `.forge/parallel-plan.md`** — file-conflict matrix, worktree isolation, merge order, integration-test cadence.
@@ -317,6 +380,23 @@ postmortem template.
 Audit semantic HTML usage. Review ARIA (sparingly). Verify keyboard
 nav, focus return on overlay close, 4.5:1 contrast on body, prefers-
 reduced-motion respected.
+```
+
+**`visual-polish` → `.forge/polish-checklist.md`** — quality pass before demo/ship. Micro-interactions, empty states, error states, loading skeletons, responsive edges, meta tags, dark mode.
+```
+/polish
+
+Run a visual quality pass on the dashboard before the investor demo.
+Audit every interactive element's states, every empty state, every
+loading skeleton, every error message — pass/fail with file:line.
+```
+```
+/polish
+
+Check every empty state, loading skeleton, and error message in the
+app against brand voice. No "No data" without context, no
+"Something went wrong" without a next step. Favicon and OG tags
+present.
 ```
 
 **`refactoring-and-tech-debt` → `.forge/tech-debt-registry.md`** — debt registry with triggers, strangler-fig for rewrites, refactor-only PRs.

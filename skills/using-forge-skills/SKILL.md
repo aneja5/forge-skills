@@ -17,10 +17,14 @@ Task arrives
     ├── Raw idea, not yet pressure-tested? ────────→ idea-griller
     ├── Ready to write a spec/PRD? ────────────────→ spec-driven-development
     ├── Have prd.md, need architecture? ───────────→ architecture-and-contracts
+    ├── Establishing brand foundations / voice? ───→ brand-and-identity
     ├── Design REST endpoints / API contracts? ────→ api-design
     ├── Schema / migrations / query design? ───────→ database-design
     ├── Establish design tokens / component lib? ──→ design-system
     ├── Modal vs sheet / expand vs nav decisions? ─→ interaction-patterns
+    ├── Catalog components before a UI sprint? ────→ component-library
+    ├── Define page templates + responsive plan? ──→ page-composition
+    ├── Charts / dashboards / data displays? ──────→ data-visualization
     ├── Research competitors / positioning? ───────→ competitive-analysis
     ├── Will this scale / capacity planning? ──────→ scalability-analysis
     ├── Security / compliance / PII / SOC 2? ──────→ security-and-compliance
@@ -41,6 +45,7 @@ Task arrives
     ├── Code ready for review? ────────────────────→ code-review-and-quality
     ├── Tech debt / refactor / rewrite plan? ──────→ refactoring-and-tech-debt
     ├── WCAG / a11y / keyboard / screen reader? ───→ accessibility
+    ├── UI quality pass before demo/ship? ─────────→ visual-polish
     ├── Doc rot / README / changelog discipline? ──→ documentation-hygiene
     ├── Sales / investor demo script? ─────────────→ demo-narrative
     ├── Committing / branching? ───────────────────→ git-workflow
@@ -57,15 +62,18 @@ Task arrives
 /grill → /spec → /architect → /plan → /build → /review → /ship
 ```
 
-Each stage consumes the previous stage's artifact. Join mid-pipeline if the artifact already exists. The full `.forge/` artifact chain is in `AGENTS.md` (15+ artifacts; the design phase fans out across architecture, api-design, database-design, design-system, interaction-patterns, and the validation skills).
+Each stage consumes the previous stage's artifact. Join mid-pipeline if the artifact already exists. The full `.forge/` artifact chain is in `AGENTS.md` (20+ artifacts; the design phase fans out across architecture, api-design, database-design, and the UI chain brand-and-identity → design-system → component-library → page-composition + data-visualization + interaction-patterns).
+
+The **UI skill chain** runs in order: `brand-and-identity → design-system → component-library → page-composition → data-visualization`. `visual-polish` runs after `/build`, before `/ship`.
 
 ## Agent Team
 
-Eleven specialist personas available via the Task tool or dispatch:
+Thirteen specialist personas available via the Task tool or dispatch:
 
 | Agent | File | When to invoke |
 |-------|------|----------------|
 | **Architect** | `agents/architect.md` | Designing system structure, evaluating tech decisions |
+| **Platform Architect** | `agents/platform-architect.md` | Multi-product boundaries, shared vs forked decisions, deploy topology |
 | **Project Manager** | `agents/project-manager.md` | Task breakdown, dependency ordering, scope management |
 | **Test Engineer** | `agents/test-engineer.md` | TDD coaching, test quality review |
 | **Code Reviewer** | `agents/code-reviewer.md` | PR review, contract validation, quality gates |
@@ -76,6 +84,7 @@ Eleven specialist personas available via the Task tool or dispatch:
 | **Data Engineer** | `agents/data-engineer.md` | Schema, migrations, query performance |
 | **QA Engineer** | `agents/qa-engineer.md` | Test strategy, quality gates |
 | **Design Engineer** | `agents/design-engineer.md` | Visual system, interaction, accessibility |
+| **Brand Strategist** | `agents/brand-strategist.md` | Brand identity, voice and tone, cross-product consistency |
 
 ## Core Operating Behaviors
 

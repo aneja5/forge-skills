@@ -35,8 +35,13 @@ forge-skills/
 │   ├── redaction-and-cleanup/       # Redact for sharing → .forge/redacted/
 │   ├── api-design/                  # REST conventions, error envelopes → .forge/api-design.md
 │   ├── database-design/             # Schema + migrations → .forge/database-design.md + migrations-policy.md
-│   ├── design-system/               # Tokens + components → .forge/design-system.md
+│   ├── brand-and-identity/          # Brand essence, voice, logo, icons → .forge/brand-identity.md
+│   ├── design-system/               # Tokens + components → .forge/design-system.md (soft dep on brand)
 │   ├── interaction-patterns/        # Modal/sheet/expand decisions → .forge/interaction-patterns.md
+│   ├── component-library/           # Component catalog → .forge/component-library.md
+│   ├── page-composition/            # Page templates + responsive plan → .forge/page-composition.md
+│   ├── data-visualization/          # Chart selection + color encoding → .forge/data-visualization.md
+│   ├── visual-polish/               # Quality pass before demo/ship → .forge/polish-checklist.md
 │   ├── parallel-execution-strategy/ # Multi-agent dispatch → .forge/parallel-plan.md
 │   ├── seed-data-and-fixtures/      # Realistic data → .forge/seed-data.md
 │   ├── testing-strategy/            # Test pyramid + coverage → .forge/testing-strategy.md
@@ -63,21 +68,25 @@ forge-skills/
 │   ├── reliability-engineer.md      # Errors, observability, incidents, performance
 │   ├── data-engineer.md             # Schema, migrations, query performance
 │   ├── qa-engineer.md               # Test strategy, quality gates
-│   └── design-engineer.md           # Visual system, interaction, accessibility
+│   ├── design-engineer.md           # Visual system, interaction, accessibility
+│   ├── brand-strategist.md          # Brand identity, voice, cross-product consistency
+│   └── platform-architect.md        # Multi-product boundaries, deploy topology
 ├── references/                      # Shared checklists linked from skills
 │   ├── contract-templates.md        # Interface contract + ADR formats
 │   ├── idea-evaluation.md           # Per-branch resolution criteria for idea-griller
 │   ├── testing-patterns.md          # Good/bad tests, mocking rules, TDD patterns
 │   ├── security-checklist.md        # OWASP checklist, severity levels
+│   ├── motion-system.md             # Durations, curves, transitions, reduced-motion
 │   └── forge-dependency-graph.md    # Canonical .forge/ dependency tree (read by forge-sync)
-├── commands/                        # 31 slash commands for the full lifecycle
+├── commands/                        # 36 slash commands for the full lifecycle
 │   ├── grill.md spec.md architect.md plan.md build.md review.md ship.md
 │   ├── compete.md gtm.md secure.md scale.md validate.md redact.md
 │   ├── api.md db.md design.md interaction.md
+│   ├── brand.md components.md pages.md dataviz.md polish.md
 │   ├── parallel.md seed.md test-strategy.md
 │   ├── errors.md observe.md perf.md incident.md
 │   ├── a11y.md debt.md demo.md docs.md
-│   └── sync.md
+│   ├── sync.md forge-migrate.md feedback.md
 ├── hooks/
 │   ├── hooks.json                   # SessionStart hook configuration
 │   └── session-start.sh             # Injects using-forge-skills at every session start
@@ -157,8 +166,12 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Share   | redaction-and-cleanup        | /redact    | .forge/ artifacts    | .forge/redacted/                  |
 | Design  | api-design                   | /api       | prd.md               | .forge/api-design.md              |
 | Design  | database-design              | /db        | prd.md + architecture.md | .forge/database-design.md + migrations-policy.md |
-| Design  | design-system                | /design    | prd.md               | .forge/design-system.md           |
+| Design  | brand-and-identity           | /brand     | —                    | .forge/brand-identity.md          |
+| Design  | design-system                | /design    | brand-identity.md (soft) | .forge/design-system.md       |
 | Design  | interaction-patterns         | /interaction | design-system.md   | .forge/interaction-patterns.md    |
+| Design  | component-library            | /components | design-system + interaction-patterns + brand-identity | .forge/component-library.md |
+| Design  | page-composition             | /pages     | component-library + design-system + interaction-patterns | .forge/page-composition.md |
+| Design  | data-visualization           | /dataviz   | design-system + component-library | .forge/data-visualization.md |
 | Plan    | parallel-execution-strategy  | /parallel  | tasks.yaml           | .forge/parallel-plan.md           |
 | Plan    | seed-data-and-fixtures       | /seed      | architecture.md + database-design.md | .forge/seed-data.md     |
 | Plan    | testing-strategy             | /test-strategy | prd.md           | .forge/testing-strategy.md        |
@@ -167,6 +180,7 @@ Never skip ahead without the previous artifact. You can join mid-pipeline if you
 | Operate | performance-and-cost-optimization | /perf | architecture.md      | .forge/performance-budget.md      |
 | Operate | incident-response-and-postmortems | /incident | live incident or service list | .forge/incident-response.md |
 | Polish  | accessibility                | /a11y      | UI surfaces          | .forge/accessibility.md           |
+| Polish  | visual-polish                | /polish    | all UI artifacts     | .forge/polish-checklist.md        |
 | Polish  | refactoring-and-tech-debt    | /debt      | codebase             | .forge/tech-debt-registry.md      |
 | Polish  | demo-narrative               | /demo      | prd.md + seed-data.md | .forge/demo-narrative.md         |
 | Polish  | documentation-hygiene        | /docs      | repo                 | .forge/docs-policy.md             |

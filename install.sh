@@ -13,7 +13,8 @@
 #                   performance-and-cost-optimization, incident-response-and-postmortems,
 #                   accessibility, refactoring-and-tech-debt, demo-narrative,
 #                   documentation-hygiene, writing-skills, forge-sync,
-#                   forge-migrate, feedback, using-forge-skills
+#                   forge-migrate, feedback, brand-and-identity, component-library,
+#                   page-composition, data-visualization, visual-polish, using-forge-skills
 
 set -e
 
@@ -60,6 +61,11 @@ if [ -z "$SKILL" ]; then
   echo "  forge-sync                 — check .forge/ artifact freshness + cascade order"
   echo "  forge-migrate              — backfill forge:meta headers on legacy .forge/ files"
   echo "  feedback                   — file reverse-cascade entries when downstream finds upstream needs fixing"
+  echo "  brand-and-identity         — brand essence, voice, logo, icon system"
+  echo "  component-library          — component catalog with props, states, accessibility"
+  echo "  page-composition           — page templates + responsive collapse strategy"
+  echo "  data-visualization         — chart selection, color encoding, dashboard conventions"
+  echo "  visual-polish              — quality pass before demo/ship (states, skeletons, meta, dark mode)"
   echo "  using-forge-skills         — meta-skill: skill discovery + pipeline"
   exit 1
 fi

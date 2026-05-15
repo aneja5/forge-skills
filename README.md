@@ -2,7 +2,7 @@
 
 > An Agentic Engineering toolkit for AI coding agents. The human writes specs and architecture. Agents implement in parallel with contracts. Review gates enforce correctness.
 
-Structured workflows that turn a raw idea into shipped, operated, and demoed code through 7 pipeline stages, 37 skills, and 11 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
+Structured workflows that turn a raw idea into shipped, operated, and demoed code through 7 pipeline stages, 42 skills, and 13 specialist agent personas. Every discipline-enforcing skill is pressure-tested against fresh subagents using TDD-for-skills methodology (see [Testing](#testing)).
 
 Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this model: humans write the specs, architecture, and guardrails — AI agents implement in parallel — humans review. The `.forge/` artifact chain is the implementation: `prd.md` → `architecture.md` + `contracts/` → `tasks.yaml` → code.
 
@@ -10,11 +10,12 @@ Andrej Karpathy's Agentic Engineering concept (Feb 2026) describes exactly this 
 
 ## Your AI Engineering Team
 
-Eleven specialist agents, available via the Task tool:
+Thirteen specialist agents, available via the Task tool:
 
 | Agent | Role |
 |-------|------|
 | **Architect** | System design, interface contracts, ADRs |
+| **Platform Architect** | Multi-product boundaries, shared vs forked decisions, deploy topology |
 | **Project Manager** | Task breakdown, dependency ordering, scope management |
 | **Test Engineer** | TDD coaching, test quality review, coverage gaps |
 | **Code Reviewer** | PR review, contract validation, five-axis quality check |
@@ -25,6 +26,7 @@ Eleven specialist agents, available via the Task tool:
 | **Data Engineer** | Schema, migrations, query performance, data integrity |
 | **QA Engineer** | Test strategy, quality gates — the person who breaks things before users do |
 | **Design Engineer** | Design system, interaction patterns, accessibility, visual quality |
+| **Brand Strategist** | Brand identity, voice and tone, cross-product consistency |
 
 Each agent has a defined role, push-back behavior, and quality bar. See `agents/` for the full personas.
 
@@ -68,8 +70,12 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 | `/redact` | Share | `redaction-and-cleanup` | `.forge/` artifacts | `.forge/redacted/` |
 | `/api` | Design | `api-design` | `prd.md` | `.forge/api-design.md` |
 | `/db` | Design | `database-design` | `prd.md` + `architecture.md` | `.forge/database-design.md` + `migrations-policy.md` |
-| `/design` | Design | `design-system` | `prd.md` | `.forge/design-system.md` |
+| `/brand` | Design | `brand-and-identity` | — | `.forge/brand-identity.md` |
+| `/design` | Design | `design-system` | `brand-identity.md` (soft) | `.forge/design-system.md` |
 | `/interaction` | Design | `interaction-patterns` | `design-system.md` | `.forge/interaction-patterns.md` |
+| `/components` | Design | `component-library` | `design-system.md` + `interaction-patterns.md` + `brand-identity.md` | `.forge/component-library.md` |
+| `/pages` | Design | `page-composition` | `component-library.md` + `design-system.md` + `interaction-patterns.md` | `.forge/page-composition.md` |
+| `/dataviz` | Design | `data-visualization` | `design-system.md` + `component-library.md` | `.forge/data-visualization.md` |
 | `/parallel` | Plan | `parallel-execution-strategy` | `tasks.yaml` | `.forge/parallel-plan.md` |
 | `/seed` | Plan | `seed-data-and-fixtures` | `architecture.md` + `database-design.md` | `.forge/seed-data.md` |
 | `/test-strategy` | Plan | `testing-strategy` | `prd.md` | `.forge/testing-strategy.md` |
@@ -78,6 +84,7 @@ Each agent has a defined role, push-back behavior, and quality bar. See `agents/
 | `/perf` | Operate | `performance-and-cost-optimization` | `architecture.md` | `.forge/performance-budget.md` |
 | `/incident` | Operate | `incident-response-and-postmortems` | live incident or service inventory | `.forge/incident-response.md` |
 | `/a11y` | Polish | `accessibility` | UI surfaces | `.forge/accessibility.md` |
+| `/polish` | Polish | `visual-polish` | all UI artifacts | `.forge/polish-checklist.md` |
 | `/debt` | Polish | `refactoring-and-tech-debt` | codebase | `.forge/tech-debt-registry.md` |
 | `/demo` | Polish | `demo-narrative` | `prd.md` + `seed-data.md` | `.forge/demo-narrative.md` |
 | `/docs` | Polish | `documentation-hygiene` | repo | `.forge/docs-policy.md` |
@@ -167,6 +174,7 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | Persona | File | When to invoke |
 |---------|------|----------------|
 | Architect | `agents/architect.md` | System design, contracts, tech decisions |
+| Platform Architect | `agents/platform-architect.md` | Multi-product boundaries, shared vs forked, deploy topology |
 | Project Manager | `agents/project-manager.md` | Task breakdown, dependency mapping |
 | Test Engineer | `agents/test-engineer.md` | TDD coaching, test quality review |
 | Code Reviewer | `agents/code-reviewer.md` | PR review, contract compliance |
@@ -177,6 +185,7 @@ See [docs/cursor-setup.md](docs/cursor-setup.md) for Cursor, Gemini CLI, Windsur
 | Data Engineer | `agents/data-engineer.md` | Schema, migrations, query performance |
 | QA Engineer | `agents/qa-engineer.md` | Test strategy, quality gates |
 | Design Engineer | `agents/design-engineer.md` | Visual system, interaction, accessibility |
+| Brand Strategist | `agents/brand-strategist.md` | Brand identity, voice and tone, cross-product consistency |
 
 ### Reference Checklists
 
@@ -215,8 +224,13 @@ forge-skills/
 │   ├── redaction-and-cleanup/
 │   ├── api-design/
 │   ├── database-design/
+│   ├── brand-and-identity/          # Brand foundations, voice, logo, icons
 │   ├── design-system/
 │   ├── interaction-patterns/
+│   ├── component-library/           # Component catalog with props, states, accessibility
+│   ├── page-composition/            # Page templates + responsive collapse strategy
+│   ├── data-visualization/          # Chart selection rules + color encoding
+│   ├── visual-polish/               # Quality pass before demo/ship
 │   ├── parallel-execution-strategy/
 │   ├── seed-data-and-fixtures/
 │   ├── testing-strategy/
@@ -243,13 +257,17 @@ forge-skills/
 │   ├── reliability-engineer.md
 │   ├── data-engineer.md
 │   ├── qa-engineer.md
-│   └── design-engineer.md
+│   ├── design-engineer.md
+│   ├── brand-strategist.md          # Brand identity, voice, cross-product consistency
+│   └── platform-architect.md        # Multi-product boundaries, shared vs forked
 ├── references/                      # Shared checklists and templates
 │   ├── contract-templates.md
 │   ├── idea-evaluation.md
 │   ├── testing-patterns.md
-│   └── security-checklist.md
-├── commands/                        # 31 slash commands across the full lifecycle
+│   ├── security-checklist.md
+│   ├── motion-system.md             # Durations, curves, transitions, reduced-motion
+│   └── forge-dependency-graph.md    # Canonical .forge/ dependency tree
+├── commands/                        # 36 slash commands across the full lifecycle
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh
