@@ -14,7 +14,7 @@
         "source": "github",
         "repo": "aneja5/forge-skills"
       },
-      "description": "Agentic Engineering toolkit — 42 skills, 13 agent personas, 36 slash commands. Full UI chain (brand → design-system → components → pages → dataviz → polish) plus motion-system reference. Bidirectional artifact chain: forge:meta + /sync + /forge-migrate + /feedback. Task lifecycle in tasks.yaml. ADR review-due signals. TDD-tested skills.",
+      "description": "Agentic Engineering toolkit — 42 skills, 13 agent personas, 36 slash commands. Full UI chain (brand → design-system → components → pages → dataviz → polish) plus motion-system reference. forge:meta uses generated_from hash snapshots so upstream edits cascade zero downstream writes. /sync + /forge-migrate + /feedback + bin/forge-check.sh. TDD-tested skills.",
       "homepage": "https://github.com/aneja5/forge-skills",
       "repository": "https://github.com/aneja5/forge-skills",
       "license": "MIT",
