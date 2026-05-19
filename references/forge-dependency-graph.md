@@ -64,6 +64,7 @@ When one skill produces multiple artifacts in a single run (e.g., `planning-and-
 | `architecture-and-contracts` | `architecture.md`, `contracts/*.md`, `adr/*.md` | `[prd.md]` — all three groups |
 | `database-design` | `database-design.md`, `migrations-policy.md` | `[architecture.md]` — both files |
 | `cross-validation` | `cross-validation-prompt.md`, `cross-validation-synthesis.md` | inputs depend on what was reviewed |
+| `forge-sync` | `sync-report.md`, `index.md` | every `.forge/` file scanned |
 
 **Why:** the alternative ("derivative" semantic where `tasks-summary` only depends on `tasks.yaml`) creates a silent staleness bug. If `prd.md` is edited after generation, only `tasks.yaml` is flagged stale; `tasks-summary.md` passes UP_TO_DATE because its single declared dep shares its generation timestamp. By pinning co-output to the full upstream set — including the snapshot in `generated_from` — both artifacts flip stale together when an upstream's content_hash drifts.
 
@@ -163,6 +164,7 @@ content_hash: 3f9a2b1c
 .forge/redaction-manifest.md         (produced by redaction-and-cleanup, reads any .forge/ artifact)
 .forge/redacted/*                    (produced by redaction-and-cleanup, copies of originals)
 .forge/sync-report.md                (produced by forge-sync, reads every .forge/ file)
+.forge/index.md                      (produced by forge-sync co-output; one-line summary per artifact for context-hungry consumers)
 .forge/feedback/*.md                 (produced by feedback skill from any downstream stage, targets one upstream artifact)
 ```
 
@@ -309,6 +311,6 @@ When an ADR is superseded, the superseding ADR (`ADR-N+1`) updates the old ADR's
 | `incident-response-and-postmortems` | `.forge/incident-response.md` | — (independent) |
 | `refactoring-and-tech-debt` | `.forge/tech-debt-registry.md` | — (independent) |
 | `redaction-and-cleanup` | `.forge/redaction-manifest.md`, `.forge/redacted/*` | any `.forge/` artifact |
-| `forge-sync` | `.forge/sync-report.md` | every `.forge/` file + this graph |
+| `forge-sync` | `.forge/sync-report.md`, `.forge/index.md` (co-output: shared `depends_on` + `generated_from`) | every `.forge/` file + this graph |
 | `feedback` | `.forge/feedback/<timestamp>-<source>.md` | the target_artifact being annotated |
 | `forge-migrate` | (in-place header backfill) | every legacy `.forge/` file |
