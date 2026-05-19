@@ -882,6 +882,65 @@ Lean is fine. The pipeline is a tool, not a ritual.
 
 ---
 
+## Pattern 14: Teams — Handling `.forge/` in Shared Repos
+
+Two engineers independently run `/architect` on different branches. Both modify `.forge/architecture.md`. Git merges, hits a 500-line conflict, and now somebody is hand-resolving generated content. By the time they're done, neither file accurately represents the system.
+
+`.forge/` artifacts are **generated**, not authored. Treat them like build output: regenerate, don't merge.
+
+### The iron rule
+
+> **Never hand-resolve a `.forge/` merge conflict.** Re-run the source skill on the merged base, then commit. The skill is the source of truth; the file is a render.
+
+If you find yourself opening a `.forge/architecture.md` conflict marker, stop. Discard both sides. Re-run `/architect`. Commit the regenerated file.
+
+### Three working models
+
+**Option A — Single owner per sprint (smallest teams, 2–4 people)**
+
+One person runs every `/grill`, `/spec`, `/architect`, `/plan` per sprint. The rest of the team is read-only on `.forge/`. At sprint boundaries the role can rotate. Pros: zero merge conflicts, single point of design coherence. Cons: bottlenecks on one person; risky if they're out.
+
+**Option B — Dedicated `.forge/` branch (medium teams, 4–10 people)**
+
+`.forge/` lives on a long-lived `forge` branch. Feature branches merge from it but never write to it. When a skill needs to re-run, it runs on the `forge` branch; feature branches rebase to pick up changes.
+
+```
+main ───────────────────────────────●─────── (code)
+  ↑                                 │
+  │ feature branches merge in       │
+  │                                 │
+forge ──────●───────●──────●────────●─────── (only .forge/ writes)
+            │       │       │
+        /architect /plan  /architect (re-run after PRD update)
+```
+
+Pros: code and `.forge/` evolve independently; no merge conflicts in feature branches. Cons: requires `.gitignore` discipline (feature branches must not write `.forge/`).
+
+**Option C — Regenerate on merge to main (large teams, ≥10 people, mature CI)**
+
+`.forge/` is committed but treated as machine-derived: a CI step on merge-to-main re-runs `/sync` and either auto-regenerates stale artifacts or fails the build with the cascade list. Engineers never edit `.forge/` directly; they edit upstream sources (the idea, the PRD, the contract) and let CI re-derive.
+
+Pros: artifacts are always current; no human regenerates by hand. Cons: requires non-interactive skill invocation (which forge-skills supports for some skills but not the interview-heavy ones like `/grill` or `/spec`).
+
+### Choosing between A/B/C
+
+| Team size | Codebase | Recommended |
+|---|---|---|
+| 2–4 | any | Option A — rotate the role |
+| 4–10 | < 50k LOC | Option A *or* Option B — pick by personality fit |
+| 4–10 | ≥ 50k LOC | Option B |
+| ≥ 10 | any | Option C (with Option B as the migration step) |
+
+### Universal rules across all three
+
+- `.forge/` is committed (not `.gitignore`d) so context survives crashes and onboards new teammates.
+- Every PR that touches `.forge/` must be reviewed by whoever owns the sprint's pipeline role.
+- `/sync` runs before every sprint kickoff — if it reports `STALE`, fix the chain before assigning new work.
+- Pre-commit hook: reject commits where `.forge/` and `src/` both have changes (`.forge/` work and code work are separate PRs).
+- When you DO get a conflict, regenerate. Don't merge.
+
+---
+
 ## Anti-Patterns
 
 **The YOLO pipeline:**
