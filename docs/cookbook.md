@@ -847,6 +847,41 @@ The demo-narrative skill produces scene-by-scene instructions with wow moments a
 
 ---
 
+## Pattern 13: Right-sizing the Pipeline
+
+Forge has 42 skills, but a weekend hackathon doesn't need 42 artifacts. Running the full pipeline on a 200-line script produces more documentation than code. Match the pipeline depth to the project's actual surface area.
+
+### By codebase size
+
+| Size | Suggested skills | Why |
+|---|---|---|
+| **< 500 LOC** (script, single page, one-shot tool) | `/spec` → `/build` | Spec captures intent in one short PRD. Skip architecture — there's only one module. Skip planning — the task list is "do the thing." |
+| **500–2000 LOC** (weekend project, single-service app) | `/spec` → `/architect` → `/plan` → `/build` | Architecture pays off once you have ≥2 modules talking. Tasks.yaml clarifies the order. Skip the analysis skills (compete, scale, secure) unless they're a real concern. |
+| **2000+ LOC** (real product, multi-module, shipping to users) | Full pipeline | Every artifact earns its keep at this scale. The analysis skills (compete, scale, secure) prevent the most expensive mistakes. |
+| **Team project** (≥2 humans, shared codebase) | Full pipeline + `/sync` before every sprint | Drift between teammates' mental models is the dominant cost. `/sync` is cheap insurance. Also adopt Pattern 14 below. |
+
+### By project type
+
+A 200-line CLI tool gets `/spec` + `/build`. A 200-line **Stripe-integration script** that handles real money gets `/spec` + `/secure` + `/build` — the LOC count lies about the risk surface.
+
+Map by *what the project does*, not just *how big it is*:
+
+- Handles money, PII, or auth → always run `/secure`, regardless of size.
+- Will scale beyond one server → always run `/scale`, regardless of size.
+- Will be sold or pitched → always run `/compete` + `/gtm`, regardless of size.
+- UI shipping to external users → always run `/a11y` + `/polish`, regardless of size.
+
+### Pipeline-depth red flags
+
+Pull back if you see:
+- The PRD describes a 5-task project in 800 lines. The PRD is overscoped.
+- `.forge/contracts/` has 8 files for a 300-LOC repo. You're documenting nothing into existence.
+- The team spends more time updating `.forge/` than writing code two sprints in a row. The pipeline is too deep for the project.
+
+Lean is fine. The pipeline is a tool, not a ritual.
+
+---
+
 ## Anti-Patterns
 
 **The YOLO pipeline:**
