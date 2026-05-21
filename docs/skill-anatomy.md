@@ -69,6 +69,26 @@ Good: "`.forge/prd.md` written and readable"
 
 The verification list is the definition of done. If the list is vague, done is vague.
 
+### Fit-Check (the meta-honesty step)
+
+After Verification, every skill emits **one** of:
+
+- **"No fit issues observed for this use case."** (one line, explicit)
+- A short list of specific fit issues: places where the skill felt too heavy, too light, or wrong-shaped for the work that just happened.
+
+The fit-check exists because skills are general but invocations are specific. A skill that worked perfectly for ten projects can be the wrong tool for the eleventh — and the agent will still produce an artifact if it just follows the steps. The fit-check forces the agent to step back and answer *"was this the right skill for what just happened?"* before declaring done.
+
+Examples of fit issues an agent might report:
+
+- "PRD generation produced 800 lines for what turned out to be a 50-line config tweak — too heavy for this use case; recommend `incremental-implementation` directly next time."
+- "Architecture-and-contracts emitted 6 contracts but only 2 modules are actually being changed; consider skipping for single-module work."
+- "The skill assumed multi-tenant SaaS; this is an internal admin tool — see issue #40 for non-SaaS conditional sections."
+- "Auto-trigger fired this skill but the actual work was a debugging task; `debugging-and-recovery` would have been correct."
+
+Silence is not the answer. If there are no fit issues, say so explicitly. The absence of fit-check output is itself a red flag — it means the agent didn't reflect.
+
+This was promoted from cultural property to convention after the v3.2.0 dry-run (issue #35) — five of seven skills self-reported limitations spontaneously; the uneven application motivated making it mandatory.
+
 ## Supporting Files
 
 Keep SKILL.md under 150 lines. If content is growing past that:

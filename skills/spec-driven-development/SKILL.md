@@ -134,3 +134,12 @@ Before marking complete, confirm:
 - [ ] Module list confirmed with user
 - [ ] Release phases defined
 - [ ] `.forge/prd.md` written and readable
+
+## Fit-Check
+
+Before declaring done, emit one of:
+
+- A short list of specific fit issues observed during this invocation (e.g., "Feature turned out to be a single config tweak — PRD is overscoped for the work; recommend `incremental-implementation` directly next time" / "PRD section on multi-tenancy doesn't apply — this is a single-tenant tool, see #40").
+- The explicit line: **"No fit issues observed for this use case."**
+
+Silence is not allowed. See [docs/skill-anatomy.md#fit-check](../../docs/skill-anatomy.md#fit-check-the-meta-honesty-step).

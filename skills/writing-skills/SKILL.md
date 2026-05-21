@@ -88,6 +88,7 @@ Required sections:
 - Red Flags list.
 - Core Process (numbered steps).
 - Verification checklist (objective, not subjective).
+- **Fit-Check** at the end — every skill emits one of: a short list of specific fit issues observed during this invocation, OR the line "No fit issues observed for this use case." Silence is not allowed. See [docs/skill-anatomy.md#fit-check](../../docs/skill-anatomy.md#fit-check-the-meta-honesty-step) for the why.
 
 Keep under 150 lines. Extract heavy templates/checklists to supporting files in the same directory.
 
@@ -200,6 +201,7 @@ Good: *"Use when user wants to write a spec, when idea-brief.md exists and is re
 - [ ] Verification checklist items are objective (file exists, section non-empty, count >= N)
 - [ ] No new rationalizations in latest GREEN run
 - [ ] If the skill writes a `.forge/` artifact: its template emits all four `forge:meta` fields (`generated_by`, `generated_at` in UTC, `depends_on` as paths-only, `generated_from` snapshot map, `content_hash`). NO hashes inline in `depends_on`.
+- [ ] Skill body has a `Fit-Check` requirement: agent must emit specific fit issues OR the explicit line "No fit issues observed for this use case" before declaring done. Silence is not allowed.
 - [ ] Skill registered in `using-forge-skills` discovery flowchart
 - [ ] README, CLAUDE.md, install.sh updated
 

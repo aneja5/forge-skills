@@ -165,3 +165,12 @@ Contents:
 - [ ] Task descriptions use module/contract names, not file paths
 - [ ] `.forge/tasks.yaml` written and parseable
 - [ ] User approved the breakdown before writing the file
+
+## Fit-Check
+
+Before declaring done, emit one of:
+
+- A short list of specific fit issues observed (e.g., "Plan produced 4 tasks for what is genuinely a 2-hour single-file change — task overhead exceeds the work; recommend `incremental-implementation` directly" / "skills: tags don't apply — this is a backend-only project with no design-system or accessibility concerns").
+- The explicit line: **"No fit issues observed for this use case."**
+
+Silence is not allowed. See [docs/skill-anatomy.md#fit-check](../../docs/skill-anatomy.md#fit-check-the-meta-honesty-step).

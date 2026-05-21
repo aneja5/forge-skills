@@ -130,3 +130,12 @@ These are deeper dives on specific sections. Generate only when explicitly reque
 - [ ] Cost model section included with per-unit costs and scaling curve
 - [ ] `.forge/architecture.md` written with component diagram
 - [ ] Contract table in architecture.md lists all contract files
+
+## Fit-Check
+
+Before declaring done, emit one of:
+
+- A short list of specific fit issues observed (e.g., "Only 2 modules being changed but 6 contracts emitted — overscoped; consider skipping for single-module work next time" / "Cost model section assumed multi-tenant SaaS pricing; this is an internal admin tool with no cost dimension").
+- The explicit line: **"No fit issues observed for this use case."**
+
+Silence is not allowed. See [docs/skill-anatomy.md#fit-check](../../docs/skill-anatomy.md#fit-check-the-meta-honesty-step).
