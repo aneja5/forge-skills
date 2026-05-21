@@ -36,3 +36,45 @@ No commentary outside the plan and the code.
 - Tests reach into private internals or mock internal collaborators of the registration handler.
 - "We can add tests after we see it works" anywhere in the plan.
 - One big test that verifies everything at once instead of one test per behavior.
+
+## Scenario 2 — "2-stage RED: behavior fail, not just import fail"
+
+**Premise:** Agent is asked to TDD a small pure function from scratch in a *new* file. Does the agent treat the first import failure as RED and jump straight to the real implementation, or do they go through the discriminating-power check (stub with correct signature returning a wrong value → re-run → AssertionError → only then real implementation)?
+
+**Setup**
+
+```
+You're starting a new feature. The file src/utils/slugify.ts does not exist yet.
+
+Task: TDD a function `slugify(input: string): string` that:
+  - lowercases the input
+  - replaces spaces with hyphens
+  - strips characters that are not [a-z0-9-]
+
+Walk me through your full red/green/refactor cycle for the FIRST test only. Be explicit:
+1. What test you write
+2. What you expect to happen when you run it (exact error type / message shape)
+3. What code (if any) you write next
+4. What you expect when you re-run
+5. What you write next
+6. When the cycle ends
+
+No commentary outside the cycle. Code blocks where appropriate.
+```
+
+**Expected behavior (skill compliant)**
+
+- First step is the test, not the implementation file.
+- After step 1 the agent predicts something like `ERR_MODULE_NOT_FOUND` / `Cannot find module './slugify'` — the existence failure. They name it as RED-1.
+- Step 3 is NOT the real implementation. Step 3 is a **stub with the correct signature returning a deliberately wrong value** — e.g., `export function slugify(input: string): string { return ""; }` or `return input;` unchanged.
+- After step 3 the agent predicts an `AssertionError` / "expected 'hello-world' but got ''" — RED-2, the behavior failure. They name it as such.
+- Step 5 is the real implementation, replacing the stub.
+- The agent explicitly cites the 2-stage pattern (or "behavior-fail RED", or "discriminating power") as the reason for the stub detour.
+
+**Red flags (skill violated)**
+
+- Test → import error → real implementation. (Single-stage RED — the test never proved it could discriminate.)
+- Agent calls the import error "RED" and goes straight to GREEN without the stub step.
+- Agent says "the test failed, that's RED, now write the code" without distinguishing existence failure from assertion failure.
+- Agent skips the stub on the grounds that "stubbing twice is wasteful" — that's the rationalization the 2-stage pattern is designed to defeat. The stub IS the discrimination check; without it, the test has no proven power.
+- Agent treats `SyntaxError` or `ReferenceError` as a valid RED end-state.

@@ -78,24 +78,45 @@ Each test responds to what you learned from the previous implementation cycle.
 - [ ] Identify [deep module](deep-modules.md) opportunities
 - [ ] Get user approval before writing the first test
 
-### 2. Tracer bullet
+### 2. Tracer bullet (2-stage RED required)
 
-Write ONE test that proves the end-to-end path works:
+Write ONE test that proves the end-to-end path works. **RED must be observed twice**: first as an existence failure, then as a behavior failure.
 
 ```
-RED:   Write test for first behavior → must fail
-GREEN: Write minimum code to pass → passes
+RED-1 (existence): Write test for first behavior → expect ERR_MODULE_NOT_FOUND
+                   / NameError / "function not defined" — the module or symbol
+                   the test imports doesn't exist yet. This proves the test
+                   ran. It does NOT prove the test discriminates correct from
+                   incorrect implementations.
+
+STUB:              Create the file / function / class with the correct
+                   signature, returning a deliberately wrong value (empty
+                   string, 0, null, []). Just enough to satisfy the import.
+
+RED-2 (behavior):  Re-run the test → expect AssertionError. The test now
+                   fails on a behavior mismatch, not a missing symbol. This
+                   proves the test would CATCH a wrong implementation —
+                   not just a missing one.
+
+GREEN:             Replace the stub with the real implementation. Test passes.
 ```
+
+**Why two stages.** A single-stage RED (existence failure → write whole implementation) leaves you unable to distinguish "the test failed because the implementation is wrong" from "the test failed because of a typo in the import path." Most failing tests look the same from far away. The 2-stage pattern proves the test has *discriminating power*: it rejects a wrong-value stub of the correct shape. If RED-2 doesn't fail with an AssertionError, the test isn't really testing the behavior — it's testing the existence of the symbol.
+
+This pattern was promoted from emergent practice to documented gold standard after the v3.2.0 dry-run (issue #36). Strict TDD literature varies on whether import-fail counts as RED; the behavior-fail standard removes the ambiguity.
 
 ### 3. Incremental loop
 
 For each remaining behavior:
 
 ```
-RED:   Write next test → fails
-GREEN: Minimum code to pass → passes
+RED-1 (existence — usually skipped after the tracer bullet): file/module exists
+RED-2 (behavior): Write next test → AssertionError (real behavior mismatch)
+GREEN:            Minimum code to pass → passes
 REPEAT
 ```
+
+After the first cycle, the file usually exists already so RED-1 collapses into RED-2 immediately. The discipline still applies: the test that fails must fail on an *assertion*, not on a missing import or syntax error.
 
 Rules: one test at a time, only enough code for the current test, no speculative features.
 
@@ -119,7 +140,17 @@ After all tests pass — see [refactoring.md](refactoring.md):
 ## Verification
 
 - [ ] All behaviors listed in Step 1 have a passing test
+- [ ] **RED was observed as a behavior failure (AssertionError / expected-vs-actual mismatch), not merely a module-not-found or symbol-undefined error.** For the first behavior of a new module: RED-1 (existence) → write stub with correct signature returning wrong value → RED-2 (assertion mismatch) → GREEN. The 2-stage pattern proves the test has discriminating power.
 - [ ] No tests mock internal collaborators
 - [ ] Full test suite passes (not just new tests)
 - [ ] Refactor pass complete — no duplication, no shallow modules
 - [ ] If task from tasks.yaml: all acceptance criteria verified
+
+## Fit-Check
+
+Before declaring done, emit one of:
+
+- A short list of specific fit issues observed (e.g., "TDD overhead exceeded the work for this single-config-line change — recommend skipping the test layer next time" / "Behavior was hard to test through public interface; suggests the interface needs rethinking, not the test").
+- The explicit line: **"No fit issues observed for this use case."**
+
+Silence is not allowed. See [docs/skill-anatomy.md#fit-check](../../docs/skill-anatomy.md#fit-check-the-meta-honesty-step).
